@@ -76,3 +76,6 @@ bin/
 
 #Android Studio
 local.properties
+
+# Testing files
+*.pdf
