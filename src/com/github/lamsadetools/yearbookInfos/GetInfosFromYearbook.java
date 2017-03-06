@@ -1,4 +1,4 @@
-package com.github.yearbookInfos;
+package com.github.lamsadetools.yearbookInfos;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,50 +9,54 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.HashMap;
 
 /**
  * GetInfosFromYearbook will get information from Dauphine's yearbook
  * It needs the name and the surname of the person you want to get information on OR
- * the url corresponding to the person's dauphine yearbook page.
+ * the URL corresponding to the person's Dauphine yearbook page.
  * @author Abdelkader ZEROUALI
  *
  */
 public class GetInfosFromYearbook {
-	private ArrayList<String> rawInfos = new ArrayList();
 	private String [][] orderedInfos;
 	private URL url;
 	
 	/**
-	 * Constructor using a person's dauphine yearbook URL
+	 * Constructor using a person's Dauphine yearbook URL
 	 * @param url
 	 */
 	public GetInfosFromYearbook(URL url){
 		this.url= url;
-		treatYbData(url);
+		RetrieveYearbookData(url);
 	}
 	
+	/**
+	 * Constructor using a person's firstname and surname
+	 * @param url
+	 */
 	public GetInfosFromYearbook(String firstname, String surname) {
 		assert(firstname != null && surname !=null);
 		try {
 			url = new URL("https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&param1=" + firstname.toLowerCase().charAt(0)+surname.toLowerCase());
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		treatYbData(url);		
+		RetrieveYearbookData(url);		
 	}
 	
 	/**
-	 * treatYbData takes a URL in parameter. It will connect to this URL and
-	 * read the entire html code of the web page
+	 * RetrieveYearbookData takes a URL in parameter. It will connect to this URL and
+	 * read the entire HTML code of the web page
 	 * @param url
 	 */
-	public void treatYbData (URL url){
-		URLConnection con;
+	public void RetrieveYearbookData (URL url){
+		URLConnection connection;
 		InputStream is = null;
 		try {
-			con = url.openConnection();
-			is = con.getInputStream();
+			connection = url.openConnection();
+			is = connection.getInputStream();
 		} catch (IOException e1) {
 			System.out.println("Impossible to connect to URL");
 			e1.printStackTrace();
@@ -62,6 +66,7 @@ public class GetInfosFromYearbook {
 
         String line = null;
         String nextLine =null;
+    	ArrayList<String> rawInfos = new ArrayList();
 
         // read each line and add it into rawInfos
         try {
@@ -78,11 +83,10 @@ public class GetInfosFromYearbook {
 			    }
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			System.out.println("Impossible to read the next line");
 			e.printStackTrace();
 		}
-        superfluRemover(rawInfos);
+        superfluousRemover(rawInfos);
         orderedInfos = new String[rawInfos.size()/2][2];
         int j =0;
         for (int i=0;i<orderedInfos.length;++i){
@@ -92,20 +96,17 @@ public class GetInfosFromYearbook {
         }
 	}
 	
-	/**superfluRemover remove html tags and useless spaces (beginning and end)
+	/**superfluousRemover remove html tags and useless spaces (beginning and end)
 	 * in an ArrayList of Strings
 	 * @param infos
 	 */
-	public void superfluRemover(ArrayList<String> infos){    	
+	private void superfluousRemover(ArrayList<String> infos){    	
     	for (int i=0;i<infos.size();++i){
     		infos.set(i,infos.get(i).trim()); // delete every spaces surrounding the string
     		infos.set(i,infos.get(i).replaceAll("<[^>]+>", "")); // delete every html tags
     	}
     }
-	
-	public ArrayList<String> getInfos() {
-		return rawInfos;
-	}
+
 	public String[][] getOrderedInfos() {
 		return orderedInfos;
 	}
@@ -122,6 +123,10 @@ public class GetInfosFromYearbook {
 		return url;
 	}
 
+	/**
+	 * set the URL
+	 * @param url
+	 */
 	public void setUrl(URL url) {
 		this.url = url;
 	}
@@ -129,9 +134,7 @@ public class GetInfosFromYearbook {
 	public static void main(String[] args) {
 		String prenom = "Olivier";
 		String nom = "CAILLOUX";
-		GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
-		ArrayList<String> rawInfos = profJava.getInfos();
-		String[][] orderedInfos = profJava.getOrderedInfos();		
+		GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);		
 		String test = profJava.toString();
 		System.out.println(test);
 	}
