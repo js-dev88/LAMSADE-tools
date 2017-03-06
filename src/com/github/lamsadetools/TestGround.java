@@ -1,12 +1,12 @@
 package com.github.lamsadetools;
 
-import com.github.odfdom.ODTGenerator;
+import com.github.odfdom.ODTDocument;
 
 public class TestGround {
 
 	public static void main(String[] args) throws Exception {
 
-		ODTGenerator g = new ODTGenerator();
+		ODTDocument g = new ODTDocument();
 
 		// PapierAEnTeteGenerator pm = new PapierAEnTeteGenerator();
 		//
