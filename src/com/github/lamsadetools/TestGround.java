@@ -2,11 +2,15 @@ package com.github.lamsadetools;
 
 import com.github.odfdom.ODTGenerator;
 
+import conferences.Conference;
+
 public class TestGround {
 
 	public static void main(String[] args) throws Exception {
 
 		ODTGenerator g = new ODTGenerator();
+
+		Conference.insertInDatabase();
 
 		// PapierAEnTeteGenerator pm = new PapierAEnTeteGenerator();
 		//

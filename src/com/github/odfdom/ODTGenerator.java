@@ -1,7 +1,5 @@
 package com.github.odfdom;
 
-import java.net.URI;
-
 import org.odftoolkit.simple.TextDocument;
 import org.odftoolkit.simple.table.Cell;
 import org.odftoolkit.simple.table.Table;
@@ -12,10 +10,6 @@ public class ODTGenerator {
 	TextDocument outputOdt;
 
 	public ODTGenerator() {
-		this("doc.odt");
-	}
-
-	public ODTGenerator(String filename) {
 		try {
 			outputOdt = TextDocument.newTextDocument();
 
@@ -23,9 +17,7 @@ public class ODTGenerator {
 			// outputOdt.newImage(new URI("odf-logo.png"));
 
 			// add paragraph
-
-			outputOdt.newImage(new URI("img/logo-dauphine.jpg"));
-			// outputOdt.addParagraph("Hello World, Hello Simple ODF!");
+			outputOdt.addParagraph("Hello World, Hello Simple ODF!");
 
 			// add list
 			outputOdt.addParagraph("The following is a list.");
@@ -38,7 +30,7 @@ public class ODTGenerator {
 			Cell cell = table.getCellByPosition(0, 0);
 			cell.setStringValue("Hello World!");
 
-			outputOdt.save(filename);
+			outputOdt.save("HelloWorld.odt");
 		} catch (Exception e) {
 			System.err.println("ERROR: unable to create output file.");
 		}
