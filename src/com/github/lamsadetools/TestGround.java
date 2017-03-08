@@ -12,13 +12,15 @@ public class TestGround {
 	public static void main(String[] args) throws Exception {
 
 		ODTGenerator g = new ODTGenerator();
-		
+
 		String dateFormat = "dd/MM/yy";
 		DateFormat format = new SimpleDateFormat(dateFormat);
 		format.setLenient(false);
-		Conference conf = new Conference("url","Antoine s conf", format.parse("10/03/2017"), format.parse("11/03/2017"));
+		Conference conf = new Conference("url", "Antoine s conf", format.parse("10/03/2017"),
+				format.parse("11/03/2017"));
 
 		Conference.insertInDatabase(conf);
+		Conference.getFromDatabase(1);
 
 		// PapierAEnTeteGenerator pm = new PapierAEnTeteGenerator();
 		//
