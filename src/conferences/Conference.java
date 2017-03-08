@@ -1,7 +1,10 @@
 package conferences;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,73 +14,6 @@ import java.util.Scanner;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 public class Conference {
-	private String url;
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public Date getStart_date() {
-		return start_date;
-	}
-
-	public void setStart_date(Date start_date) {
-		this.start_date = start_date;
-	}
-
-	public Date getEnd_date() {
-		return end_date;
-	}
-
-	public void setEnd_date(Date end_date) {
-		this.end_date = end_date;
-	}
-
-	public double getEntry_fee() {
-		return entry_fee;
-	}
-
-	public void setEntry_fee(double entry_fee) {
-		this.entry_fee = entry_fee;
-	}
-
-	private String title;
-	private Date start_date;
-	private Date end_date;
-	private double entry_fee;
-
-	public Conference(String url, String title, Date start_date, Date end_date, double entry_fee) {
-		this.url = url;
-		this.title = title;
-		this.start_date = start_date;
-		this.end_date = end_date;
-		this.entry_fee = entry_fee;
-	}
-
-	public Conference(String url, String title, Date start_date, Date end_date) {
-		this(url, title, start_date, end_date, 0);
-	}
-
-	public Conference(String title, Date start_date, Date end_date, double entry_fee) {
-		this(null, title, start_date, end_date, entry_fee);
-	}
-
-	public Conference(String title, Date start_date, Date end_date) {
-		this(null, title, start_date, end_date, 0);
-	}
-
 	/**
 	 * Asks the user for several parameters and uses them to create a Conference
 	 * object
@@ -120,33 +56,96 @@ public class Conference {
 		return new Conference(url, title, start_date, end_date, Double.parseDouble(entry_fee));
 	}
 
-	/**
-	 * Keeps asking the user for a date until the date verifies a specific
-	 * format and then returns the date
-	 *
-	 * @param dateFormat
-	 *            the format that the date needs to verify
-	 * @return the date passed by input in the Date format
-	 */
+	public static void getAllConferencesFromDatabase() throws SQLException {
+		JdbcConnectionPool cp;
+		Connection conn;
+		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		conn = cp.getConnection();
+		Statement state = conn.createStatement();
+		ResultSet result = state.executeQuery("SELECT * FROM conference");
+		ResultSetMetaData resultMeta = result.getMetaData();
 
-	private static Date readDate(String dateFormat) {
+		System.out.println("\n**********************************");
+		// We print the name of the columns
+		for (int i = 1; i <= resultMeta.getColumnCount(); i++)
+			System.out.print("\t" + resultMeta.getColumnName(i).toUpperCase() + "\t *");
 
-		Scanner sc = new Scanner(System.in);
+		System.out.println("\n**********************************");
 
-		DateFormat format = new SimpleDateFormat(dateFormat);
-		format.setLenient(false);
-		Date date = null;
+		while (result.next()) {
+			for (int i = 1; i <= resultMeta.getColumnCount(); i++)
+				System.out.print("\t" + result.getObject(i).toString() + "\t |");
 
-		while (date == null) {
-			String line = sc.nextLine();
-			try {
-				date = format.parse(line);
-			} catch (ParseException e) {
-				System.out.println("Sorry, that's not valid. Please try again.");
-			}
+			System.out.println("\n---------------------------------");
+
 		}
 
-		return date;
+		result.close();
+		state.close();
+		return;
+	}
+
+	public static Conference getConferenceFromDatabase(int conferenceID) throws SQLException, ParseException {
+		JdbcConnectionPool cp;
+		Connection conn;
+		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		conn = cp.getConnection();
+		Statement state = conn.createStatement();
+		ResultSet result = state.executeQuery("SELECT * FROM conference WHERE conferenceID = " + conferenceID);
+
+		String dateFormat = "yyyy-MM-dd";
+		DateFormat format = new SimpleDateFormat(dateFormat);
+		format.setLenient(false);
+
+		result.next();
+		String url = result.getString(2);
+		System.out.println(url);
+		String title = result.getObject(3).toString();
+		System.out.println(title);
+		Date start_date = result.getDate(4);
+		Date end_date = result.getDate(5);
+		double entry_fee = result.getDouble(6);
+		result.close();
+		state.close();
+		return new Conference(url, title, start_date, end_date, entry_fee);
+
+	}
+
+	public static void insertInDatabase(Conference conf) throws SQLException {
+		JdbcConnectionPool cp;
+		Connection conn;
+
+		// try {
+		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		conn = cp.getConnection();
+
+		conn.createStatement().execute("DROP TABLE conference");
+
+		try {
+			String create_tables = "CREATE TABLE conference (" + "conferenceID     SERIAL, "
+					+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
+					+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, "
+					+ "entry_fee        double, " + "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
+			conn.createStatement().execute(create_tables);
+
+		} catch (Exception e) {
+			System.out.println("Table not created, it probably already exists");
+		}
+
+		// String insert_statement = "INSERT INTO conference VALUES
+		// ('1',"+conf.getTitle()+"','"+conf.getUrl()+"','"+conf.getStart_date()+"','"+conf.getEnd_date()+"','"+conf.getEntry_fee()+"'
+		// );";
+		String insert_statement = "INSERT INTO conference VALUES ('1','" + conf.getTitle() + "','" + conf.getUrl()
+				+ "','" + "2017-03-10" + "','" + "2017-03-20" + "','" + conf.getEntry_fee() + "' );";
+		conn.createStatement().execute(insert_statement);
+		cp.dispose();
+		conn.close();
+		// catch (SQLException ex) {
+		// System.out.println("Impossible d'insérer la conférence dans la base
+		// de données");
+		// return;
+		// }
+
 	}
 
 	public static void menu() {
@@ -193,42 +192,103 @@ public class Conference {
 
 	}
 
-	public static void insertInDatabase(Conference conf) throws SQLException {
-		JdbcConnectionPool cp;
-		Connection conn;
+	/**
+	 * Keeps asking the user for a date until the date verifies a specific
+	 * format and then returns the date
+	 *
+	 * @param dateFormat
+	 *            the format that the date needs to verify
+	 * @return the date passed by input in the Date format
+	 */
 
-		//try {
-			cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-			conn = cp.getConnection();
-			
-			conn.createStatement().execute("DROP TABLE conference");
-			
+	private static Date readDate(String dateFormat) {
+
+		Scanner sc = new Scanner(System.in);
+
+		DateFormat format = new SimpleDateFormat(dateFormat);
+		format.setLenient(false);
+		Date date = null;
+
+		while (date == null) {
+			String line = sc.nextLine();
 			try {
-				String create_tables = "CREATE TABLE conference ("+ 
-						 "conferenceID     SERIAL, "+
-						 "Title            varchar(255) NOT NULL, "+
-						 "URL              varchar(255) NOT NULL, "+
-						 "start_date       date NOT NULL, "+
-						 "end_date         date NOT NULL, "+
-						 "entry_fee        double, "+
-						 "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
-				conn.createStatement().execute(create_tables);
-				
-			} catch (Exception e){
-				System.out.println("Table not created, it probably already exists");
+				date = format.parse(line);
+			} catch (ParseException e) {
+				System.out.println("Sorry, that's not valid. Please try again.");
 			}
-			
-			//String insert_statement = "INSERT INTO conference VALUES ('1',"+conf.getTitle()+"','"+conf.getUrl()+"','"+conf.getStart_date()+"','"+conf.getEnd_date()+"','"+conf.getEntry_fee()+"' );";
-			String insert_statement = "INSERT INTO conference VALUES ('1','"+conf.getTitle()+"','"+conf.getUrl()+"','"+"2017-03-10"+"','"+"2017-03-20"+"','"+conf.getEntry_fee()+"' );";
-			conn.createStatement().execute(insert_statement);
-			cp.dispose();
-			conn.close();
-		// catch (SQLException ex) {
-		//	System.out.println("Impossible d'insérer la conférence dans la base de données");
-		//	return;
-		//}
+		}
 
+		return date;
 	}
-	
-	
+
+	private Date end_date;
+
+	private double entry_fee;
+
+	private Date start_date;
+
+	private String title;
+
+	private String url;
+
+	public Conference(String title, Date start_date, Date end_date) {
+		this(null, title, start_date, end_date, 0);
+	}
+
+	public Conference(String title, Date start_date, Date end_date, double entry_fee) {
+		this(null, title, start_date, end_date, entry_fee);
+	}
+
+	public Conference(String url, String title, Date start_date, Date end_date) {
+		this(url, title, start_date, end_date, 0);
+	}
+
+	public Conference(String url, String title, Date start_date, Date end_date, double entry_fee) {
+		this.url = url;
+		this.title = title;
+		this.start_date = start_date;
+		this.end_date = end_date;
+		this.entry_fee = entry_fee;
+	}
+
+	public Date getEnd_date() {
+		return end_date;
+	}
+
+	public double getEntry_fee() {
+		return entry_fee;
+	}
+
+	public Date getStart_date() {
+		return start_date;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setEnd_date(Date end_date) {
+		this.end_date = end_date;
+	}
+
+	public void setEntry_fee(double entry_fee) {
+		this.entry_fee = entry_fee;
+	}
+
+	public void setStart_date(Date start_date) {
+		this.start_date = start_date;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
 }
