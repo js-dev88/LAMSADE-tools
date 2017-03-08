@@ -76,7 +76,7 @@ public class Conference {
 	}
 
 	/**
-	 * display the table conference where all conferences are stored
+	 * display all the conferences present in the database ordered by start date
 	 *
 	 * @throws SQLException
 	 */
@@ -86,7 +86,7 @@ public class Conference {
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
 		Statement state = conn.createStatement();
-		ResultSet result = state.executeQuery("SELECT * FROM conference");
+		ResultSet result = state.executeQuery("SELECT * FROM conference ORDER BY start_date");
 		ResultSetMetaData resultMeta = result.getMetaData();
 
 		System.out.println("\n**********************************");
@@ -154,11 +154,8 @@ public class Conference {
 		JdbcConnectionPool cp;
 		Connection conn;
 
-		// try {
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
-
-		conn.createStatement().execute("DROP TABLE conference");
 
 		try {
 			String create_tables = "CREATE TABLE conference (" + "conferenceID     SERIAL, "
@@ -171,27 +168,22 @@ public class Conference {
 			System.out.println("Table not created, it probably already exists");
 		}
 
-		// String insert_statement = "INSERT INTO conference VALUES
-		// ('1',"+conf.getTitle()+"','"+conf.getUrl()+"','"+conf.getStart_date()+"','"+conf.getEnd_date()+"','"+conf.getEntry_fee()+"'
-		// );";
-		String insert_statement = "INSERT INTO conference VALUES ('1','" + conf.getTitle() + "','" + conf.getUrl()
-				+ "','" + "2017-03-10" + "','" + "2017-03-20" + "','" + conf.getEntry_fee() + "' );";
+		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
+				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
+				+ conf.getSQLEnd_date() + "','" + conf.getEntry_fee() + "' );";
 		conn.createStatement().execute(insert_statement);
 		cp.dispose();
 		conn.close();
-		// catch (SQLException ex) {
-		// System.out.println("Impossible d'insérer la conférence dans la base
-		// de données");
-		// return;
-		// }
 
 	}
 
 	/**
 	 * display a menu which enables you to create, search, edit and delete
 	 * conferences
+	 * 
+	 * @throws SQLException
 	 */
-	public static void menu() {
+	public static void menu() throws SQLException {
 		int option = -1;
 
 		Scanner sc = new Scanner(System.in);
@@ -202,8 +194,9 @@ public class Conference {
 			System.out.println("Please choose an option:");
 			System.out.println("1. Create a new conference.");
 			System.out.println("2. Search a conference.");
-			System.out.println("3. Edit a conference."); // by URL or title
-			System.out.println("4. Delete a conference.");
+			System.out.println("3. View all conferences.");
+			System.out.println("4. Edit a conference."); // by URL or title
+			System.out.println("5. Delete a conference.");
 			System.out.println("0. Exit");
 			String optionstr = sc.nextLine();
 			// Verify input is an integer
@@ -223,7 +216,7 @@ public class Conference {
 
 			break;
 		case 3:
-
+			Conference.getAllConferencesFromDatabase();
 			break;
 		case 4:
 
@@ -300,6 +293,14 @@ public class Conference {
 
 	public double getEntry_fee() {
 		return entry_fee;
+	}
+
+	public String getSQLEnd_date() {
+		return Conference.dateFormater(end_date);
+	}
+
+	public String getSQLStart_date() {
+		return Conference.dateFormater(start_date);
 	}
 
 	public Date getStart_date() {
