@@ -8,6 +8,10 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -56,6 +60,26 @@ public class Conference {
 		return new Conference(url, title, start_date, end_date, Double.parseDouble(entry_fee));
 	}
 
+	/**
+	 * Format a java date into a SQL date
+	 *
+	 * @param date
+	 * @return
+	 */
+	public static String dateFormater(Date date) {
+		Instant instant = date.toInstant();
+		ZoneId zoneId = ZoneId.of("America/Montreal");
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, zoneId);
+		LocalDate localDate = zdt.toLocalDate();
+		java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
+		return sqlDate.toString();
+	}
+
+	/**
+	 * display the table conference where all conferences are stored
+	 *
+	 * @throws SQLException
+	 */
 	public static void getAllConferencesFromDatabase() throws SQLException {
 		JdbcConnectionPool cp;
 		Connection conn;
@@ -85,6 +109,15 @@ public class Conference {
 		return;
 	}
 
+	/**
+	 * get the conference from the database whose conferenceID is the same than
+	 * the one in parameter
+	 *
+	 * @param conferenceID
+	 * @return
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
 	public static Conference getConferenceFromDatabase(int conferenceID) throws SQLException, ParseException {
 		JdbcConnectionPool cp;
 		Connection conn;
@@ -111,6 +144,12 @@ public class Conference {
 
 	}
 
+	/**
+	 * Insert the given conference in the database
+	 *
+	 * @param conf
+	 * @throws SQLException
+	 */
 	public static void insertInDatabase(Conference conf) throws SQLException {
 		JdbcConnectionPool cp;
 		Connection conn;
@@ -148,6 +187,10 @@ public class Conference {
 
 	}
 
+	/**
+	 * display a menu which enables you to create, search, edit and delete
+	 * conferences
+	 */
 	public static void menu() {
 		int option = -1;
 
