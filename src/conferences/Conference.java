@@ -56,7 +56,7 @@ public class Conference {
 		return new Conference(url, title, start_date, end_date, Double.parseDouble(entry_fee));
 	}
 
-	public static void getFromDatabase(int conferenceID) throws SQLException {
+	public static void getAllConferencesFromDatabase() throws SQLException {
 		JdbcConnectionPool cp;
 		Connection conn;
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
@@ -83,6 +83,32 @@ public class Conference {
 		result.close();
 		state.close();
 		return;
+	}
+
+	public static Conference getConferenceFromDatabase(int conferenceID) throws SQLException, ParseException {
+		JdbcConnectionPool cp;
+		Connection conn;
+		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		conn = cp.getConnection();
+		Statement state = conn.createStatement();
+		ResultSet result = state.executeQuery("SELECT * FROM conference WHERE conferenceID = " + conferenceID);
+
+		String dateFormat = "yyyy-MM-dd";
+		DateFormat format = new SimpleDateFormat(dateFormat);
+		format.setLenient(false);
+
+		result.next();
+		String url = result.getString(2);
+		System.out.println(url);
+		String title = result.getObject(3).toString();
+		System.out.println(title);
+		Date start_date = result.getDate(4);
+		Date end_date = result.getDate(5);
+		double entry_fee = result.getDouble(6);
+		result.close();
+		state.close();
+		return new Conference(url, title, start_date, end_date, entry_fee);
+
 	}
 
 	public static void insertInDatabase(Conference conf) throws SQLException {

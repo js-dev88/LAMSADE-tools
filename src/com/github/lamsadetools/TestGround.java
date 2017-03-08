@@ -20,7 +20,8 @@ public class TestGround {
 				format.parse("11/03/2017"));
 
 		Conference.insertInDatabase(conf);
-		Conference.getFromDatabase(1);
+		Conference.getAllConferencesFromDatabase();
+		Conference.getConferenceFromDatabase(1);
 
 		// PapierAEnTeteGenerator pm = new PapierAEnTeteGenerator();
 		//
