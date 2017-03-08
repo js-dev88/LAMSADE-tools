@@ -15,7 +15,7 @@ public class ImageSize {
 	}
 
 	private void setWidth(double width) {
-		this.width = width;
+		this.width = width;d.
 	}
 
 	public double getHeight() {
