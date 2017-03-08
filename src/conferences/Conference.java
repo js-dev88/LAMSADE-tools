@@ -146,8 +146,6 @@ public class Conference {
 			}
 		}
 
-		sc.close();
-
 		return date;
 	}
 
@@ -195,19 +193,42 @@ public class Conference {
 
 	}
 
-	public static void insertInDatabase() {
+	public static void insertInDatabase(Conference conf) throws SQLException {
 		JdbcConnectionPool cp;
 		Connection conn;
 
-		try {
-			cp = JdbcConnectionPool.create("jdbc:h2:~/test", "sa", "sa");
+		//try {
+			cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 			conn = cp.getConnection();
-			conn.createStatement().execute("CREATE TABLE Conference (titre varchar);");
+			
+			conn.createStatement().execute("DROP TABLE conference");
+			
+			try {
+				String create_tables = "CREATE TABLE conference ("+ 
+						 "conferenceID     SERIAL, "+
+						 "Title            varchar(255) NOT NULL, "+
+						 "URL              varchar(255) NOT NULL, "+
+						 "start_date       date NOT NULL, "+
+						 "end_date         date NOT NULL, "+
+						 "entry_fee        double, "+
+						 "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
+				conn.createStatement().execute(create_tables);
+				
+			} catch (Exception e){
+				System.out.println("Table not created, it probably already exists");
+			}
+			
+			//String insert_statement = "INSERT INTO conference VALUES ('1',"+conf.getTitle()+"','"+conf.getUrl()+"','"+conf.getStart_date()+"','"+conf.getEnd_date()+"','"+conf.getEntry_fee()+"' );";
+			String insert_statement = "INSERT INTO conference VALUES ('1','"+conf.getTitle()+"','"+conf.getUrl()+"','"+"2017-03-10"+"','"+"2017-03-20"+"','"+conf.getEntry_fee()+"' );";
+			conn.createStatement().execute(insert_statement);
 			cp.dispose();
 			conn.close();
-		} catch (SQLException ex) {
-
-		}
+		// catch (SQLException ex) {
+		//	System.out.println("Impossible d'insérer la conférence dans la base de données");
+		//	return;
+		//}
 
 	}
+	
+	
 }
