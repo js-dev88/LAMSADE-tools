@@ -8,8 +8,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Dictionary;
 import java.util.HashMap;
 
 /**
@@ -20,8 +18,9 @@ import java.util.HashMap;
  *
  */
 public class GetInfosFromYearbook {
-	private String [][] orderedInfos;
 	private URL url;
+	private HashMap<String, String> informations = new HashMap<String, String>();
+	
 	
 	/**
 	 * Constructor using a person's Dauphine yearbook URL
@@ -66,7 +65,7 @@ public class GetInfosFromYearbook {
 
         String line = null;
         String nextLine =null;
-    	ArrayList<String> rawInfos = new ArrayList();
+    	ArrayList<String> rawInfos = new ArrayList<String>();
 
         // read each line and add it into rawInfos
         try {
@@ -87,36 +86,31 @@ public class GetInfosFromYearbook {
 			e.printStackTrace();
 		}
         superfluousRemover(rawInfos);
-        orderedInfos = new String[rawInfos.size()/2][2];
-        int j =0;
-        for (int i=0;i<orderedInfos.length;++i){
-        	orderedInfos[i][0]=rawInfos.get(j);
-        	orderedInfos[i][1]=rawInfos.get(j+1);
-        	j+=2;
+        
+        int j=0;
+        while (j< rawInfos.size()){
+        	informations.put(rawInfos.get(j), rawInfos.get(j+1));
+        	j+=2;        	
         }
 	}
 	
-	/**superfluousRemover remove html tags and useless spaces (beginning and end)
+	/**superfluousRemover remove HTML tags and useless spaces (beginning and end)
 	 * in an ArrayList of Strings
 	 * @param infos
 	 */
 	private void superfluousRemover(ArrayList<String> infos){    	
     	for (int i=0;i<infos.size();++i){
+    		infos.set(i,infos.get(i).replaceAll("<[^>]+>", "")); // delete every HTML tags
     		infos.set(i,infos.get(i).trim()); // delete every spaces surrounding the string
-    		infos.set(i,infos.get(i).replaceAll("<[^>]+>", "")); // delete every html tags
     	}
     }
-
-	public String[][] getOrderedInfos() {
-		return orderedInfos;
-	}
 	
 	@Override
 	public String toString() {
 		String toString = "";
-		for (int i=0;i<orderedInfos.length;++i){
-			toString += orderedInfos[i][0] + " : " + orderedInfos[i][1] + "\n";
-		}	
+		for (String i : informations.keySet()){
+    		toString += i+": "+informations.get(i)+"\n";
+    	}
 		return toString;
 	}
 	public URL getUrl() {
@@ -130,12 +124,35 @@ public class GetInfosFromYearbook {
 	public void setUrl(URL url) {
 		this.url = url;
 	}
+	
+	public String getCourrier(){
+		return informations.get("Courriel");
+	}
+	
+	public String getFonction(){
+		return informations.get("Fonction");
+	}
+	
+	public String getTelephone(){
+		return informations.get("Téléphone");
+	}
+	
+	public String getGroupes(){
+		return informations.get("Groupes");
+	}
+	
+	public String getFax(){
+		return informations.get("Fax");
+	}
+	
+	public String getBureau(){
+		return informations.get("Bureau");
+	}
 
 	public static void main(String[] args) {
 		String prenom = "Olivier";
 		String nom = "CAILLOUX";
-		GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);		
-		String test = profJava.toString();
-		System.out.println(test);
+		GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
+		System.out.println(profJava.toString());
 	}
 }

@@ -1,14 +1,11 @@
 package com.github.lamsadetools.yearbookInfos;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * 
- */
 
 /**
  * This class tests the use of GetInfosFromYearbook constructors
@@ -21,15 +18,21 @@ public class Test_GetInfosFromYearbook {
 	public void testGetInfosFromYearbookwithName() {
 		String prenom = "Olivier";
 		String nom = "CAILLOUX";
-		GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
-		String[][] orderedInfos = profJava.getOrderedInfos();
-		Assert.assertTrue("Fonction = MAITRE DE CONFERENCES", orderedInfos[0][0].equals("Fonction") && orderedInfos[0][1].equals("MAITRE DE CONFERENCES"));
+		GetInfosFromYearbook prof = new GetInfosFromYearbook(prenom, nom);
+		Assert.assertTrue(prof.getCourrier().equals("olivier.cailloux@lamsade.dauphine.fr")
+				&& prof.getFonction().equals("MAITRE DE CONFERENCES")
+				&& prof.getTelephone().equals("+33 1 44 05 46 53")
+				&& prof.getGroupes().equals("MIDO - LAMSADE")
+				&& prof.getFax().equals("non renseigné")
+				&& prof.getBureau().equals("P405 ter"));
 		
-		
-		String toStringTest = profJava.toString();
+		String toStringTest = prof.toString();
 		System.out.println(toStringTest);
 		
 	}
+	
+	
+	
 	@Test
 	public void testGetInfosFromYearbookwithURL() {
 		URL url =null;
@@ -38,15 +41,9 @@ public class Test_GetInfosFromYearbook {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		GetInfosFromYearbook profBDD = new GetInfosFromYearbook(url);
-		String[][] orderedInfos = profBDD.getOrderedInfos();
-		//System.out.println("TOTO" + orderedInfos[3][0]);
-		//Assert.assertTrue("Le bureau de Mme Mannouvrier est P424", orderedInfos[3][0].equals("Bureau") && orderedInfos[3][1].equals("P424"));
-		System.out.println("Affichage avec une boucle :\n");
-		
-		String toStringTest = profBDD.toString();
-		System.out.println("Affiche avec toString()" + toStringTest);
-		
+		GetInfosFromYearbook prof = new GetInfosFromYearbook(url);
+		Assert.assertTrue(prof.getBureau().equals("P424"));
+				
 	}
 
 }
