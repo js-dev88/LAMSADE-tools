@@ -20,10 +20,14 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.artofsolving.jodconverter.OfficeDocumentConverter;
+import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
+import org.artofsolving.jodconverter.office.OfficeException;
+import org.artofsolving.jodconverter.office.OfficeManager;
 
 ;  
 
-public class SetCoordinates {
+public class SetCoordinates implements AbstractFileConvertor {
 	
 	
 	   
@@ -131,7 +135,17 @@ public class SetCoordinates {
 	    
 	    	doc.write(new FileOutputStream("papier_en_tete_CloneTest.docx"));
 	    	
-	    	    	
+	    	//File inputFile = new File("papier_en_tete_CloneTest.docx");
+	    	//File outputFile = new File("papier_en_tete_CloneTest.odt");
+	    	//DefaultOfficeManagerConfiguration configuration = new DefaultOfficeManagerConfiguration(); 
+	        //configuration.setOfficeHome(new File("C:\\Program Files (x86)\\LibreOffice 5"));
+	    	//configuration
+	        
+	    	OfficeManager officeManager = new DefaultOfficeManagerConfiguration().buildOfficeManager(); officeManager.start();
+			OfficeDocumentConverter converter = new OfficeDocumentConverter(officeManager);
+	    	converter.convert(new File("papier_en_tete_CloneTest.docx"), new File("papier_en_tete_CloneTest.odt"));
+
+	    	officeManager.stop();
 	    	
 	    }
 
@@ -148,7 +162,13 @@ public class SetCoordinates {
 	        targetChannel.close();  
 	        sourceChannel.close();  
 	        }  
-	        }  
+	        }
+
+		@Override
+		public void convertToOdt(File source, File destination) throws OfficeException {
+			// TODO Auto-generated method stub
+			
+		}  
 	           
 
 
