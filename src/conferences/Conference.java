@@ -145,6 +145,9 @@ public class Conference {
 		return new Conference(url, title, start_date, end_date, entry_fee);
 
 	}
+	
+	
+	
 
 	/**
 	 * Insert the given conference in the database
@@ -159,14 +162,8 @@ public class Conference {
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
 
-			
-			String create_tables = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
-					+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
-					+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, "
-					+ "entry_fee        double, " + "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
-			conn.createStatement().execute(create_tables);
-
-
+		
+		conn.createStatement().execute(CREATETABLE);
 
 
 
@@ -174,8 +171,9 @@ public class Conference {
 				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
 				+ conf.getSQLEnd_date() + "','" + conf.getEntry_fee() + "' );";
 		conn.createStatement().execute(insert_statement);
-		cp.dispose();
 		conn.close();
+		cp.dispose();
+		
 
 	}
 
@@ -268,6 +266,11 @@ public class Conference {
 	private String title;
 
 	private String url;
+	
+	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
+			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
+			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, "
+			+ "entry_fee        double, " + "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";;
 
 
 	public Conference(String url, String title, Date start_date, Date end_date, double entry_fee) {
