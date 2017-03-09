@@ -166,6 +166,13 @@ public class Conference {
 					+ "entry_fee        double, " + "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 			conn.createStatement().execute(create_tables);
 
+<<<<<<< HEAD
+=======
+		} catch (Exception e) {
+			System.out.println("Table not created, it probably already exists");
+		}
+
+>>>>>>> parent of 506a7ec... change to system.err
 		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
 				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
 				+ conf.getSQLEnd_date() + "','" + conf.getEntry_fee() + "' );";
@@ -175,14 +182,10 @@ public class Conference {
 
 	}
 
-	private static void editConference() {
-
-	}
-
 	/**
 	 * display a menu which enables you to create, search, edit and delete
 	 * conferences
-	 *
+	 * 
 	 * @throws SQLException
 	 */
 	public static void menu() throws SQLException {
