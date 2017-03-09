@@ -1,5 +1,6 @@
 package com.github.lamsadetools.yearbookInfos;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -15,7 +16,7 @@ import org.junit.Test;
 public class Test_GetInfosFromYearbook {
 
 	@Test
-	public void testGetInfosFromYearbookwithName() {
+	public void testGetInfosFromYearbookwithName() throws IOException, MalformedURLException {
 		String prenom = "Olivier";
 		String nom = "CAILLOUX";
 		GetInfosFromYearbook prof = new GetInfosFromYearbook(prenom, nom);
@@ -34,7 +35,7 @@ public class Test_GetInfosFromYearbook {
 	
 	
 	@Test
-	public void testGetInfosFromYearbookwithURL() {
+	public void testGetInfosFromYearbookwithURL() throws IOException {
 		URL url =null;
 		try {
 			url = new URL("https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&param1=mmanouvrier");

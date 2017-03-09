@@ -25,8 +25,9 @@ public class GetInfosFromYearbook {
 	/**
 	 * Constructor using a person's Dauphine yearbook URL
 	 * @param url
+	 * @throws IOException 
 	 */
-	public GetInfosFromYearbook(URL url){
+	public GetInfosFromYearbook(URL url) throws IOException{
 		this.url= url;
 		RetrieveYearbookData(url);
 	}
@@ -34,13 +35,14 @@ public class GetInfosFromYearbook {
 	/**
 	 * Constructor using a person's firstname and surname
 	 * @param url
+	 * @throws IOException 
 	 */
-	public GetInfosFromYearbook(String firstname, String surname) {
+	public GetInfosFromYearbook(String firstname, String surname) throws IOException,MalformedURLException  {
 		assert(firstname != null && surname !=null);
 		try {
 			url = new URL("https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&param1=" + firstname.toLowerCase().charAt(0)+surname.toLowerCase());
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			throw new MalformedURLException ("Error when trying to reach URL");
 		}
 		RetrieveYearbookData(url);		
 	}
@@ -49,16 +51,16 @@ public class GetInfosFromYearbook {
 	 * RetrieveYearbookData takes a URL in parameter. It will connect to this URL and
 	 * read the entire HTML code of the web page
 	 * @param url
+	 * @throws IOException 
 	 */
-	public void RetrieveYearbookData (URL url){
+	public void RetrieveYearbookData (URL url) throws IOException{
 		URLConnection connection;
 		InputStream is = null;
 		try {
 			connection = url.openConnection();
 			is = connection.getInputStream();
 		} catch (IOException e1) {
-			System.out.println("Impossible to connect to URL");
-			e1.printStackTrace();
+			throw new IOException("Data not Found");
 		}
 		
         BufferedReader br = new BufferedReader(new InputStreamReader(is,StandardCharsets.UTF_8));
@@ -81,9 +83,8 @@ public class GetInfosFromYearbook {
 			    	}	 
 			    }
 			}
-		} catch (IOException e) {
-			System.out.println("Impossible to read the next line");
-			e.printStackTrace();
+		} catch (IOException e2) {
+			throw new IOException("Error when trying to read Nextline");
 		}
         superfluousRemover(rawInfos);
         
@@ -150,9 +151,14 @@ public class GetInfosFromYearbook {
 	}
 
 	public static void main(String[] args) {
-		String prenom = "Olivier";
-		String nom = "CAILLOUX";
-		GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
-		System.out.println(profJava.toString());
+		try{
+			String prenom = "Olivier";
+			String nom = "CAILLOUX";
+			GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
+			System.out.println(profJava.toString());
+		}catch(Exception e){
+			//the message of the original exception is displayed
+			System.out.println("Error: " + e.getMessage());
+		}
 	}
 }
