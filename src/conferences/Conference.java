@@ -8,6 +8,10 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -56,13 +60,33 @@ public class Conference {
 		return new Conference(url, title, start_date, end_date, Double.parseDouble(entry_fee));
 	}
 
+	/**
+	 * Format a java date into a SQL date
+	 *
+	 * @param date
+	 * @return
+	 */
+	public static String dateFormater(Date date) {
+		Instant instant = date.toInstant();
+		ZoneId zoneId = ZoneId.of("America/Montreal");
+		ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, zoneId);
+		LocalDate localDate = zdt.toLocalDate();
+		java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
+		return sqlDate.toString();
+	}
+
+	/**
+	 * display all the conferences present in the database ordered by start date
+	 *
+	 * @throws SQLException
+	 */
 	public static void getAllConferencesFromDatabase() throws SQLException {
 		JdbcConnectionPool cp;
 		Connection conn;
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
 		Statement state = conn.createStatement();
-		ResultSet result = state.executeQuery("SELECT * FROM conference");
+		ResultSet result = state.executeQuery("SELECT * FROM conference ORDER BY start_date");
 		ResultSetMetaData resultMeta = result.getMetaData();
 
 		System.out.println("\n**********************************");
@@ -87,6 +111,15 @@ public class Conference {
 		return;
 	}
 
+	/**
+	 * get the conference from the database whose conferenceID is the same than
+	 * the one in parameter
+	 *
+	 * @param conferenceID
+	 * @return
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
 	public static Conference getConferenceFromDatabase(int conferenceID) throws SQLException, ParseException {
 		JdbcConnectionPool cp;
 		Connection conn;
@@ -113,15 +146,18 @@ public class Conference {
 
 	}
 
+	/**
+	 * Insert the given conference in the database
+	 *
+	 * @param conf
+	 * @throws SQLException
+	 */
 	public static void insertInDatabase(Conference conf) throws SQLException {
 		JdbcConnectionPool cp;
 		Connection conn;
 
-		// try {
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
-
-		conn.createStatement().execute("DROP TABLE conference");
 
 		try {
 			String create_tables = "CREATE TABLE conference (" + "conferenceID     SERIAL, "
@@ -134,23 +170,22 @@ public class Conference {
 			System.out.println("Table not created, it probably already exists");
 		}
 
-		// String insert_statement = "INSERT INTO conference VALUES
-		// ('1',"+conf.getTitle()+"','"+conf.getUrl()+"','"+conf.getStart_date()+"','"+conf.getEnd_date()+"','"+conf.getEntry_fee()+"'
-		// );";
-		String insert_statement = "INSERT INTO conference VALUES ('1','" + conf.getTitle() + "','" + conf.getUrl()
-				+ "','" + "2017-03-10" + "','" + "2017-03-20" + "','" + conf.getEntry_fee() + "' );";
+		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
+				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
+				+ conf.getSQLEnd_date() + "','" + conf.getEntry_fee() + "' );";
 		conn.createStatement().execute(insert_statement);
 		cp.dispose();
 		conn.close();
-		// catch (SQLException ex) {
-		// System.out.println("Impossible d'insérer la conférence dans la base
-		// de données");
-		// return;
-		// }
 
 	}
 
-	public static void menu() {
+	/**
+	 * display a menu which enables you to create, search, edit and delete
+	 * conferences
+	 * 
+	 * @throws SQLException
+	 */
+	public static void menu() throws SQLException {
 		int option = -1;
 
 		Scanner sc = new Scanner(System.in);
@@ -161,8 +196,9 @@ public class Conference {
 			System.out.println("Please choose an option:");
 			System.out.println("1. Create a new conference.");
 			System.out.println("2. Search a conference.");
-			System.out.println("3. Edit a conference."); // by URL or title
-			System.out.println("4. Delete a conference.");
+			System.out.println("3. View all conferences.");
+			System.out.println("4. Edit a conference."); // by URL or title
+			System.out.println("5. Delete a conference.");
 			System.out.println("0. Exit");
 			String optionstr = sc.nextLine();
 			// Verify input is an integer
@@ -182,7 +218,7 @@ public class Conference {
 
 			break;
 		case 3:
-
+			Conference.getAllConferencesFromDatabase();
 			break;
 		case 4:
 
@@ -259,6 +295,14 @@ public class Conference {
 
 	public double getEntry_fee() {
 		return entry_fee;
+	}
+
+	public String getSQLEnd_date() {
+		return Conference.dateFormater(end_date);
+	}
+
+	public String getSQLStart_date() {
+		return Conference.dateFormater(start_date);
 	}
 
 	public Date getStart_date() {
