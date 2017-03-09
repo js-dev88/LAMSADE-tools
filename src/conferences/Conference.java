@@ -167,7 +167,7 @@ public class Conference {
 			conn.createStatement().execute(create_tables);
 
 		} catch (Exception e) {
-			System.out.println("Table not created, it probably already exists");
+			System.err.println("Table not created, it probably already exists");
 		}
 
 		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
@@ -179,10 +179,14 @@ public class Conference {
 
 	}
 
+	private static void editConference() {
+
+	}
+
 	/**
 	 * display a menu which enables you to create, search, edit and delete
 	 * conferences
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	public static void menu() throws SQLException {
