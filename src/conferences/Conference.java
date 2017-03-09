@@ -159,16 +159,12 @@ public class Conference {
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
 
-		try {
-			String create_tables = "CREATE TABLE conference (" + "conferenceID     SERIAL, "
+		
+			String create_tables = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
 					+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
 					+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, "
 					+ "entry_fee        double, " + "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 			conn.createStatement().execute(create_tables);
-
-		} catch (Exception e) {
-			System.err.println("Table not created, it probably already exists");
-		}
 
 		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
 				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
