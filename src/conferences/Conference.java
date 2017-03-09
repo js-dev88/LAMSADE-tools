@@ -155,24 +155,21 @@ public class Conference {
 	public static void insertInDatabase(Conference conf) throws SQLException {
 		JdbcConnectionPool cp;
 		Connection conn;
-
+		
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
 
-		
+			
 			String create_tables = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
 					+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
 					+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, "
 					+ "entry_fee        double, " + "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 			conn.createStatement().execute(create_tables);
 
-<<<<<<< HEAD
-=======
-		} catch (Exception e) {
-			System.out.println("Table not created, it probably already exists");
-		}
 
->>>>>>> parent of 506a7ec... change to system.err
+
+
+
 		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
 				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
 				+ conf.getSQLEnd_date() + "','" + conf.getEntry_fee() + "' );";
@@ -272,17 +269,6 @@ public class Conference {
 
 	private String url;
 
-	public Conference(String title, Date start_date, Date end_date) {
-		this(null, title, start_date, end_date, 0);
-	}
-
-	public Conference(String title, Date start_date, Date end_date, double entry_fee) {
-		this(null, title, start_date, end_date, entry_fee);
-	}
-
-	public Conference(String url, String title, Date start_date, Date end_date) {
-		this(url, title, start_date, end_date, 0);
-	}
 
 	public Conference(String url, String title, Date start_date, Date end_date, double entry_fee) {
 		this.url = url;
