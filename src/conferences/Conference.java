@@ -29,7 +29,7 @@ public class Conference {
 		String url = "", title = "", entry_fee = "";
 		Date start_date = null, end_date = null;
 
-		for (int i = 0; i <= tableauQuestion.length - 1; i++) {
+		for (int i = 0; i <= (tableauQuestion.length - 1); i++) {
 
 			System.out.println("Please enter the " + tableauQuestion[i] + " of the conference");
 
@@ -67,14 +67,16 @@ public class Conference {
 
 		System.out.println("\n**********************************");
 		// We print the name of the columns
-		for (int i = 1; i <= resultMeta.getColumnCount(); i++)
+		for (int i = 1; i <= resultMeta.getColumnCount(); i++) {
 			System.out.print("\t" + resultMeta.getColumnName(i).toUpperCase() + "\t *");
+		}
 
 		System.out.println("\n**********************************");
 
 		while (result.next()) {
-			for (int i = 1; i <= resultMeta.getColumnCount(); i++)
+			for (int i = 1; i <= resultMeta.getColumnCount(); i++) {
 				System.out.print("\t" + result.getObject(i).toString() + "\t |");
+			}
 
 			System.out.println("\n---------------------------------");
 
