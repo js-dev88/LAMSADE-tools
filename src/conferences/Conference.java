@@ -99,12 +99,13 @@ public class Conference {
 		ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
 
 		while (result.next()) {
+			int id = result.getInt(1);
 			String url = result.getString(2);
 			String title = result.getString(3);
 			Date start_date = result.getDate(4);
 			Date end_date = result.getDate(5);
 			double entry_fee = result.getDouble(6);
-			conferencesArray.add(new Conference(url, title, start_date, end_date, entry_fee));
+			conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee));
 		}
 
 		for (Conference i : conferencesArray) {
@@ -138,6 +139,7 @@ public class Conference {
 		format.setLenient(false);
 
 		result.next();
+		int id = result.getInt(1);
 		String url = result.getString(2);
 		String title = result.getObject(3).toString();
 		Date start_date = result.getDate(4);
@@ -145,7 +147,7 @@ public class Conference {
 		double entry_fee = result.getDouble(6);
 		result.close();
 		state.close();
-		return new Conference(url, title, start_date, end_date, entry_fee);
+		return new Conference(id, title, url, start_date, end_date, entry_fee);
 
 	}
 
@@ -257,26 +259,53 @@ public class Conference {
 
 	private double entry_fee;
 
+	private int id;
+
 	private Date start_date;
 
 	private String title;
 
 	private String url;
 
-	public Conference(String title, String url, Date start_date, Date end_date, double entry_fee) {
+	public Conference(int id, String title, String url, Date start_date, Date end_date, double entry_fee) {
 		this.url = url;
 		this.title = title;
 		this.start_date = start_date;
 		this.end_date = end_date;
 		this.entry_fee = entry_fee;
-	};
+	}
+
+	public Conference(String title, String url, Date start_date, Date end_date, double entry_fee) {
+		this(0, title, url, start_date, end_date, entry_fee);
+	}
+
+	@Override
+	/**
+	 * Compare the conference to obj by comparing all attributes except id
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof Conference) {
+			System.out.println("intance of conf");
+			Conference conference2 = (Conference) obj;
+			if (this.title.equals(conference2.title) && this.url.equals(conference2.url)
+					&& this.start_date.equals(conference2.start_date) && this.end_date.equals(conference2.end_date)
+					&& this.entry_fee == conference2.entry_fee) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Date getEnd_date() {
 		return end_date;
-	}
+	};
 
 	public double getEntry_fee() {
 		return entry_fee;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	public String getSQLEnd_date() {
@@ -321,8 +350,8 @@ public class Conference {
 
 	@Override
 	public String toString() {
-		return "Conference [title=" + title + ", url=" + url + ", start_date=" + start_date + ",end_date=" + end_date
-				+ ", entry_fee=" + entry_fee + "]";
+		return "Conference [id=" + id + "title=" + title + ", url=" + url + ", start_date=" + start_date + ",end_date="
+				+ end_date + ", entry_fee=" + entry_fee + "]";
 	}
 
 }
