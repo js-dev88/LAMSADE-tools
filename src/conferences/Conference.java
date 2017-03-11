@@ -2,7 +2,6 @@ package conferences;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
@@ -12,12 +11,18 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
 import org.h2.jdbcx.JdbcConnectionPool;
 
 public class Conference {
+	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
+			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
+			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, " + "entry_fee        double, "
+			+ "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
+
 	/**
 	 * Asks the user for several parameters and uses them to create a Conference
 	 * object
@@ -87,23 +92,23 @@ public class Conference {
 		conn = cp.getConnection();
 		Statement state = conn.createStatement();
 		ResultSet result = state.executeQuery("SELECT * FROM conference ORDER BY start_date");
-		ResultSetMetaData resultMeta = result.getMetaData();
 
-		System.out.println("\n**********************************");
-		// We print the name of the columns
-		for (int i = 1; i <= resultMeta.getColumnCount(); i++) {
-			System.out.print("\t" + resultMeta.getColumnName(i).toUpperCase() + "\t *");
-		}
-
-		System.out.println("\n**********************************");
+		String dateFormat = "yyyy-MM-dd";
+		DateFormat format = new SimpleDateFormat(dateFormat);
+		format.setLenient(false);
+		ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
 
 		while (result.next()) {
-			for (int i = 1; i <= resultMeta.getColumnCount(); i++) {
-				System.out.print("\t" + result.getObject(i).toString() + "\t |");
-			}
+			String url = result.getString(2);
+			String title = result.getString(3);
+			Date start_date = result.getDate(4);
+			Date end_date = result.getDate(5);
+			double entry_fee = result.getDouble(6);
+			conferencesArray.add(new Conference(url, title, start_date, end_date, entry_fee));
+		}
 
-			System.out.println("\n---------------------------------");
-
+		for (Conference i : conferencesArray) {
+			System.out.println(i);
 		}
 
 		result.close();
@@ -134,9 +139,7 @@ public class Conference {
 
 		result.next();
 		String url = result.getString(2);
-		System.out.println(url);
 		String title = result.getObject(3).toString();
-		System.out.println(title);
 		Date start_date = result.getDate(4);
 		Date end_date = result.getDate(5);
 		double entry_fee = result.getDouble(6);
@@ -145,9 +148,6 @@ public class Conference {
 		return new Conference(url, title, start_date, end_date, entry_fee);
 
 	}
-	
-	
-	
 
 	/**
 	 * Insert the given conference in the database
@@ -158,14 +158,11 @@ public class Conference {
 	public static void insertInDatabase(Conference conf) throws SQLException {
 		JdbcConnectionPool cp;
 		Connection conn;
-		
+
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
 
-		
 		conn.createStatement().execute(CREATETABLE);
-
-
 
 		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
 				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
@@ -173,14 +170,13 @@ public class Conference {
 		conn.createStatement().execute(insert_statement);
 		conn.close();
 		cp.dispose();
-		
 
 	}
 
 	/**
 	 * display a menu which enables you to create, search, edit and delete
 	 * conferences
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	public static void menu() throws SQLException {
@@ -266,20 +262,14 @@ public class Conference {
 	private String title;
 
 	private String url;
-	
-	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
-			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
-			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, "
-			+ "entry_fee        double, " + "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";;
 
-
-	public Conference(String url, String title, Date start_date, Date end_date, double entry_fee) {
+	public Conference(String title, String url, Date start_date, Date end_date, double entry_fee) {
 		this.url = url;
 		this.title = title;
 		this.start_date = start_date;
 		this.end_date = end_date;
 		this.entry_fee = entry_fee;
-	}
+	};
 
 	public Date getEnd_date() {
 		return end_date;
@@ -327,6 +317,12 @@ public class Conference {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	@Override
+	public String toString() {
+		return "Conference [title=" + title + ", url=" + url + ", start_date=" + start_date + ",end_date=" + end_date
+				+ ", entry_fee=" + entry_fee + "]";
 	}
 
 }
