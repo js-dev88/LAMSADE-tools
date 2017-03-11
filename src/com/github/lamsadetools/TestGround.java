@@ -19,8 +19,9 @@ public class TestGround {
 		Conference conf = new Conference("Antoine s conf", "url", format.parse("10/03/2017"),
 				format.parse("11/03/2017"), 0);
 
-		Conference.insertInDatabase(conf);
+		// Conference.insertInDatabase(conf);
 		Conference.getAllConferencesFromDatabase();
+		Conference.menu();
 		// Conference.getConferenceFromDatabase(1);
 
 		// PapierAEnTeteGenerator pm = new PapierAEnTeteGenerator();

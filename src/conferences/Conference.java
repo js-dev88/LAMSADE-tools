@@ -23,6 +23,10 @@ public class Conference {
 			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, " + "entry_fee        double, "
 			+ "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 
+	private static final String DATE_FORMAT = "yyyy-MM-dd";
+
+	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
+
 	/**
 	 * Asks the user for several parameters and uses them to create a Conference
 	 * object
@@ -30,9 +34,8 @@ public class Conference {
 	 * @return a conference object with the parameters passed by input
 	 */
 	public static Conference createConference() {
-		String dateFormat = "dd/MM/yy";
-		String tableauQuestion[] = { "url", "title", "start date" + " (" + dateFormat + ")",
-				"end date" + " (" + dateFormat + ")", "entry fee" };
+		String tableauQuestion[] = { "url", "title", "start date" + " (" + DATE_FORMAT + ")",
+				"end date" + " (" + DATE_FORMAT + ")", "entry fee" };
 		Scanner sc = new Scanner(System.in);
 
 		String url = "", title = "", entry_fee = "";
@@ -50,10 +53,10 @@ public class Conference {
 				title = sc.nextLine();
 				break;
 			case 2:
-				start_date = Conference.readDate(dateFormat);
+				start_date = Conference.readDate(DATE_FORMAT);
 				break;
 			case 3:
-				end_date = Conference.readDate(dateFormat);
+				end_date = Conference.readDate(DATE_FORMAT);
 				break;
 			case 4:
 				entry_fee = sc.nextLine();
@@ -86,15 +89,26 @@ public class Conference {
 	 * @throws SQLException
 	 */
 	public static void getAllConferencesFromDatabase() throws SQLException {
+		Conference.getAllConferencesFromDatabase("");
+	}
+
+	/**
+	 *
+	 */
+	public static void getAllConferencesFromDatabase(String whereStatement) throws SQLException {
 		JdbcConnectionPool cp;
 		Connection conn;
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
 		Statement state = conn.createStatement();
-		ResultSet result = state.executeQuery("SELECT * FROM conference ORDER BY start_date");
+		ResultSet result;
+		if (whereStatement.isEmpty()) {
+			result = state.executeQuery("SELECT * FROM conference ORDER BY start_date");
 
-		String dateFormat = "yyyy-MM-dd";
-		DateFormat format = new SimpleDateFormat(dateFormat);
+		} else {
+			result = state.executeQuery("SELECT * FROM conference WHERE " + whereStatement + " ORDER BY start_date");
+		}
+		DateFormat format = new SimpleDateFormat(DATE_FORMAT);
 		format.setLenient(false);
 		ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
 
@@ -134,8 +148,7 @@ public class Conference {
 		Statement state = conn.createStatement();
 		ResultSet result = state.executeQuery("SELECT * FROM conference WHERE conferenceID = " + conferenceID);
 
-		String dateFormat = "yyyy-MM-dd";
-		DateFormat format = new SimpleDateFormat(dateFormat);
+		DateFormat format = new SimpleDateFormat(SQL_DATE_FORMAT);
 		format.setLenient(false);
 
 		result.next();
@@ -204,24 +217,24 @@ public class Conference {
 				System.out.println("Please choose a valid option");
 				option = -1;
 			}
-		}
 
-		switch (option) {
-		case 1:
-			Conference.createConference();
-			break;
-		case 2:
+			switch (option) {
+			case 1:
+				Conference.createConference();
+				break;
+			case 2:
+				Conference.searchMenu();
+				break;
+			case 3:
+				Conference.getAllConferencesFromDatabase();
+				break;
+			case 4:
 
-			break;
-		case 3:
-			Conference.getAllConferencesFromDatabase();
-			break;
-		case 4:
+				break;
 
-			break;
-
-		default:
-			break;
+			default:
+				break;
+			}
 		}
 
 	}
@@ -255,6 +268,34 @@ public class Conference {
 		return date;
 	}
 
+	/**
+	 * Let the user choose which
+	 *
+	 * @throws SQLException
+	 */
+	public static void searchMenu() throws SQLException {
+		System.out.println("Use : <FIELD> = <\'string\'> and ... and [<FIELD> = <\'string\'>] ");
+		System.out.println("FIELDS :");
+		System.out.println("Title");
+		System.out.println("URL");
+		System.out.println("start_date");
+		System.out.println("end_date");
+		System.out.println("entry_fee");
+		Scanner sc = new Scanner(System.in);
+		String whereStatement = sc.nextLine();
+
+		Conference.getAllConferencesFromDatabase(whereStatement);
+		Conference.menu();
+	}
+
+	/**
+	 * returns a whereStament ready to be used in getAllFromDatabase
+	 *
+	 * @param querry
+	 *            a query formated like in the searchMenu
+	 * @return
+	 */
+
 	private Date end_date;
 
 	private double entry_fee;
@@ -285,7 +326,6 @@ public class Conference {
 	 */
 	public boolean equals(Object obj) {
 		if (obj instanceof Conference) {
-			System.out.println("intance of conf");
 			Conference conference2 = (Conference) obj;
 			if (this.title.equals(conference2.title) && this.url.equals(conference2.url)
 					&& this.start_date.equals(conference2.start_date) && this.end_date.equals(conference2.end_date)
