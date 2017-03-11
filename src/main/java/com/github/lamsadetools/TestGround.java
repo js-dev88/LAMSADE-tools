@@ -3,9 +3,8 @@ package com.github.lamsadetools;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import com.github.odfdom.ODTGenerator;
-
-import conferences.Conference;
+import com.github.lamsadetools.conferences.Conference;
+import com.github.lamsadetools.odfdom.ODTGenerator;
 
 public class TestGround {
 

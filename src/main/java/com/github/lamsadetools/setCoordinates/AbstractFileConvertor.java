@@ -1,11 +1,11 @@
-package com.github.setCoordinates;
+package com.github.lamsadetools.setCoordinates;
 
 import java.io.File;
+
 import org.artofsolving.jodconverter.office.OfficeException;
 
 public interface AbstractFileConvertor {
 
-void convertToOdt(File source, File destination) throws OfficeException;
+	void convertToOdt(File source, File destination) throws OfficeException;
 
 }
-

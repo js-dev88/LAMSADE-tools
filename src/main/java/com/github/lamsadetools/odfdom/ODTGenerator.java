@@ -1,4 +1,4 @@
-package com.github.odfdom;
+package com.github.lamsadetools.odfdom;
 
 import org.odftoolkit.simple.TextDocument;
 import org.odftoolkit.simple.table.Cell;
