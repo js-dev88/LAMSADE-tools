@@ -4,11 +4,18 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
+import com.sun.star.lang.IllegalArgumentException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 /**
  * GetInfosFromYearbook will get information from Dauphine's yearbook
@@ -18,6 +25,9 @@ import java.util.HashMap;
  *
  */
 public class GetInfosFromYearbook {
+	
+	final static Logger logger = Logger.getLogger(GetInfosFromYearbook.class);
+	static final String path = "src/main/resources/com/github/lamsadetools/yearbookInfos/log4j.properties";
 	//private URL url;
 	private HashMap<String, String> informations = new HashMap<String, String>();
 	
@@ -39,17 +49,16 @@ public class GetInfosFromYearbook {
 	 */
 	public GetInfosFromYearbook(String firstname, String surname) throws Exception  {
 		assert(firstname != null && surname !=null);
-		try {
+		
+		String param = firstname.toLowerCase().charAt(0)+surname.toLowerCase();
+		Client client = ClientBuilder.newClient();
+		WebTarget t1 = client.target("https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&");
+		WebTarget t4 = t1.queryParam("param1", param);
+		String result = t4.request(MediaType.TEXT_PLAIN).get(String.class);
+		RetrieveYearbookData(result);	
+        
 			
-			String param = firstname.toLowerCase().charAt(0)+surname.toLowerCase();
-			Client client = ClientBuilder.newClient();
-			WebTarget t1 = client.target("https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&");
-			WebTarget t4 = t1.queryParam("param1", param);
-			String result = t4.request(MediaType.TEXT_PLAIN).get(String.class);
-			RetrieveYearbookData(result);	
-		} catch (Exception e) {
-			throw new Exception ("Error when trying to reach URL");
-		}
+		
 			
 	}
 	
@@ -58,8 +67,9 @@ public class GetInfosFromYearbook {
 	 * read the entire HTML code of the web page
 	 * @param url
 	 * @throws IOException 
+	 * @throws IllegalArgumentException 
 	 */
-	public void RetrieveYearbookData (String htmlText) throws IOException{
+	public void RetrieveYearbookData (String htmlText) throws IOException, IllegalArgumentException{
 
         String line = null;
         String nextLine =null;
@@ -88,6 +98,11 @@ public class GetInfosFromYearbook {
         while (j< rawInfos.size()){
         	informations.put(rawInfos.get(j), rawInfos.get(j+1));
         	j+=2;        	
+        }
+        if(informations.isEmpty()){
+        	throw new IllegalArgumentException("Wrong parameters (Name or Surname is false)");
+        	
+        	
         }
 	}
 	
@@ -147,6 +162,8 @@ public class GetInfosFromYearbook {
 	}
 
 	public static void main(String[] args) {
+		
+		PropertyConfigurator.configure(path);
 		try{
 			String prenom = "Olivier";
 			String nom = "CAILLOUX";
@@ -154,7 +171,7 @@ public class GetInfosFromYearbook {
 			System.out.println(profJava.toString());
 		}catch(Exception e){
 			//the message of the original exception is displayed
-			System.out.println("Error: " + e.getMessage());
+			logger.error("Error : ", e);
 		}
 	}
 }
