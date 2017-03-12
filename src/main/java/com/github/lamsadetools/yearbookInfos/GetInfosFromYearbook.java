@@ -1,12 +1,12 @@
 package com.github.lamsadetools.yearbookInfos;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -18,7 +18,7 @@ import java.util.HashMap;
  *
  */
 public class GetInfosFromYearbook {
-	private URL url;
+	//private URL url;
 	private HashMap<String, String> informations = new HashMap<String, String>();
 	
 	
@@ -27,24 +27,30 @@ public class GetInfosFromYearbook {
 	 * @param url
 	 * @throws IOException 
 	 */
-	public GetInfosFromYearbook(URL url) throws IOException{
+	/*public GetInfosFromYearbook(URL url) throws IOException{
 		this.url= url;
 		RetrieveYearbookData(url);
-	}
+	}*/
 	
 	/**
 	 * Constructor using a person's firstname and surname
 	 * @param url
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	public GetInfosFromYearbook(String firstname, String surname) throws IOException,MalformedURLException  {
+	public GetInfosFromYearbook(String firstname, String surname) throws Exception  {
 		assert(firstname != null && surname !=null);
 		try {
-			url = new URL("https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&param1=" + firstname.toLowerCase().charAt(0)+surname.toLowerCase());
-		} catch (MalformedURLException e) {
-			throw new MalformedURLException ("Error when trying to reach URL");
+			
+			String param = firstname.toLowerCase().charAt(0)+surname.toLowerCase();
+			Client client = ClientBuilder.newClient();
+			WebTarget t1 = client.target("https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&");
+			WebTarget t4 = t1.queryParam("param1", param);
+			String result = t4.request(MediaType.TEXT_PLAIN).get(String.class);
+			RetrieveYearbookData(result);	
+		} catch (Exception e) {
+			throw new Exception ("Error when trying to reach URL");
 		}
-		RetrieveYearbookData(url);		
+			
 	}
 	
 	/**
@@ -53,22 +59,12 @@ public class GetInfosFromYearbook {
 	 * @param url
 	 * @throws IOException 
 	 */
-	public void RetrieveYearbookData (URL url) throws IOException{
-		URLConnection connection;
-		InputStream is = null;
-		try {
-			connection = url.openConnection();
-			is = connection.getInputStream();
-		} catch (IOException e1) {
-			throw new IOException("Data not Found");
-		}
-		
-        BufferedReader br = new BufferedReader(new InputStreamReader(is,StandardCharsets.UTF_8));
+	public void RetrieveYearbookData (String htmlText) throws IOException{
 
         String line = null;
         String nextLine =null;
     	ArrayList<String> rawInfos = new ArrayList<String>();
-
+    	BufferedReader br = new BufferedReader(new StringReader(htmlText));
         // read each line and add it into rawInfos
         try {
 			while ((line = br.readLine()) != null) {
@@ -114,17 +110,17 @@ public class GetInfosFromYearbook {
     	}
 		return toString;
 	}
-	public URL getUrl() {
+	/*public URL getUrl() {
 		return url;
-	}
+	}*/
 
 	/**
 	 * set the URL
 	 * @param url
 	 */
-	public void setUrl(URL url) {
+	/*public void setUrl(URL url) {
 		this.url = url;
-	}
+	}*/
 	
 	public String getCourrier(){
 		return informations.get("Courriel");
@@ -135,7 +131,7 @@ public class GetInfosFromYearbook {
 	}
 	
 	public String getTelephone(){
-		return informations.get("Téléphone");
+		return informations.get("Telephone");
 	}
 	
 	public String getGroupes(){
