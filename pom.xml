@@ -14,85 +14,85 @@
 	</repositories>
 	<dependencies>
 		<dependency>
-				<groupId>com.sun</groupId>
-				<artifactId>tools</artifactId>
-				<version>1.5.0</version>
+			<groupId>com.sun</groupId>
+			<artifactId>tools</artifactId>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
-			 <groupId>org.artofsolving.jodconverter</groupId>
-			 <artifactId>jodconverter-core</artifactId>
-			 <version>3.0-NX10</version>
+			<groupId>org.artofsolving.jodconverter</groupId>
+			<artifactId>jodconverter-core</artifactId>
+			<version>3.0-NX10</version>
 		</dependency>
 		 <dependency>
-				<groupId>org.odftoolkit</groupId>
-				<artifactId>odfdom-java</artifactId>
-				<version>0.8.7</version>
+			<groupId>org.odftoolkit</groupId>
+			<artifactId>odfdom-java</artifactId>
+			<version>0.8.7</version>
 		</dependency>
 		<dependency>
-				<groupId>org.apache.odftoolkit</groupId>
-				<artifactId>simple-odf</artifactId>
-				<version>0.8.1-incubating</version>
+			<groupId>org.apache.odftoolkit</groupId>
+			<artifactId>simple-odf</artifactId>
+			<version>0.8.1-incubating</version>
 		</dependency>
 		<dependency>
-				<groupId>com.h2database</groupId>
-				<artifactId>h2</artifactId>
-				<version>1.4.193</version>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.193</version>
 		</dependency>
 		<dependency>
-				<groupId>org.apache.xmlbeans</groupId>
-				<artifactId>xmlbeans-qname</artifactId>
-				<version>2.6.0</version>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans-qname</artifactId>
+			<version>2.6.0</version>
 		</dependency>
 		<dependency>
-				<groupId>org.apache.xmlbeans</groupId>
-				<artifactId>xmlbeans-xpath</artifactId>
-				<version>2.6.0</version>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans-xpath</artifactId>
+			<version>2.6.0</version>
 		</dependency>
 		<dependency>
-				<groupId>net.sf.saxon</groupId>
-				<artifactId>saxon</artifactId>
-				<version>9.1.0.8</version>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>saxon</artifactId>
+			<version>9.1.0.8</version>
 		</dependency>
 		<dependency>
-				<groupId>com.artofsolving</groupId>
-				<artifactId>jodconverter</artifactId>
-				<version>2.2.1</version>
+			<groupId>com.artofsolving</groupId>
+			<artifactId>jodconverter</artifactId>
+			<version>2.2.1</version>
 		</dependency>
 		<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>poi</artifactId>
-				<version>3.16-beta2</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.16-beta2</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
 		</dependency>
 		<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>poi-excelant</artifactId>
-				<version>3.16-beta2</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-excelant</artifactId>
+			<version>3.16-beta2</version>
 		</dependency>
 		<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>poi-ooxml</artifactId>
-				<version>3.16-beta2</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.16-beta2</version>
 		</dependency>
 		<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>poi-ooxml-schemas</artifactId>
-				<version>3.16-beta2</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.16-beta2</version>
 		</dependency>
 		<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>poi-scratchpad</artifactId>
-				<version>3.16-beta2</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-scratchpad</artifactId>
+			<version>3.16-beta2</version>
 		</dependency>
 		<dependency>
-				<groupId>org.lucee</groupId>
-				<artifactId>curvesapi</artifactId>
-				<version>1.04.0</version>
+			<groupId>org.lucee</groupId>
+			<artifactId>curvesapi</artifactId>
+			<version>1.04.0</version>
 		</dependency>
 	</dependencies>
 	<properties>
