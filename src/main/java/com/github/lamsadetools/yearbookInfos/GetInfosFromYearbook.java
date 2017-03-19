@@ -4,12 +4,9 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
 import com.sun.star.lang.IllegalArgumentException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -19,55 +16,53 @@ import java.util.HashMap;
 
 /**
  * GetInfosFromYearbook will get information from Dauphine's yearbook
- * It needs the name and the surname of the person you want to get information on OR
- * the URL corresponding to the person's Dauphine yearbook page.
- * @author Abdelkader ZEROUALI
+ * It needs the name and the surname of the person you want to get information.
+ * @author Abdelkader ZEROUALI, Antony Entremont, Julien Saussier
  *
  */
 public class GetInfosFromYearbook {
 	
-	final static Logger logger = Logger.getLogger(GetInfosFromYearbook.class);
+	final static Logger LOGGER = Logger.getLogger(GetInfosFromYearbook.class);
+	// Set the properties file's path
 	static final String path = "src/main/resources/com/github/lamsadetools/yearbookInfos/log4j.properties";
-	//private URL url;
+	// HashMap collection register informations with a key and an associated value
 	private HashMap<String, String> informations = new HashMap<String, String>();
 	
-	
-	/**
-	 * Constructor using a person's Dauphine yearbook URL
-	 * @param url
-	 * @throws IOException 
-	 */
-	/*public GetInfosFromYearbook(URL url) throws IOException{
-		this.url= url;
-		RetrieveYearbookData(url);
-	}*/
-	
+
 	/**
 	 * Constructor using a person's firstname and surname
-	 * @param url
-	 * @throws Exception 
+	 * @param firstname of the person
+	 * @param surname of the person
+	 * @throws IllegalArgumentException when firstname or surname is null
+	 * @throws IOException from RetrieveYEarBookData
 	 */
-	public GetInfosFromYearbook(String firstname, String surname) throws Exception  {
-		assert(firstname != null && surname !=null);
+	public GetInfosFromYearbook(String firstname, String surname) throws IllegalArgumentException, IOException  {
 		
+		if(firstname == null || surname == null){
+			throw new IllegalArgumentException("Firstname or surname is null");
+		}
+		
+		//Build the URL parameter with the firstname's first letter and the person's surname
 		String param = firstname.toLowerCase().charAt(0)+surname.toLowerCase();
+		//This part of the url is always the same
+		String urlConstantPArt = "https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&";
+		//First step of the JAX rs class => Client initialization
 		Client client = ClientBuilder.newClient();
-		WebTarget t1 = client.target("https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&");
-		WebTarget t4 = t1.queryParam("param1", param);
-		String result = t4.request(MediaType.TEXT_PLAIN).get(String.class);
+		//Build the targeted URL
+		WebTarget t1 = client.target(urlConstantPArt);
+		WebTarget t2 = t1.queryParam("param1", param);
+		//The entire HTML page is stocked in result
+		String result = t2.request(MediaType.TEXT_PLAIN).get(String.class);
+		//LOGGER.info(result);
 		RetrieveYearbookData(result);	
-        
-			
-		
-			
+        		
 	}
 	
 	/**
-	 * RetrieveYearbookData takes a URL in parameter. It will connect to this URL and
-	 * read the entire HTML code of the web page
-	 * @param url
-	 * @throws IOException 
-	 * @throws IllegalArgumentException 
+	 * Put all the person's info in a Hashmap with labels for keys and data for values
+	 * @param htmlText is the yearBook's page in HTML format
+	 * @throws IOException if Nextline function fails
+	 * @throws IllegalArgumentException  from hashMapConstructor
 	 */
 	public void RetrieveYearbookData (String htmlText) throws IOException, IllegalArgumentException{
 
@@ -75,6 +70,7 @@ public class GetInfosFromYearbook {
         String nextLine =null;
     	ArrayList<String> rawInfos = new ArrayList<String>();
     	BufferedReader br = new BufferedReader(new StringReader(htmlText));
+    	
         // read each line and add it into rawInfos
         try {
 			while ((line = br.readLine()) != null) {
@@ -83,6 +79,7 @@ public class GetInfosFromYearbook {
 			    	boolean found=false;
 			    	while ((nextLine=br.readLine()) != null && found != true){
 			    		if (nextLine.contains("</li>")){
+			    			//LOGGER.info("TEST NEXTLINE : " +nextLine);
 				    		rawInfos.add(nextLine);
 				    		found = true;
 			    		}		    		
@@ -93,22 +90,14 @@ public class GetInfosFromYearbook {
 			throw new IOException("Error when trying to read Nextline");
 		}
         superfluousRemover(rawInfos);
+        hashMapConstructor(rawInfos);
         
-        int j=0;
-        while (j< rawInfos.size()){
-        	informations.put(rawInfos.get(j), rawInfos.get(j+1));
-        	j+=2;        	
-        }
-        if(informations.isEmpty()){
-        	throw new IllegalArgumentException("Wrong parameters (Name or Surname is false)");
-        	
-        	
-        }
 	}
 	
-	/**superfluousRemover remove HTML tags and useless spaces (beginning and end)
+	/**
+	 * superfluousRemover remove HTML tags and useless spaces (beginning and end)
 	 * in an ArrayList of Strings
-	 * @param infos
+	 * @param infos is filled with raw HTML lines
 	 */
 	private void superfluousRemover(ArrayList<String> infos){    	
     	for (int i=0;i<infos.size();++i){
@@ -116,6 +105,26 @@ public class GetInfosFromYearbook {
     		infos.set(i,infos.get(i).trim()); // delete every spaces surrounding the string
     	}
     }
+	
+	/**
+	 * Construct the HasMap collections with proper label and values
+	 * @param rawInfos contains lines with labels and lines with corresponding data
+	 * @throws IllegalArgumentException if rawInfo is null, this indicates that the firstname or the surname is wrong, 
+	 * no data is found or the original HTML page is a 404.
+	 * @throws Exception if the Hashmap contains no data
+	 * @return the HAshMap with all the person's informations
+	 */
+	private HashMap<String, String> hashMapConstructor(ArrayList<String> rawInfos) throws IllegalArgumentException{
+		if(rawInfos.isEmpty() || rawInfos.size() == 0){
+			throw new IllegalArgumentException("Wrong parameters : Please verify Firstname And Surname"); 
+		}
+		int j=0;
+        while (j< rawInfos.size()){
+        	informations.put(rawInfos.get(j), rawInfos.get(j+1));
+        	j+=2;        	
+        }
+		return informations;
+	}
 	
 	@Override
 	public String toString() {
@@ -125,17 +134,8 @@ public class GetInfosFromYearbook {
     	}
 		return toString;
 	}
-	/*public URL getUrl() {
-		return url;
-	}*/
-
-	/**
-	 * set the URL
-	 * @param url
-	 */
-	/*public void setUrl(URL url) {
-		this.url = url;
-	}*/
+	
+	
 	
 	public String getCourrier(){
 		return informations.get("Courriel");
@@ -146,7 +146,7 @@ public class GetInfosFromYearbook {
 	}
 	
 	public String getTelephone(){
-		return informations.get("Telephone");
+		return informations.get("Téléphone");
 	}
 	
 	public String getGroupes(){
@@ -161,17 +161,18 @@ public class GetInfosFromYearbook {
 		return informations.get("Bureau");
 	}
 
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) {	
+		//path configuration for logger
 		PropertyConfigurator.configure(path);
+		
 		try{
 			String prenom = "Olivier";
 			String nom = "CAILLOUX";
 			GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
-			System.out.println(profJava.toString());
+			LOGGER.info("\n"+profJava.toString());
 		}catch(Exception e){
 			//the message of the original exception is displayed
-			logger.error("Error : ", e);
+			LOGGER.error("Error : ", e);
 		}
 	}
 }
