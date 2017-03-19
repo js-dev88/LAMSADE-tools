@@ -89,7 +89,9 @@ public class Conference {
 	 * @throws SQLException
 	 */
 	public static void getAllConferencesFromDatabase() throws SQLException {
+		
 		Conference.getAllConferencesFromDatabase("");
+	
 	}
 
 	/**
@@ -286,6 +288,22 @@ public class Conference {
 
 		Conference.getAllConferencesFromDatabase(whereStatement);
 		Conference.menu();
+	}
+	
+	
+	public static void clearDataBase() throws SQLException{
+		
+		JdbcConnectionPool cp;
+		Connection conn;
+
+		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		conn = cp.getConnection();
+		
+		
+		conn.close();
+
+		conn.createStatement().execute("DROP SCHEMA PUBLIC CASCADE;");
+	
 	}
 
 	/**
