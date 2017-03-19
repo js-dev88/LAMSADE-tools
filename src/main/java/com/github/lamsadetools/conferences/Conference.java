@@ -1,4 +1,4 @@
-package conferences;
+package com.github.lamsadetools.conferences;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -12,8 +12,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 import org.h2.jdbcx.JdbcConnectionPool;
 
 public class Conference {
@@ -28,6 +28,19 @@ public class Conference {
 	static final String path = "src/main/resources/com/github/lamsadetools/log4j.properties";
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
+
+	public static void clearDataBase() throws SQLException {
+
+		JdbcConnectionPool cp;
+		Connection conn;
+
+		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		conn = cp.getConnection();
+		conn.createStatement().execute("DROP SCHEMA PUBLIC CASCADE;");
+		conn.close();
+		cp.dispose();
+
+	}
 
 	private static String constructSetStatement(String actual_statement, String field, String content) {
 		String new_statement = "";
@@ -154,9 +167,9 @@ public class Conference {
 	 * @throws SQLException
 	 */
 	public static void getAllConferencesFromDatabase() throws SQLException {
-		
+
 		Conference.getAllConferencesFromDatabase("");
-	
+
 	}
 
 	/**
@@ -167,6 +180,7 @@ public class Conference {
 		Connection conn;
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
+		conn.createStatement().execute(CREATETABLE);
 		Statement state = conn.createStatement();
 		ResultSet result;
 		if (whereStatement.isEmpty()) {
@@ -355,22 +369,6 @@ public class Conference {
 		Conference.getAllConferencesFromDatabase(whereStatement);
 		Conference.menu();
 	}
-	
-	
-	public static void clearDataBase() throws SQLException{
-		
-		JdbcConnectionPool cp;
-		Connection conn;
-
-		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		conn = cp.getConnection();
-		
-		
-		conn.close();
-
-		conn.createStatement().execute("DROP SCHEMA PUBLIC CASCADE;");
-	
-	}
 
 	/**
 	 * returns a whereStament ready to be used in getAllFromDatabase
@@ -411,6 +409,8 @@ public class Conference {
 	public boolean equals(Object obj) {
 		if (obj instanceof Conference) {
 			Conference conference2 = (Conference) obj;
+			System.out.println(this.toString());
+			System.out.println(conference2.toString());
 			if (this.title.equals(conference2.title) && this.url.equals(conference2.url)
 					&& this.start_date.equals(conference2.start_date) && this.end_date.equals(conference2.end_date)
 					&& this.entry_fee == conference2.entry_fee) {
@@ -418,6 +418,7 @@ public class Conference {
 			}
 		}
 		return false;
+
 	}
 
 	public LocalDate getEnd_date() {

@@ -5,21 +5,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.github.lamsadetools.conferences.Conference;
-import com.github.lamsadetools.odfdom.ODTGenerator;
 
 public class TestGround {
 
 	public static void main(String[] args) throws Exception {
-
-		ODTGenerator g = new ODTGenerator();
-
-		String dateFormat = "dd/MM/yy";
+		String dateFormat = "dd/MM/yyyy";
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat);
 		dtf.withLocale(Locale.FRANCE);
+
 		Conference conf = new Conference("Antoine s conf", "url", LocalDate.parse("10/03/2017", dtf),
 				LocalDate.parse("11/03/2017", dtf), 0);
 
-		// Conference.insertInDatabase(conf);
+		Conference.insertInDatabase(conf);
 		Conference.getAllConferencesFromDatabase();
 		Conference.menu();
 		// Conference.getConferenceFromDatabase(1);

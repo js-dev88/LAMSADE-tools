@@ -1,4 +1,4 @@
-package conferences;
+package com.github.lamsadetools.conferences;
 
 import static org.junit.Assert.fail;
 
@@ -13,7 +13,7 @@ public class TestConference {
 
 	@Test
 	public void equals() throws ParseException {
-		String dateFormat = "dd/MM/yy";
+		String dateFormat = "dd/MM/yyyy";
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat);
 		dtf.withLocale(Locale.FRANCE);
 		Conference conf1 = new Conference("Antoine s conf", "url", LocalDate.parse("10/03/2017", dtf),
