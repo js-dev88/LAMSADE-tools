@@ -69,6 +69,7 @@ public class SetCoordinates {
 	       sc.close();
 	        setDetails(source, destinationFile, user);
 	        
+	        
 	        System.out.println("Done");
 	        
 	           
