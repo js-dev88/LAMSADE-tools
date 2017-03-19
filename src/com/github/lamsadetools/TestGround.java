@@ -1,7 +1,8 @@
 package com.github.lamsadetools;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import com.github.odfdom.ODTGenerator;
 
@@ -14,10 +15,10 @@ public class TestGround {
 		ODTGenerator g = new ODTGenerator();
 
 		String dateFormat = "dd/MM/yy";
-		DateFormat format = new SimpleDateFormat(dateFormat);
-		format.setLenient(false);
-		Conference conf = new Conference("Antoine s conf", "url", format.parse("10/03/2017"),
-				format.parse("11/03/2017"), 0);
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat);
+		dtf.withLocale(Locale.FRANCE);
+		Conference conf = new Conference("Antoine s conf", "url", LocalDate.parse("10/03/2017", dtf),
+				LocalDate.parse("11/03/2017", dtf), 0);
 
 		// Conference.insertInDatabase(conf);
 		Conference.getAllConferencesFromDatabase();
