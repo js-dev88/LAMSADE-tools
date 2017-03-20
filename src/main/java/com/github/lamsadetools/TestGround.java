@@ -9,16 +9,27 @@ import com.github.lamsadetools.conferences.Conference;
 public class TestGround {
 
 	public static void main(String[] args) throws Exception {
+		
+		//Conference.clearDataBase();
 		String dateFormat = "dd/MM/yyyy";
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat);
 		dtf.withLocale(Locale.FRANCE);
 
 		Conference conf = new Conference("Antoine s conf", "url", LocalDate.parse("10/03/2017", dtf),
 				LocalDate.parse("11/03/2017", dtf), 0);
-
 		Conference.insertInDatabase(conf);
+		
+		int id = 10;
+		Conference.clearElementDataBase(id);
+		
+		
 		Conference.getAllConferencesFromDatabase();
 		Conference.menu();
+		
+		
+		
+	
+		
 		// Conference.getConferenceFromDatabase(1);
 
 		// PapierAEnTeteGenerator pm = new PapierAEnTeteGenerator();

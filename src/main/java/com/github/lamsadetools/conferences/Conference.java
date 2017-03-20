@@ -36,11 +36,29 @@ public class Conference {
 
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
-		conn.createStatement().execute("DROP SCHEMA PUBLIC CASCADE;");
+
+		conn.createStatement().execute(CREATETABLE);
+		conn.createStatement().execute("DROP table Conference;");
 		conn.close();
 		cp.dispose();
 
 	}
+	
+	public static void clearElementDataBase(int id) throws SQLException  {
+		
+		JdbcConnectionPool cp;
+		Connection conn;
+
+		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		
+		conn = cp.getConnection();
+
+		conn.createStatement().execute("Delete from conference where conferenceID ="+id+";");
+		conn.close();
+		cp.dispose();
+		
+	}
+	
 
 	private static String constructSetStatement(String actual_statement, String field, String content) {
 		String new_statement = "";
@@ -268,6 +286,20 @@ public class Conference {
 		cp.dispose();
 
 	}
+	
+	public static void deleteMenu() throws SQLException{
+		
+		System.out.println("Conference to delete :");
+		System.out.println("ID :");
+		
+		Scanner sc = new Scanner(System.in);
+		
+		int id =sc.nextInt();
+		
+		Conference.clearElementDataBase(id);
+		Conference.menu();
+	}
+	
 
 	/**
 	 * display a menu which enables you to create, search, edit and delete
@@ -310,9 +342,11 @@ public class Conference {
 				Conference.getAllConferencesFromDatabase();
 				break;
 			case 4:
-
+				Conference.editConference();
 				break;
-
+			case 5: 
+				Conference.deleteMenu();
+				break;		
 			default:
 				break;
 			}
@@ -363,6 +397,7 @@ public class Conference {
 		System.out.println("start_date");
 		System.out.println("end_date");
 		System.out.println("entry_fee");
+		
 		Scanner sc = new Scanner(System.in);
 		String whereStatement = sc.nextLine();
 
@@ -391,6 +426,7 @@ public class Conference {
 	private String url;
 
 	public Conference(int id, String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee) {
+		this.id = id;
 		this.url = url;
 		this.title = title;
 		this.start_date = start_date;
