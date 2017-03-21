@@ -55,7 +55,7 @@ public class GetInfosFromYearbook {
 		String result = t2.request(MediaType.TEXT_PLAIN).get(String.class);
 		//LOGGER.info(result);
 		RetrieveYearbookData(result);	
-        		
+        	client.close();
 	}
 	
 	/**
@@ -69,10 +69,10 @@ public class GetInfosFromYearbook {
         String line = null;
         String nextLine =null;
     	ArrayList<String> rawInfos = new ArrayList<String>();
-    	BufferedReader br = new BufferedReader(new StringReader(htmlText));
+    	
     	
         // read each line and add it into rawInfos
-        try {
+        try (BufferedReader br = new BufferedReader(new StringReader(htmlText))) {
 			while ((line = br.readLine()) != null) {
 			    if (line.contains("class=\"label\"")){ // class ="label" contains the name of the needed info
 			    	rawInfos.add(line); 
@@ -116,7 +116,7 @@ public class GetInfosFromYearbook {
 	 */
 	private HashMap<String, String> hashMapConstructor(ArrayList<String> rawInfos) throws IllegalArgumentException{
 		if(rawInfos.isEmpty() || rawInfos.size() == 0){
-			throw new IllegalArgumentException("Wrong parameters : Please verify Firstname And Surname"); 
+			throw new IllegalArgumentException("Wrong parameters or site is unreachable"); 
 		}
 		int j=0;
         while (j< rawInfos.size()){
