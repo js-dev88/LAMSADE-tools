@@ -62,7 +62,7 @@ public class TestGetInfosFromYearbook {
 			GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, surname);
 		    fail("Should throw Exception when person is not found in the YearBook");
 		  }catch(IllegalArgumentException e){
-			  assert(e.getMessage().contains("Wrong parameters : Please verify Firstname And Surname"));
+			  assert(e.getMessage().contains("Wrong parameters or site is unreachable"));
 		  }
 		
 	}
