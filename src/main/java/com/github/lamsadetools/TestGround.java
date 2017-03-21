@@ -1,26 +1,36 @@
 package com.github.lamsadetools;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import com.github.lamsadetools.conferences.Conference;
-import com.github.lamsadetools.odfdom.ODTGenerator;
 
 public class TestGround {
 
 	public static void main(String[] args) throws Exception {
+		
+		//Conference.clearDataBase();
+		String dateFormat = "dd/MM/yyyy";
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat);
+		dtf.withLocale(Locale.FRANCE);
 
-		ODTGenerator g = new ODTGenerator();
-
-		String dateFormat = "dd/MM/yy";
-		DateFormat format = new SimpleDateFormat(dateFormat);
-		format.setLenient(false);
-		Conference conf = new Conference("url", "Antoine s conf", format.parse("10/03/2017"),
-				format.parse("11/03/2017"));
-
+		Conference conf = new Conference("Antoine s conf", "url", LocalDate.parse("10/03/2017", dtf),
+				LocalDate.parse("11/03/2017", dtf), 0);
 		Conference.insertInDatabase(conf);
+		
+		int id = 10;
+		Conference.clearElementDataBase(id);
+		
+		
 		Conference.getAllConferencesFromDatabase();
-		Conference.getConferenceFromDatabase(1);
+		Conference.menu();
+		
+		
+		
+	
+		
+		// Conference.getConferenceFromDatabase(1);
 
 		// PapierAEnTeteGenerator pm = new PapierAEnTeteGenerator();
 		//
