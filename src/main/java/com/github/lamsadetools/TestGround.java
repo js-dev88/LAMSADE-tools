@@ -10,6 +10,8 @@ public class TestGround {
 
 	public static void main(String[] args) throws Exception {
 
+		AClass test = new AClass();
+		System.out.println(test);
 		ODTGenerator g = new ODTGenerator();
 
 		String dateFormat = "dd/MM/yy";
