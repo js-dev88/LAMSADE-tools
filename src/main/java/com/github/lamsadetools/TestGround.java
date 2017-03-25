@@ -20,7 +20,7 @@ public class TestGround {
 		Conference.insertInDatabase(conf);
 
 		int id = 10;
-		Conference.clearElementDataBase(id);
+		Conference.removeConferenceFromDatabase(id);
 
 		Conference.getAllConferencesFromDatabase();
 		Conference.menu();

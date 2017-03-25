@@ -16,6 +16,15 @@ import java.util.Scanner;
 import org.apache.log4j.Logger;
 import org.h2.jdbcx.JdbcConnectionPool;
 
+/**
+ * This class enable us to store some of the informations that a teacher may
+ * want to store about his future conferences. it contains functions to store
+ * informations in a database and a user interface to create, search, view, edit
+ * and delete the conferences.
+ *
+ * @author lantoine
+ *
+ */
 public class Conference {
 	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
 			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
@@ -29,6 +38,12 @@ public class Conference {
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
 
+	/**
+	 * Drop the table conference in order to erase all the conferences stored in
+	 * the database
+	 *
+	 * @throws SQLException
+	 */
 	public static void clearDataBase() throws SQLException {
 
 		JdbcConnectionPool cp;
@@ -43,23 +58,16 @@ public class Conference {
 		cp.dispose();
 
 	}
-	
-	public static void clearElementDataBase(int id) throws SQLException  {
-		
-		JdbcConnectionPool cp;
-		Connection conn;
 
-		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		
-		conn = cp.getConnection();
-
-		conn.createStatement().execute("Delete from conference where conferenceID ="+id+";");
-		conn.close();
-		cp.dispose();
-		
-	}
-	
-
+	/**
+	 * Construct a SQL where statement in order to facilitate the implementation
+	 * of the methods which need to find some conferences in the database
+	 *
+	 * @param actual_statement
+	 * @param field
+	 * @param content
+	 * @return
+	 */
 	private static String constructSetStatement(String actual_statement, String field, String content) {
 		String new_statement = "";
 		if (actual_statement.isEmpty()) {
@@ -112,7 +120,26 @@ public class Conference {
 	}
 
 	/**
-	 * Enable the user to edit a conference
+	 * A menu which enables the user to choose what conference he wants to
+	 * delete
+	 *
+	 * @throws SQLException
+	 */
+	public static void deleteMenu() throws SQLException {
+
+		System.out.println("Conference to delete :");
+		System.out.println("ID :");
+
+		Scanner sc = new Scanner(System.in);
+
+		int id = sc.nextInt();
+
+		Conference.removeConferenceFromDatabase(id);
+		Conference.menu();
+	}
+
+	/**
+	 * A menu which enables the user to edit a conference
 	 *
 	 * @throws SQLException
 	 */
@@ -141,6 +168,9 @@ public class Conference {
 	}
 
 	/**
+	 * Take a conference in parameter, and change the conference from the
+	 * database which has the same ID to match the non null variables of the
+	 * conference from parameters
 	 *
 	 * @return true if the edit was successful
 	 * @throws SQLException
@@ -286,20 +316,6 @@ public class Conference {
 		cp.dispose();
 
 	}
-	
-	public static void deleteMenu() throws SQLException{
-		
-		System.out.println("Conference to delete :");
-		System.out.println("ID :");
-		
-		Scanner sc = new Scanner(System.in);
-		
-		int id =sc.nextInt();
-		
-		Conference.clearElementDataBase(id);
-		Conference.menu();
-	}
-	
 
 	/**
 	 * display a menu which enables you to create, search, edit and delete
@@ -344,9 +360,9 @@ public class Conference {
 			case 4:
 				Conference.editConference();
 				break;
-			case 5: 
+			case 5:
 				Conference.deleteMenu();
-				break;		
+				break;
 			default:
 				break;
 			}
@@ -385,6 +401,26 @@ public class Conference {
 	}
 
 	/**
+	 *
+	 * @param id
+	 * @throws SQLException
+	 */
+	public static void removeConferenceFromDatabase(int id) throws SQLException {
+
+		JdbcConnectionPool cp;
+		Connection conn;
+
+		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+
+		conn = cp.getConnection();
+
+		conn.createStatement().execute("Delete from conference where conferenceID =" + id + ";");
+		conn.close();
+		cp.dispose();
+
+	}
+
+	/**
 	 * Let the user choose which
 	 *
 	 * @throws SQLException
@@ -397,7 +433,7 @@ public class Conference {
 		System.out.println("start_date");
 		System.out.println("end_date");
 		System.out.println("entry_fee");
-		
+
 		Scanner sc = new Scanner(System.in);
 		String whereStatement = sc.nextLine();
 
