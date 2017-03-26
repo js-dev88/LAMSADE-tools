@@ -1,9 +1,18 @@
 package com.github.lamsadetools.conferences;
 
 import java.sql.Connection;
+
 import java.sql.SQLException;
 
+
 import org.h2.jdbcx.JdbcConnectionPool;
+
+/**
+ * ConnectionDataBase classe avoid to repeat code for connected in the data base in each function which need to make a query
+ * Moreover, thats allow to keep the Conferences classe maintainable
+ * @author Kevin
+ *
+ */
 public class ConnectionDataBase {
 	
 	private static String url = "jdbc:h2:~/conferences";   
@@ -12,7 +21,12 @@ public class ConnectionDataBase {
     private static Connection conn;
     private static JdbcConnectionPool cp;
 
-		
+		/**
+		 * getConnection function set connection with url, username and password and return Connection object
+		 * This function is used to connect in the data base 
+		 * @return
+		 * @throws SQLException
+		 */
     public static Connection getConnection() throws SQLException{
     	
     	ConnectionDataBase.setCp(JdbcConnectionPool.create(ConnectionDataBase.getUrl(),ConnectionDataBase.getUsername(), ConnectionDataBase.getPassword()));
@@ -22,12 +36,21 @@ public class ConnectionDataBase {
     	return ConnectionDataBase.getConn();
     }
     
+    /**
+     * closeAndDisposeConnection function close and dispose connection properly
+     * @throws SQLException
+     */
     public static void closeAndDisposeConnection() throws SQLException{
     	
     	ConnectionDataBase.getConn().close();
-    	ConnectionDataBase.getCp();
+    	ConnectionDataBase.getCp().dispose();
     	
     }
+    /**
+     * sqlQuery function create and execute sql query and take in input a string which contain sql query 
+     * @param query
+     * @throws SQLException
+     */
     
     public static void sqlQuery( String query) throws SQLException{
     	
