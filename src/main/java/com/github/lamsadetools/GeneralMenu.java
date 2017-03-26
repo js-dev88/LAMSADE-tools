@@ -20,13 +20,13 @@ public class GeneralMenu {
 	 *
 	 */
 	public static void fillAForm() throws IllegalArgumentException, IOException, InvalidFormatException {
-		UserDetails userDetails = GetInfosFromYearbook.getUserDetails();
+		//UserDetails userDetails = GetInfosFromYearbook.getUserDetails();
 		Scanner sc = new Scanner(System.in);
 		System.out.println("source file:");
 		String source = sc.nextLine();
 		System.out.println("destination file:");
 		String destination = sc.nextLine();
-		SetCoordinates.setDetails(source, destination, userDetails);
+		//SetCoordinates.setDetails(source, destination, userDetails);
 	}
 
 	public static void main(String[] args)
