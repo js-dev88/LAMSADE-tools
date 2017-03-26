@@ -2,6 +2,9 @@ package com.github.lamsadetools.yearbookInfos;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 import com.sun.star.lang.IllegalArgumentException;
 import java.io.BufferedReader;
@@ -52,9 +55,18 @@ public class GetInfosFromYearbook {
 	 * @param htmlText is the yearBook's page in HTML format
 	 * @throws IOException if Nextline function fails
 	 * @throws IllegalArgumentException  from hashMapConstructor
+	 * @throws JDOMException 
 	 */
-	public void retrieveYearbookData (String htmlText) throws IOException, IllegalArgumentException{
+	public void retrieveYearbookData (String htmlText) throws IOException, IllegalArgumentException, JDOMException{
 
+		SAXBuilder sb= new SAXBuilder();
+		try{
+			Document doc = sb.build(htmlText);
+		}catch(JDOMException e){
+			throw new JDOMException("XML from String Error");
+		}
+		
+		
         String line = null;
         String nextLine =null;
     	ArrayList<String> rawInfos = new ArrayList<String>();

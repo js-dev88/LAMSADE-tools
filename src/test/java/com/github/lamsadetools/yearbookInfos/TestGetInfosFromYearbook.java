@@ -19,9 +19,9 @@ public class TestGetInfosFromYearbook {
 		HashMap<String, String> hashTest = new HashMap<String, String>();
 		hashTest.put("Courriel","olivier.cailloux@lamsade.dauphine.fr");
 		hashTest.put("Fonction","MAITRE DE CONFERENCES");
-		hashTest.put("TÃ©lÃ©phone","+33 1 44 05 46 53");
+		hashTest.put("Téléphone","+33 1 44 05 46 53");
 		hashTest.put("Groupes","MIDO - LAMSADE");
-		hashTest.put("Fax","non renseignÃ©");
+		hashTest.put("Fax","non renseigné");
 		hashTest.put("Bureau","P405 ter");
 		Assert.assertTrue(hashTested.equals(hashTest));
 							
