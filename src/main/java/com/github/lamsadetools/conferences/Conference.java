@@ -348,10 +348,11 @@ public class Conference {
 			System.out.println("Please choose an option:");
 			System.out.println("1. Create a new conference.");
 			System.out.println("2. Search a conference.");
+			System.out.println("3. View all conferences.");
 			System.out.println("4. Edit a conference."); // by URL or title
 			System.out.println("5. Delete a conference.");
 			System.out.println("0. Exit");
-			System.out.println("3. View all conferences.");
+
 			String optionstr = io.scanner.nextLine();
 			// Verify input is an integer
 			try {
