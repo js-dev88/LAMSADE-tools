@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Université Paris Dauphine</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link href="https://www.ent.dauphine.fr/annuaire/ressources/images/dauphine.ico" rel="SHORTCUT ICON"/>
+    <link href="https://www.ent.dauphine.fr/annuaire/ressources/styles/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <link href="https://www.ent.dauphine.fr/annuaire/ressources/styles/annuaire.css" rel="stylesheet" type="text/css"/>
+    <link href="https://www.ent.dauphine.fr/annuaire/ressources/styles/popup.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="https://www.ent.dauphine.fr/annuaire/ressources/javascripts/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.ent.dauphine.fr/annuaire/ressources/javascripts/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://www.ent.dauphine.fr/annuaire/ressources/javascripts/hide.js"></script>
+    <script type="text/javascript">
+			$(function(){
+                                // Tabs
+				$('#tabs').tabs();
+                        })
+    </script>
+</head>
+<body>
+    <div id="Page">
+ 
+ 
+  <div id="MenuLeft">
+    <div class="Header">
+      <img alt="Université Paris IX Dauphine - Annuaire" src="https://www.ent.dauphine.fr/annuaire/ressources/images/annuaire.png"/>
+      <h1>Annuaire</h1>
+          </div>
+    
+        <div class="Group">
+        <ul>
+            <li class="right"><small><a href="https://www.ent.dauphine.fr/annuaire/login.php">Connexion</a></small></li>
+        </ul>
+    </div>
+    
+        <div class="Group">
+      <!-- recherche rapide -->
+      <h2>Recherche</h2>
+      <div class="search">
+        <form action="index.php" method="get">
+          <input type="text" id="q" size="10" name="rsearch" accesskey="4"  />
+	  <input  name="submit" id="submit" type="submit" class="submit" value=" " />
+        </form>
+      </div>
+    </div>
+    <!-- Affichage du menu structure -->
+    <div class="Group">
+      <h2><a href="index.php?param0=structures">Structures</a></h2>
+    </div>
+    
+        <div class="Footer"></div>              
+  </div>
+ 
+                <div id="Corps">
+                    <div class="Resultat">
+                        <!-- RESULTAT : lecture fiche personnel -->
+                        <div class="Item">
+                            <h4>Olivier CAILLOUX</h4>
+                            <p class="floatleft">
+                                    <img class="photo_etu" alt="personne" src="https://trombis.dauphine.fr/myPhoto.php?login=ocailloux"/>
+                            </p>
+
+                            <div class="List">
+                                                                                                                                
+                                                                                                                                                                
+                                
+                                
+                                                                <ul>
+                                    <li class="label">Fonction</li>
+                                    <li class="value">MAITRE DE CONFERENCES</li>
+                                </ul>
+                                                                <ul>
+                                    <li class="label">Téléphone</li>
+                                    <li class="value">
+                                        +33 1 44 05 46 53                                    </li>
+                                </ul>                                <ul>
+                                    <li class="label">Fax</li>
+                                    <li class="value"><i>non renseigné</i></li>
+                                </ul>
+                                                                <ul>
+                                    <li class="label">Bureau</li>
+                                    <li class="value">
+                                        P405 ter                                    </li>
+                                </ul>                                <ul>
+                                    <li class="label">Courriel</li>
+                                    <li class="value"><a class="extern" href="mailto:olivier.cailloux@lamsade.dauphine.fr">olivier.cailloux@lamsade.dauphine.fr</a></li>
+                                </ul>                                                                <ul>
+                                    <li class="label">Groupes</li>
+                                    <li class="value"><a href="index.php?param0=structures&amp;param1=MIDO">MIDO</a> - <a href="index.php?param0=structures&amp;param1=LAMSADE">LAMSADE</a></li>
+                                </ul>
+                                                                                                                                <br/>
+                                                            </div>
+                            <br/>
+                                                    </div>
+                    </div>
+                </div>
+
+                 
+    </div>
+    <script type="text/javascript" src="https://www.ent.dauphine.fr/annuaire/ressources/javascripts/modal.jquery.js"></script>
+    <script type="text/javascript" src="https://www.ent.dauphine.fr/annuaire/ressources/javascripts/basic.jquery.js"></script>
+</body>
+</html>
+
