@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <title>UniversitÃ© Paris Dauphine</title>
+    <title>Université Paris Dauphine</title>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
     <meta name="robots" content="noindex, nofollow" />
     <link href="https://www.ent.dauphine.fr/annuaire/ressources/images/dauphine.ico" rel="SHORTCUT ICON"/>
@@ -24,7 +24,7 @@
  
   <div id="MenuLeft">
     <div class="Header">
-      <img alt="UniversitÃ© Paris IX Dauphine - Annuaire" src="https://www.ent.dauphine.fr/annuaire/ressources/images/annuaire.png"/>
+      <img alt="Université Paris IX Dauphine - Annuaire" src="https://www.ent.dauphine.fr/annuaire/ressources/images/annuaire.png"/>
       <h1>Annuaire</h1>
           </div>
     
@@ -71,12 +71,12 @@
                                     <li class="value">MAITRE DE CONFERENCES</li>
                                 </ul>
                                                                 <ul>
-                                    <li class="label">TÃ©lÃ©phone</li>
+                                    <li class="label">Téléphone</li>
                                     <li class="value">
                                         +33 1 44 05 46 53                                    </li>
                                 </ul>                                <ul>
                                     <li class="label">Fax</li>
-                                    <li class="value"><i>non renseignÃ©</i></li>
+                                    <li class="value"><i>non renseigné</i></li>
                                 </ul>
                                                                 <ul>
                                     <li class="label">Bureau</li>
