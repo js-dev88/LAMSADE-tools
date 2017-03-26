@@ -46,7 +46,7 @@ public class Conference {
 	 */
 	public static void clearDataBase() throws SQLException {
 
-		JdbcConnectionPool cp;
+		/*JdbcConnectionPool cp;
 		Connection conn;
 
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
@@ -55,8 +55,12 @@ public class Conference {
 		conn.createStatement().execute(CREATETABLE);
 		conn.createStatement().execute("DROP table Conference;");
 		conn.close();
-		cp.dispose();
-
+		cp.dispose();*/
+		
+		Conference.getConnectionDataBase().getConnection();
+		Conference.getConnectionDataBase().sqlQuery(CREATETABLE);
+		Conference.getConnectionDataBase().sqlQuery("DROP table Conference;");
+		Conference.getConnectionDataBase().closeAndDisposeConnection();
 	}
 
 	/**
@@ -194,18 +198,29 @@ public class Conference {
 			set_statement = constructSetStatement(set_statement, "entry_fee", Double.toString(conf.getEntry_fee()));
 		}
 		set_statement = "UPDATE conferences " + set_statement + where_statement + ";";
-
-		JdbcConnectionPool cp;
+		
+		
+		/*JdbcConnectionPool cp;
 		Connection conn;
 
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		conn = cp.getConnection();
+		conn = cp.getConnection();*/
+		
+		
+		Conference.getConnectionDataBase().getConnection();
+		
+		/*conn.createStatement().execute(CREATETABLE);
 
-		conn.createStatement().execute(CREATETABLE);
-
-		conn.createStatement().execute(set_statement);
-		conn.close();
-		cp.dispose();
+		conn.createStatement().execute(set_statement);*/
+		
+		Conference.getConnectionDataBase().sqlQuery(CREATETABLE);
+		
+		Conference.getConnectionDataBase().sqlQuery(set_statement);
+		
+		/*conn.close();
+		cp.dispose();*/
+		Conference.getConnectionDataBase().closeAndDisposeConnection();
+		
 		return true;
 	}
 
@@ -224,10 +239,10 @@ public class Conference {
 	 *
 	 */
 	public static void getAllConferencesFromDatabase(String whereStatement) throws SQLException {
-		JdbcConnectionPool cp;
+		/*JdbcConnectionPool cp;
 		Connection conn;
-		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		conn = cp.getConnection();
+		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");*/
+		Connection conn = Conference.getConnectionDataBase().getConnection();
 		conn.createStatement().execute(CREATETABLE);
 		Statement state = conn.createStatement();
 		ResultSet result;
@@ -270,10 +285,11 @@ public class Conference {
 	 * @throws ParseException
 	 */
 	public static Conference getConferenceFromDatabase(int conferenceID) throws SQLException, ParseException {
-		JdbcConnectionPool cp;
+		/*JdbcConnectionPool cp;
 		Connection conn;
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		conn = cp.getConnection();
+		conn = cp.getConnection();*/
+		Connection conn = Conference.getConnectionDataBase().getConnection();
 		Statement state = conn.createStatement();
 		ResultSet result = state.executeQuery("SELECT * FROM conference WHERE conferenceID = " + conferenceID);
 
@@ -300,21 +316,39 @@ public class Conference {
 	 * @throws SQLException
 	 */
 	public static void insertInDatabase(Conference conf) throws SQLException {
-		JdbcConnectionPool cp;
+		/*JdbcConnectionPool cp;
 		Connection conn;
 
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
-
-		conn.createStatement().execute(CREATETABLE);
+		
+		
+		
+		conn.createStatement().execute(CREATETABLE);*/
+		
+		Conference.getConnectionDataBase().getConnection();
+		
+		Conference.getConnectionDataBase().sqlQuery(CREATETABLE);
 
 		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
 				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
 				+ conf.getSQLEnd_date() + "','" + conf.getEntry_fee() + "' );";
-		conn.createStatement().execute(insert_statement);
+		
+		Conference.getConnectionDataBase().sqlQuery(insert_statement);
+		Conference.getConnectionDataBase().closeAndDisposeConnection();
+		
+		/*conn.createStatement().execute(insert_statement);
 		conn.close();
-		cp.dispose();
+		cp.dispose();*/
 
+	}
+
+	public static ConnectionDataBase getConnectionDataBase() {
+		return connectionDataBase;
+	}
+
+	public void setConnectionDataBase(ConnectionDataBase connectionDataBase) {
+		this.connectionDataBase = connectionDataBase;
 	}
 
 	/**
@@ -407,7 +441,7 @@ public class Conference {
 	 */
 	public static void removeConferenceFromDatabase(int id) throws SQLException {
 
-		JdbcConnectionPool cp;
+		/*JdbcConnectionPool cp;
 		Connection conn;
 
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
@@ -416,8 +450,11 @@ public class Conference {
 
 		conn.createStatement().execute("Delete from conference where conferenceID =" + id + ";");
 		conn.close();
-		cp.dispose();
-
+		cp.dispose();*/
+		
+		Conference.getConnectionDataBase().getConnection();
+		Conference.getConnectionDataBase().sqlQuery("Delete from conference where conferenceID =" + id + ";");
+		Conference.getConnectionDataBase().closeAndDisposeConnection();
 	}
 
 	/**
@@ -460,6 +497,10 @@ public class Conference {
 	private String title;
 
 	private String url;
+	
+	private static ConnectionDataBase connectionDataBase;
+	
+	
 
 	public Conference(int id, String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee) {
 		this.id = id;
