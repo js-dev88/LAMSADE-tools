@@ -18,12 +18,44 @@ import org.artofsolving.jodconverter.office.OfficeException;
 
 public class SetCoordinates implements AbstractFileConvertor {
 
+	/**
+	 * Duplicate a file
+	 *
+	 * @param source
+	 * @param target
+	 * @throws IOException
+	 */
+	public static void copy(File source, File target) throws IOException {
+		FileChannel sourceChannel = null;
+		FileChannel targetChannel = null;
+		try {
+			sourceChannel = new FileInputStream(source).getChannel();
+			targetChannel = new FileOutputStream(target).getChannel();
+			targetChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+		} finally {
+			if (targetChannel != null)
+				targetChannel.close();
+			if (sourceChannel != null)
+				sourceChannel.close();
+		}
+	}
+
 	public static void main(String[] args) throws Exception {
+		String source = "papier_en_tete.docx";
+		String destination = "papier_en_tete_CloneTest.docx";
 
-		File source = new File("papier_en_tete.docx");
-		File destinationFile = new File("papier_en_tete_CloneTest.docx");
-		copy(source, destinationFile);
+		UserDetails user = promptUserDetails();
+		setDetails(source, destination, user);
+		System.out.println("Done");
 
+	}
+
+	/**
+	 * prompt the user for its names, phone, ...
+	 *
+	 * @return return a user with all the asked informations
+	 */
+	public static UserDetails promptUserDetails() {
 		String tableauQuestion[] = { "Your name ?", "Your first name?", "Your telephone number?", "Your mail?",
 				"Your function?" };
 		Scanner sc = new Scanner(System.in);
@@ -55,17 +87,27 @@ public class SetCoordinates implements AbstractFileConvertor {
 		}
 
 		sc.close();
-		setDetails(source, destinationFile, user);
-
-		System.out.println("Done");
-
+		return user;
 	}
 
-	public static void setDetails(File source, File destinationFile, UserDetails user)
+	/**
+	 * Add the user details to the source file and return the result in the
+	 * destination file
+	 *
+	 * @param source
+	 * @param destinationFile
+	 * @param user
+	 * @throws IOException
+	 * @throws InvalidFormatException
+	 */
+	public static void setDetails(String source, String destination, UserDetails user)
 			throws IOException, InvalidFormatException {
 
-		XWPFDocument doc = new XWPFDocument(OPCPackage.open("papier_en_tete.docx"));
+		XWPFDocument doc = new XWPFDocument(OPCPackage.open(source));
 		XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
+		File sourceFile = new File(source);
+		File destinationFile = new File(destination);
+		copy(sourceFile, destinationFile);
 
 		for (XWPFParagraph p : policy.getFirstPageHeader().getParagraphs()) {
 			List<XWPFRun> runs = p.getRuns();
@@ -111,50 +153,12 @@ public class SetCoordinates implements AbstractFileConvertor {
 				}
 			}
 		}
-		// System.out.println("Would you like an HTML version ?");
-		// Scanner sc = new Scanner(System.in);
-		// String type = sc.nextLine();
-
-		// if (type == "no"){
-		// doc.write(new FileOutputStream("papier_en_tete_CloneTest.docx"));
-		// }
-		// else if (type == "yes"){
-		doc.write(new FileOutputStream("papier_en_tete_CloneTest.docx"));
+		doc.write(new FileOutputStream(destination));
+		doc.close();
 
 		long start = System.currentTimeMillis();
 
 		System.err.println("Generate papier_en_tete.html with " + (System.currentTimeMillis() - start) + "ms");
-	}
-
-	// File inputFile = new File("papier_en_tete_CloneTest.docx");
-	// File outputFile = new File("papier_en_tete_CloneTest.odt");
-	// DefaultOfficeManagerConfiguration configuration = new
-	// DefaultOfficeManagerConfiguration();
-	// configuration.setOfficeHome(new File("C:\\Program Files
-	// (x86)\\LibreOffice 5"));
-	// configuration
-
-	// OfficeManager officeManager = new
-	// DefaultOfficeManagerConfiguration().buildOfficeManager();
-	// officeManager.start();
-	// OfficeDocumentConverter converter = new
-	// OfficeDocumentConverter(officeManager);
-	// converter.convert(new File("papier_en_tete_CloneTest.docx"), new
-	// File("papier_en_tete_CloneTest.odt"));
-
-	// officeManager.stop();
-
-	public static void copy(File source, File target) throws IOException {
-		FileChannel sourceChannel = null;
-		FileChannel targetChannel = null;
-		try {
-			sourceChannel = new FileInputStream(source).getChannel();
-			targetChannel = new FileOutputStream(target).getChannel();
-			targetChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
-		} finally {
-			targetChannel.close();
-			sourceChannel.close();
-		}
 	}
 
 	@Override

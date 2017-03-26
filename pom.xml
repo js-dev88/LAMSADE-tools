@@ -105,11 +105,15 @@
          <version>1.04.0</version>
       </dependency>
   	  <dependency>
-    <groupId>net.sf.saxon</groupId>
-    <artifactId>saxon</artifactId>
-    <version>9.1.0.8</version>
-</dependency>
-  	  
+        <groupId>net.sf.saxon</groupId>
+        <artifactId>saxon</artifactId>
+        <version>9.1.0.8</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opengis.cite.saxon</groupId>
+        <artifactId>saxon9</artifactId>
+        <version>9.0.0.8</version>
+      </dependency>
    </dependencies>
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
