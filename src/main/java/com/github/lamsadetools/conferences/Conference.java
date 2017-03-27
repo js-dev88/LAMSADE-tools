@@ -238,6 +238,7 @@ public class Conference {
 		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		conn = cp.getConnection();
 		conn.createStatement().execute(CREATETABLE);
+
 		try (Statement state = conn.createStatement()) {
 
 			try (ResultSet result = state.executeQuery(
@@ -248,6 +249,7 @@ public class Conference {
 				ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
 
 				while (result.next()) {
+
 					int id = result.getInt(1);
 					String url = result.getString(2);
 					String title = result.getString(3);
