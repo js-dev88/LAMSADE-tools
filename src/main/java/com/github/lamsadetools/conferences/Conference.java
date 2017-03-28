@@ -29,6 +29,12 @@ public class Conference {
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
 
+	
+	/**
+	 * This function drop conference table's
+	 * 
+	 * @throws SQLException
+	 */
 	public static void clearDataBase() throws SQLException {
 
 		JdbcConnectionPool cp;
@@ -44,6 +50,12 @@ public class Conference {
 
 	}
 	
+	/**
+	 * This function drop a element of the conference table's thanks to the id conference's
+	 * 
+	 * @param id
+	 * @throws SQLException
+	 */
 	public static void clearElementDataBase(int id) throws SQLException  {
 		
 		JdbcConnectionPool cp;
@@ -109,6 +121,8 @@ public class Conference {
 			}
 		}
 		return new Conference(url, title, start_date, end_date, Double.parseDouble(entry_fee));
+		
+		
 	}
 
 	/**
@@ -333,7 +347,7 @@ public class Conference {
 
 			switch (option) {
 			case 1:
-				Conference.createConference();
+				Conference.insertInDatabase(Conference.createConference());
 				break;
 			case 2:
 				Conference.searchMenu();
