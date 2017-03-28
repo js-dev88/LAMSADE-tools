@@ -14,7 +14,6 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
-import org.h2.jdbcx.JdbcConnectionPool;
 
 /**
  * This class enable us to store some of the informations that a teacher may
@@ -30,13 +29,17 @@ public class Conference {
 			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
 			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, " + "entry_fee        double, "
 			+ "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
-	private static final String DATE_FORMAT = "yyyy/MM/dd";
+	private static final String DATE_FORMAT = "dd/MM/yyyy";
 
 	final static Logger logger = Logger.getLogger(Conference.class);
 
 	static final String path = "src/main/resources/com/github/lamsadetools/log4j.properties";
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
+
+	public static void main(String[] args) throws Exception {
+		menu();
+	}
 
 	/**
 	 * Drop the table conference in order to erase all the conferences stored in
@@ -46,17 +49,17 @@ public class Conference {
 	 */
 	public static void clearDataBase() throws SQLException {
 
-		/*JdbcConnectionPool cp;
-		Connection conn;
+		/*
+		 * JdbcConnectionPool cp; Connection conn;
+		 *
+		 * cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		 * conn = cp.getConnection();
+		 *
+		 * conn.createStatement().execute(CREATETABLE);
+		 * conn.createStatement().execute("DROP table Conference;");
+		 * conn.close(); cp.dispose();
+		 */
 
-		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		conn = cp.getConnection();
-
-		conn.createStatement().execute(CREATETABLE);
-		conn.createStatement().execute("DROP table Conference;");
-		conn.close();
-		cp.dispose();*/
-		
 		Conference.getConnectionDataBase().getConnection();
 		Conference.getConnectionDataBase().sqlQuery(CREATETABLE);
 		Conference.getConnectionDataBase().sqlQuery("DROP table Conference;");
@@ -198,29 +201,31 @@ public class Conference {
 			set_statement = constructSetStatement(set_statement, "entry_fee", Double.toString(conf.getEntry_fee()));
 		}
 		set_statement = "UPDATE conferences " + set_statement + where_statement + ";";
-		
-		
-		/*JdbcConnectionPool cp;
-		Connection conn;
 
-		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		conn = cp.getConnection();*/
-		
-		
+		/*
+		 * JdbcConnectionPool cp; Connection conn;
+		 *
+		 * cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		 * conn = cp.getConnection();
+		 */
+
 		Conference.getConnectionDataBase().getConnection();
-		
-		/*conn.createStatement().execute(CREATETABLE);
 
-		conn.createStatement().execute(set_statement);*/
-		
+		/*
+		 * conn.createStatement().execute(CREATETABLE);
+		 *
+		 * conn.createStatement().execute(set_statement);
+		 */
+
 		Conference.getConnectionDataBase().sqlQuery(CREATETABLE);
-		
+
 		Conference.getConnectionDataBase().sqlQuery(set_statement);
-		
-		/*conn.close();
-		cp.dispose();*/
+
+		/*
+		 * conn.close(); cp.dispose();
+		 */
 		Conference.getConnectionDataBase().closeAndDisposeConnection();
-		
+
 		return true;
 	}
 
@@ -231,47 +236,52 @@ public class Conference {
 	 */
 	public static void getAllConferencesFromDatabase() throws SQLException {
 
-		Conference.getAllConferencesFromDatabase("");
+		Conference.getAllConferencesFromDatabase("", "");
 
 	}
 
 	/**
 	 *
 	 */
-	public static void getAllConferencesFromDatabase(String whereStatement) throws SQLException {
-		/*JdbcConnectionPool cp;
-		Connection conn;
-		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");*/
+	public static void getAllConferencesFromDatabase(String type, String value) throws SQLException {
+		/*
+		 * JdbcConnectionPool cp; Connection conn; cp =
+		 * JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		 */
 		Connection conn = Conference.getConnectionDataBase().getConnection();
 		conn.createStatement().execute(CREATETABLE);
-		Statement state = conn.createStatement();
-		ResultSet result;
-		if (whereStatement.isEmpty()) {
-			result = state.executeQuery("SELECT * FROM conference ORDER BY start_date");
+		try (Statement state = conn.createStatement()) {
 
-		} else {
-			result = state.executeQuery("SELECT * FROM conference WHERE " + whereStatement + " ORDER BY start_date");
+			try (ResultSet result = state.executeQuery(
+					"SELECT * FROM conference WHERE " + type + " = '" + value + "' ORDER BY start_date;")) {
+
+				DateFormat format = new SimpleDateFormat(DATE_FORMAT);
+				format.setLenient(false);
+				ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
+
+				while (result.next()) {
+
+					int id = result.getInt(1);
+					String url = result.getString(2);
+					String title = result.getString(3);
+					LocalDate start_date = LocalDate.parse(result.getString(4));
+					LocalDate end_date = LocalDate.parse(result.getString(5));
+					double entry_fee = result.getDouble(6);
+					conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee));
+				}
+
+				for (Conference i : conferencesArray) {
+					System.out.println("####################");
+					System.out.println("Conference: " + i.title + " (" + i.url + ")");
+					System.out.println("From the " + i.start_date + " to the " + i.end_date);
+					System.out.println("Fee: " + i.entry_fee);
+				}
+
+				result.close();
+			}
+
+			state.close();
 		}
-		DateFormat format = new SimpleDateFormat(DATE_FORMAT);
-		format.setLenient(false);
-		ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
-
-		while (result.next()) {
-			int id = result.getInt(1);
-			String url = result.getString(2);
-			String title = result.getString(3);
-			LocalDate start_date = LocalDate.parse(result.getString(4));
-			LocalDate end_date = LocalDate.parse(result.getString(5));
-			double entry_fee = result.getDouble(6);
-			conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee));
-		}
-
-		for (Conference i : conferencesArray) {
-			System.out.println(i);
-		}
-
-		result.close();
-		state.close();
 		return;
 	}
 
@@ -285,28 +295,29 @@ public class Conference {
 	 * @throws ParseException
 	 */
 	public static Conference getConferenceFromDatabase(int conferenceID) throws SQLException, ParseException {
-		/*JdbcConnectionPool cp;
-		Connection conn;
-		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		conn = cp.getConnection();*/
+		/*
+		 * JdbcConnectionPool cp; Connection conn; cp =
+		 * JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa"); conn
+		 * = cp.getConnection();
+		 */
 		Connection conn = Conference.getConnectionDataBase().getConnection();
 		Statement state = conn.createStatement();
-		ResultSet result = state.executeQuery("SELECT * FROM conference WHERE conferenceID = " + conferenceID);
+		try (ResultSet result = state.executeQuery("SELECT * FROM conference WHERE conferenceID = " + conferenceID)) {
 
-		DateFormat format = new SimpleDateFormat(SQL_DATE_FORMAT);
-		format.setLenient(false);
+			DateFormat format = new SimpleDateFormat(SQL_DATE_FORMAT);
+			format.setLenient(false);
 
-		result.next();
-		int id = result.getInt(1);
-		String url = result.getString(2);
-		String title = result.getObject(3).toString();
-		LocalDate start_date = LocalDate.parse(result.getString(4));
-		LocalDate end_date = LocalDate.parse(result.getString(5));
-		double entry_fee = result.getDouble(6);
-		result.close();
-		state.close();
-		return new Conference(id, title, url, start_date, end_date, entry_fee);
-
+			result.next();
+			int id = result.getInt(1);
+			String url = result.getString(2);
+			String title = result.getObject(3).toString();
+			LocalDate start_date = LocalDate.parse(result.getString(4));
+			LocalDate end_date = LocalDate.parse(result.getString(5));
+			double entry_fee = result.getDouble(6);
+			result.close();
+			state.close();
+			return new Conference(id, title, url, start_date, end_date, entry_fee);
+		}
 	}
 
 	/**
@@ -316,30 +327,32 @@ public class Conference {
 	 * @throws SQLException
 	 */
 	public static void insertInDatabase(Conference conf) throws SQLException {
-		/*JdbcConnectionPool cp;
-		Connection conn;
+		/*
+		 * JdbcConnectionPool cp; Connection conn;
+		 *
+		 * cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		 * conn = cp.getConnection();
+		 *
+		 *
+		 *
+		 * conn.createStatement().execute(CREATETABLE);
+		 */
 
-		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		conn = cp.getConnection();
-		
-		
-		
-		conn.createStatement().execute(CREATETABLE);*/
-		
 		Conference.getConnectionDataBase().getConnection();
-		
+
 		Conference.getConnectionDataBase().sqlQuery(CREATETABLE);
 
 		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
 				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
 				+ conf.getSQLEnd_date() + "','" + conf.getEntry_fee() + "' );";
-		
+
 		Conference.getConnectionDataBase().sqlQuery(insert_statement);
 		Conference.getConnectionDataBase().closeAndDisposeConnection();
-		
-		/*conn.createStatement().execute(insert_statement);
-		conn.close();
-		cp.dispose();*/
+
+		/*
+		 * conn.createStatement().execute(insert_statement); conn.close();
+		 * cp.dispose();
+		 */
 
 	}
 
@@ -360,9 +373,10 @@ public class Conference {
 	public static void menu() throws SQLException {
 		int option = -1;
 
-		Scanner sc = new Scanner(System.in);
-
 		while (option != 0) {
+			IO io = new IO();
+			io.scanner = new Scanner(System.in);
+
 			System.out.println("Welcome to the conference creation | Created by Javier & Antoine");
 			System.out.println("#################### ");
 			System.out.println("Please choose an option:");
@@ -372,7 +386,8 @@ public class Conference {
 			System.out.println("4. Edit a conference."); // by URL or title
 			System.out.println("5. Delete a conference.");
 			System.out.println("0. Exit");
-			String optionstr = sc.nextLine();
+
+			String optionstr = io.scanner.nextLine();
 			// Verify input is an integer
 			try {
 				option = Integer.parseInt(optionstr);
@@ -401,7 +416,6 @@ public class Conference {
 				break;
 			}
 		}
-
 	}
 
 	/**
@@ -441,17 +455,18 @@ public class Conference {
 	 */
 	public static void removeConferenceFromDatabase(int id) throws SQLException {
 
-		/*JdbcConnectionPool cp;
-		Connection conn;
+		/*
+		 * JdbcConnectionPool cp; Connection conn;
+		 *
+		 * cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		 *
+		 * conn = cp.getConnection();
+		 *
+		 * conn.createStatement().
+		 * execute("Delete from conference where conferenceID =" + id + ";");
+		 * conn.close(); cp.dispose();
+		 */
 
-		cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-
-		conn = cp.getConnection();
-
-		conn.createStatement().execute("Delete from conference where conferenceID =" + id + ";");
-		conn.close();
-		cp.dispose();*/
-		
 		Conference.getConnectionDataBase().getConnection();
 		Conference.getConnectionDataBase().sqlQuery("Delete from conference where conferenceID =" + id + ";");
 		Conference.getConnectionDataBase().closeAndDisposeConnection();
@@ -463,19 +478,63 @@ public class Conference {
 	 * @throws SQLException
 	 */
 	public static void searchMenu() throws SQLException {
-		System.out.println("Use : <FIELD> = <\'string\'> and ... and [<FIELD> = <\'string\'>] ");
-		System.out.println("FIELDS :");
-		System.out.println("Title");
-		System.out.println("URL");
-		System.out.println("start_date");
-		System.out.println("end_date");
-		System.out.println("entry_fee");
+		int option = -1;
 
-		Scanner sc = new Scanner(System.in);
-		String whereStatement = sc.nextLine();
+		while (option != 0) {
+			IO io = new IO();
+			io.scanner = new Scanner(System.in);
+			System.out.println("Please choose an option:");
+			System.out.println("1. Search by name");
+			System.out.println("2. Search by URL.");
+			System.out.println("3. Search by start date");
+			System.out.println("0. Exit");
+			String optionstr = io.scanner.nextLine();
+			// Verify input is an integer
+			try {
+				option = Integer.parseInt(optionstr);
+			} catch (NumberFormatException ex) {
+				System.out.println("Please choose a valid option");
+				option = -1;
+			}
 
-		Conference.getAllConferencesFromDatabase(whereStatement);
-		Conference.menu();
+			switch (option) {
+			case 1:
+				Conference.getAllConferencesFromDatabase(getValidSearchQuery(), "title");
+				break;
+			case 2:
+
+				Conference.getAllConferencesFromDatabase(getValidSearchQuery(), "url");
+				break;
+			case 3:
+				Conference.getAllConferencesFromDatabase(getValidSearchQuery(), "startdate");
+
+				break;
+			default:
+			}
+		}
+	}
+
+	/**
+	 * Asks the user what they want to search for and makes sure the input is 3
+	 * characters long or more
+	 *
+	 * @return
+	 */
+
+	private static String getValidSearchQuery() {
+
+		System.out.print("What do you want to search for?");
+		IO io = new IO();
+		io.scanner = new Scanner(System.in);
+		String in = io.scanner.nextLine();
+
+		while (in.isEmpty() || (in.length() < 3)) {
+			System.out.print("Please type in at least 3 characters");
+			in = io.scanner.nextLine();
+		}
+
+		return in;
+
 	}
 
 	/**
@@ -497,10 +556,8 @@ public class Conference {
 	private String title;
 
 	private String url;
-	
+
 	private static ConnectionDataBase connectionDataBase;
-	
-	
 
 	public Conference(int id, String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee) {
 		this.id = id;
@@ -522,21 +579,28 @@ public class Conference {
 	public boolean equals(Object obj) {
 		if (obj instanceof Conference) {
 			Conference conference2 = (Conference) obj;
-			System.out.println(this.toString());
+			System.out.println(toString());
 			System.out.println(conference2.toString());
-			if (this.title.equals(conference2.title) && this.url.equals(conference2.url)
-					&& this.start_date.equals(conference2.start_date) && this.end_date.equals(conference2.end_date)
-					&& this.entry_fee == conference2.entry_fee) {
+			if (title.equals(conference2.title) && url.equals(conference2.url)
+					&& start_date.equals(conference2.start_date) && end_date.equals(conference2.end_date)
+					&& (entry_fee == conference2.entry_fee)) {
 				return true;
 			}
 		}
 		return false;
+	}
 
+	/**
+	 * Overriding a required method
+	 */
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 
 	public LocalDate getEnd_date() {
 		return end_date;
-	};
+	}
 
 	public double getEntry_fee() {
 		return entry_fee;
