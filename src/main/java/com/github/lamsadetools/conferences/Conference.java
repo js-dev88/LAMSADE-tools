@@ -14,7 +14,6 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
-import org.h2.jdbcx.JdbcConnectionPool;
 
 /**
  * This class enable us to store some of the informations that a teacher may
@@ -38,6 +37,9 @@ public class Conference {
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
 
+	public static void main(String[] args) throws Exception {
+		menu();
+	}
 
 	/**
 	 * Drop the table conference in order to erase all the conferences stored in
@@ -122,8 +124,6 @@ public class Conference {
 			}
 		}
 		return new Conference(url, title, start_date, end_date, Double.parseDouble(entry_fee));
-		
-		
 	}
 
 	/**
@@ -252,7 +252,7 @@ public class Conference {
 
 			try (ResultSet result = type.isEmpty() && value.isEmpty() ? state.executeQuery("SELECT * FROM conference")
 					: state.executeQuery(
-							"SELECT * FROM conference WHERE " + type	 + " = '" + value + "' ORDER BY start_date;")) {
+							"SELECT * FROM conference WHERE " + type + " = '" + value + "' ORDER BY start_date;")) {
 
 				DateFormat format = new SimpleDateFormat(DATE_FORMAT);
 				format.setLenient(false);
@@ -261,8 +261,8 @@ public class Conference {
 				while (result.next()) {
 
 					int id = result.getInt(1);
-					String url = result.getString(2);
-					String title = result.getString(3);
+					String url = result.getString(3);
+					String title = result.getString(2);
 					LocalDate start_date = LocalDate.parse(result.getString(4));
 					LocalDate end_date = LocalDate.parse(result.getString(5));
 					double entry_fee = result.getDouble(6);
@@ -294,12 +294,13 @@ public class Conference {
 	 * @throws ParseException
 	 */
 	public static Conference getConferenceFromDatabase(int conferenceID) throws SQLException, ParseException {
-		
-		
+		/*
+		 * JdbcConnectionPool cp; Connection conn; cp =
+		 * JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa"); conn
+		 * = cp.getConnection();
+		 */
 		Connection conn = Conference.getConnectionDataBase().getConnection();
-		
 		Statement state = conn.createStatement();
-		
 		try (ResultSet result = state.executeQuery("SELECT * FROM conference WHERE conferenceID = " + conferenceID)) {
 
 			DateFormat format = new SimpleDateFormat(SQL_DATE_FORMAT);
@@ -325,21 +326,32 @@ public class Conference {
 	 * @throws SQLException
 	 */
 	public static void insertInDatabase(Conference conf) throws SQLException {
-		
+		/*
+		 * JdbcConnectionPool cp; Connection conn;
+		 *
+		 * cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
+		 * conn = cp.getConnection();
+		 *
+		 *
+		 *
+		 * conn.createStatement().execute(CREATETABLE);
+		 */
 
 		Conference.getConnectionDataBase().getConnection();
 
 		Conference.getConnectionDataBase().sqlQuery(CREATETABLE);
 
-		String insert_statement = "INSERT INTO conference (URL,Title, start_date, end_date , entry_fee)   VALUES ('"
-				+ conf.getUrl() + "','" + conf.getTitle() + "','" + conf.getSQLStart_date() + "','"
+		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
+				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getSQLStart_date() + "','"
 				+ conf.getSQLEnd_date() + "','" + conf.getEntry_fee() + "' );";
 
 		Conference.getConnectionDataBase().sqlQuery(insert_statement);
 		Conference.getConnectionDataBase().closeAndDisposeConnection();
 
-		
-		 
+		/*
+		 * conn.createStatement().execute(insert_statement); conn.close();
+		 * cp.dispose();
+		 */
 
 	}
 
@@ -385,7 +397,7 @@ public class Conference {
 
 			switch (option) {
 			case 1:
-				Conference.insertInDatabase(Conference.createConference());
+				Conference.createConference();
 				break;
 			case 2:
 				Conference.searchMenu();
@@ -480,17 +492,17 @@ public class Conference {
 			try {
 				option = Integer.parseInt(optionstr);
 			} catch (NumberFormatException ex) {
-				System.out.println("Please choose a valid option");
+				System.out.println("Please hoose a valid option");
 				option = -1;
 			}
 
 			switch (option) {
 			case 1:
-				Conference.getAllConferencesFromDatabase("title",getValidSearchQuery());
+				Conference.getAllConferencesFromDatabase("title", getValidSearchQuery());
 				break;
 			case 2:
 
-				Conference.getAllConferencesFromDatabase( "url", getValidSearchQuery());
+				Conference.getAllConferencesFromDatabase("url", getValidSearchQuery());
 				break;
 			case 3:
 				Conference.getAllConferencesFromDatabase("start_date",getValidSearchQuery());
