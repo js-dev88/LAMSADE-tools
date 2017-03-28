@@ -252,8 +252,9 @@ public class Conference {
 		conn.createStatement().execute(CREATETABLE);
 		try (Statement state = conn.createStatement()) {
 
-			try (ResultSet result = state.executeQuery(
-					"SELECT * FROM conference WHERE " + type + " = '" + value + "' ORDER BY start_date;")) {
+			try (ResultSet result = type.isEmpty() && value.isEmpty() ? state.executeQuery("SELECT * FROM conference")
+					: state.executeQuery(
+							"SELECT * FROM conference WHERE " + type + " = '" + value + "' ORDER BY start_date;")) {
 
 				DateFormat format = new SimpleDateFormat(DATE_FORMAT);
 				format.setLenient(false);
