@@ -1,18 +1,18 @@
 package com.github.lamsadetools.yearbookInfos;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+
 import com.sun.star.lang.IllegalArgumentException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import com.github.lamsadetools.yearbookInfos.ConnectionToYearbook;
 
 /**
  * GetInfosFromYearbook will get information from Dauphine's yearbook
@@ -24,38 +24,30 @@ public class GetInfosFromYearbook {
 	
 	final static Logger LOGGER = Logger.getLogger(GetInfosFromYearbook.class);
 	// Set the properties file's path
-	static final String path = "src/main/resources/com/github/lamsadetools/yearbookInfos/log4j.properties";
+	static final String path = "src/main/resources/com/github/lamsadetools/log4j.properties";
 	// HashMap collection register informations with a key and an associated value
 	private HashMap<String, String> informations = new HashMap<String, String>();
 	
 
 	/**
 	 * Constructor using a person's firstname and surname
-	 * @param firstname of the person
-	 * @param surname of the person
-	 * @throws IllegalArgumentException when firstname or surname is null
-	 * @throws IOException from RetrieveYEarBookData
+	 * @param firstname of the person may not be null
+	 * @param surname of the person not be null
+	 * @throws IllegalArgumentException when parameters are null
 	 */
-	public GetInfosFromYearbook(String firstname, String surname) throws IllegalArgumentException, IOException  {
-		
+	public GetInfosFromYearbook(String firstname, String surname) throws IllegalArgumentException {
 		if(firstname == null || surname == null){
 			throw new IllegalArgumentException("Firstname or surname is null");
 		}
+		String htmlPage;
+		try{
+			ConnectionToYearbook newConnection = new ConnectionToYearbook(firstname,surname);
+			htmlPage = newConnection.getHtmlPage();
+			retrieveYearbookData(htmlPage);
+		}catch(Throwable t){
+			LOGGER.error(t);
+		}
 		
-		//Build the URL parameter with the firstname's first letter and the person's surname
-		String param = firstname.toLowerCase().charAt(0)+surname.toLowerCase();
-		//This part of the url is always the same
-		String urlConstantPArt = "https://www.ent.dauphine.fr/Annuaire/index.php?param0=fiche&";
-		//First step of the JAX rs class => Client initialization
-		Client client = ClientBuilder.newClient();
-		//Build the targeted URL
-		WebTarget t1 = client.target(urlConstantPArt);
-		WebTarget t2 = t1.queryParam("param1", param);
-		//The entire HTML page is stocked in result
-		String result = t2.request(MediaType.TEXT_PLAIN).get(String.class);
-		//LOGGER.info(result);
-		RetrieveYearbookData(result);	
-        	client.close();
 	}
 	
 	/**
@@ -63,9 +55,18 @@ public class GetInfosFromYearbook {
 	 * @param htmlText is the yearBook's page in HTML format
 	 * @throws IOException if Nextline function fails
 	 * @throws IllegalArgumentException  from hashMapConstructor
+	 * @throws JDOMException 
 	 */
-	public void RetrieveYearbookData (String htmlText) throws IOException, IllegalArgumentException{
+	public void retrieveYearbookData (String htmlText) throws IOException, IllegalArgumentException, JDOMException{
 
+		SAXBuilder sb= new SAXBuilder();
+		try{
+			Document doc = sb.build(htmlText);
+		}catch(JDOMException e){
+			throw new JDOMException("XML from String Error");
+		}
+		
+		
         String line = null;
         String nextLine =null;
     	ArrayList<String> rawInfos = new ArrayList<String>();
@@ -136,7 +137,9 @@ public class GetInfosFromYearbook {
 	}
 	
 	
-	
+	public HashMap<String, String> getHashMap(){
+		return informations;
+	}
 	public String getCourrier(){
 		return informations.get("Courriel");
 	}
@@ -161,18 +164,10 @@ public class GetInfosFromYearbook {
 		return informations.get("Bureau");
 	}
 
-	public static void main(String[] args) {	
-		//path configuration for logger
-		PropertyConfigurator.configure(path);
-		
-		try{
-			String prenom = "Olivier";
-			String nom = "CAILLOUX";
-			GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
-			LOGGER.info("\n"+profJava.toString());
-		}catch(Exception e){
-			//the message of the original exception is displayed
-			LOGGER.error("Error : ", e);
-		}
-	}
+	 public static void main(String [] args) throws Exception{  
+		 PropertyConfigurator.configure(path);
+		 GetInfosFromYearbook test = new GetInfosFromYearbook("Olivier","Cailloux");
+		 LOGGER.info(test.toString());
+	           
+	    } 
 }
