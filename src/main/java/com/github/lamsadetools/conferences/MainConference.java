@@ -14,7 +14,6 @@ public class MainConference {
 	public static void main(String[] args) throws SQLException {
 
 		Conference.menu();
-
 	}
 
 }
