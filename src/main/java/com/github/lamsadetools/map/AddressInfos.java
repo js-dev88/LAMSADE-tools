@@ -4,22 +4,16 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
-import com.github.lamsadetools.setCoordinates.UserDetails;
 import com.sun.star.lang.IllegalArgumentException;
 
 public class AddressInfos {
-	final static Logger LOGGER = Logger.getLogger(AddressInfos.class);
-	static final String path = "src/test/resources/log4j.properties";
+	
 	
 	private String rawAdress;
 	private HashMap<String, String> information = new HashMap<String, String>();
@@ -105,7 +99,7 @@ public class AddressInfos {
 				}
 			}
 		} catch (IOException e2) {
-			throw new IOException("Error when trying to read Nextline");
+			throw new IOException("Error when trying to read Nextline", e2);
 		}
 		superfluousRemover(rawInfos);
 		hashMapConstructor(rawInfos);
@@ -152,6 +146,7 @@ public class AddressInfos {
 	}
 	
 	
+	
 	@Override
 	public String toString() {
 		String toString = "";
@@ -159,33 +154,6 @@ public class AddressInfos {
 			toString += i + ": " + information.get(i) + "\n";
 		}
 		return toString;
-	}
-	
-	
-	
-	/**
-	 * This method is temporary and won't be available in the next release
-	 * It gives a link to a png tile corresponding to the latitude and longitude given 
-	 * and zoomed at the level entered (zoom parameter)
-	 * 
-	 * @param lat
-	 * @param lon
-	 * @param zoom
-	 * @return the link to a png tile 
-	 */
-	@Deprecated
-	private String getTileNumber(double lat, double lon, int zoom) {
-		int xtile = (int)Math.floor( (lon + 180) / 360 * (1<<zoom) ) ;
-		int ytile = (int)Math.floor( (1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1<<zoom) ) ;
-		if (xtile < 0)
-			xtile=0;
-		if (xtile >= (1<<zoom))
-			xtile=((1<<zoom)-1);
-		if (ytile < 0)
-			ytile=0;
-		if (ytile >= (1<<zoom))
-			ytile=((1<<zoom)-1);
-		return("http://tile.openstreetmap.org/" + zoom + "/" + xtile + "/" + ytile + ".png");
 	}
 	
 	public String getRawAdress() {
@@ -208,21 +176,4 @@ public class AddressInfos {
 		return information.get("Longitude");
 	}
 	
-	
-	public static void main(String[] args) {
-		PropertyConfigurator.configure(path);
-		
-		String rawAdress = "Paris";
-		HashMap<String, String> information;
-		String linkTile;
-		try {
-			AddressInfos paris = new AddressInfos(rawAdress);
-			LOGGER.info("\n" + paris.toString());
-			information = paris.getInformation();
-			linkTile = paris.getTileNumber(Double.parseDouble(information.get("Latitude")), Double.parseDouble(information.get("Longitude")), 10);
-			LOGGER.info("\n" + linkTile);
-		} catch (IllegalArgumentException | IOException e) {
-			LOGGER.error("Error : ", e);
-		}		
-	}	
 }
