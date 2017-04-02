@@ -1,5 +1,15 @@
 package com.github.lamsadetools.graphical_interface;
 
+<<<<<<< HEAD
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+public class Tester {
+	public static void main(String[] args) {
+		Display display = new Display();
+		Shell shell = new Shell(display);
+		// … populate shell …
+=======
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,6 +46,7 @@ public class Tester {
 			}
 		});
 
+>>>>>>> swt
 		shell.open();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
