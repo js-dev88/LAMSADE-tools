@@ -498,7 +498,7 @@ public class Conference {
 
 	private String url;
 	
-	private static ConnectionDataBase connectionDataBase;
+	private static ConnectionDataBase connectionDataBase = new ConnectionDataBase();
 	
 	
 
