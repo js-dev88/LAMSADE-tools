@@ -250,6 +250,7 @@ public class Conference {
 		 */
 		Connection conn = Conference.getConnectionDataBase().getConnection();
 		conn.createStatement().execute(CREATETABLE);
+
 		try (Statement state = conn.createStatement()) {
 
 			try (ResultSet result = type.isEmpty() && value.isEmpty() ? state.executeQuery("SELECT * FROM conference")
@@ -284,6 +285,42 @@ public class Conference {
 			state.close();
 		}
 		return;
+	}
+
+	/**
+	 * Function to return an ArrayList of conferences
+	 *
+	 * @return an ArrayList of all the conferences
+	 * @throws SQLException
+	 */
+	public ArrayList<Conference> returnAllConferencesFromDatabase() throws SQLException {
+
+		ArrayList<Conference> conferencesArray = new ArrayList<>();
+		Connection conn = Conference.getConnectionDataBase().getConnection();
+		conn.createStatement().execute(CREATETABLE);
+
+		try (Statement state = conn.createStatement()) {
+
+			try (ResultSet result = state.executeQuery("SELECT * FROM conference")) {
+				DateFormat format = new SimpleDateFormat(DATE_FORMAT);
+				format.setLenient(false);
+
+				while (result.next()) {
+
+					int _id = result.getInt(1);
+					String _url = result.getString(2);
+					String _title = result.getString(3);
+					LocalDate _start_date = LocalDate.parse(result.getString(4));
+					LocalDate _end_date = LocalDate.parse(result.getString(5));
+					double _entry_fee = result.getDouble(6);
+					conferencesArray.add(new Conference(_id, _url, _title, _start_date, _end_date, _entry_fee));
+				}
+
+				result.close();
+			}
+			state.close();
+			return conferencesArray;
+		}
 	}
 
 	/**
@@ -378,7 +415,7 @@ public class Conference {
 			IO io = new IO();
 			io.scanner = new Scanner(System.in);
 
-			System.out.println("Welcome to the conference creation | Created by Javier & Antoine");
+			System.out.println("Welcome to the conference creation tool");
 			System.out.println("#################### ");
 			System.out.println("Please choose an option:");
 			System.out.println("1. Create a new conference.");
