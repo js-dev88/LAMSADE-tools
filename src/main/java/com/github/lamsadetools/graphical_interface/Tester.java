@@ -1,5 +1,10 @@
 package com.github.lamsadetools.graphical_interface;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -13,13 +18,16 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import com.github.lamsadetools.conferences.Conference;
+
 public class Tester {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
+
 		Display display = new Display();
 		Shell shell = new Shell(display);
 
 		// shell.setSize(300, 300);
-		shell.setText("Example");
+		shell.setText("Conference List");
 
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 4;
@@ -33,7 +41,9 @@ public class Tester {
 
 		Table table = new Table(shell, SWT.V_SCROLL);
 
-		String[] titles = { "Col 1", "Col 2", "Col 3", "Col 4" };
+		String[] titles = { "Title", "URL", "Start Date", "End Date", "Fee" };
+
+		ArrayList<Conference> confs = Conference.returnAllConferencesFromDatabase();
 
 		for (String title : titles) {
 			System.out.println(title);
@@ -42,13 +52,13 @@ public class Tester {
 		}
 		table.setHeaderVisible(true);
 
-		for (int loopIndex = 0; loopIndex < 24; loopIndex++) {
+		for (Conference i : confs) {
 			TableItem item = new TableItem(table, SWT.NULL);
-			item.setText("Item " + loopIndex);
-			item.setText(0, "Item " + loopIndex);
-			item.setText(1, "Yes");
-			item.setText(2, "No");
-			item.setText(3, "A table item");
+			item.setText(0, i.getTitle());
+			item.setText(1, i.getUrl());
+			item.setText(2, convertLocaldateToString(i.getStart_date()));
+			item.setText(3, convertLocaldateToString(i.getEnd_date()));
+			item.setText(4, Double.toString(i.getEntry_fee()));
 		}
 
 		for (int loopIndex = 0; loopIndex < titles.length; loopIndex++) {
@@ -94,6 +104,12 @@ public class Tester {
 			}
 		}
 		display.dispose();
+	}
+
+	private static String convertLocaldateToString(LocalDate localdate) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
+		String formattedDate = localdate.format(formatter);
+		return formattedDate;
 	}
 
 }
