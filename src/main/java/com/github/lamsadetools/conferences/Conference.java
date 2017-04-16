@@ -293,7 +293,7 @@ public class Conference {
 	 * @return an ArrayList of all the conferences
 	 * @throws SQLException
 	 */
-	public ArrayList<Conference> returnAllConferencesFromDatabase() throws SQLException {
+	public static ArrayList<Conference> returnAllConferencesFromDatabase() throws SQLException {
 
 		ArrayList<Conference> conferencesArray = new ArrayList<>();
 		Connection conn = Conference.getConnectionDataBase().getConnection();
