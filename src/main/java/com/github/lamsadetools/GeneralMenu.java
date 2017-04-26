@@ -14,7 +14,9 @@ public class GeneralMenu {
 	 */
 	public static void fillAForm() throws Throwable {
 		UserDetails userDetails = GetInfosFromYearbook.getUserDetails();
-		SetCoordinates.fillPapierEnTete(userDetails);
+		if (userDetails.isFilled())
+			SetCoordinates.fillPapierEnTete(userDetails);
+		mainMenu();
 	}
 
 	public static void main(String[] args) throws Throwable {

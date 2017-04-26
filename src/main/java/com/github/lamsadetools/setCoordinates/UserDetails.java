@@ -40,6 +40,12 @@ public class UserDetails {
 		return number;
 	}
 
+	public boolean isFilled() {
+		if (email != null && firstName != null && function != null && name != null && number != null)
+			return true;
+		return false;
+	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}

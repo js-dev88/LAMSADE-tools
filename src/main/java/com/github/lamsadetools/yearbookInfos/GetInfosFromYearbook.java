@@ -135,18 +135,11 @@ public class GetInfosFromYearbook {
 	 *
 	 * @param rawInfos
 	 *            contains lines with labels and lines with corresponding data
-	 * @throws IllegalArgumentException
-	 *             if rawInfo is null, this indicates that the firstname or the
-	 *             surname is wrong, no data is found or the original HTML page
-	 *             is a 404.
 	 * @throws Exception
 	 *             if the Hashmap contains no data
 	 * @return the HAshMap with all the person's informations
 	 */
-	private HashMap<String, String> hashMapConstructor(ArrayList<String> rawInfos) throws IllegalArgumentException {
-		if (rawInfos.isEmpty() || rawInfos.size() == 0) {
-			throw new IllegalArgumentException("Wrong parameters or site is unreachable");
-		}
+	private HashMap<String, String> hashMapConstructor(ArrayList<String> rawInfos) {
 		int j = 0;
 		while (j < rawInfos.size()) {
 			informations.put(rawInfos.get(j), rawInfos.get(j + 1));
@@ -197,6 +190,12 @@ public class GetInfosFromYearbook {
 			throw new IOException("Error when trying to read Nextline");
 		}
 		superfluousRemover(rawInfos);
+		if (rawInfos.isEmpty() || rawInfos.size() == 0) {
+			if (htmlText.contains("<h4>Annuaire - page non trouvée</h4"))
+				System.out.println("No page matching this name has been found");
+			else
+				throw new IllegalArgumentException("Wrong parameters or site is unreachable");
+		}
 		hashMapConstructor(rawInfos);
 
 	}
