@@ -9,9 +9,7 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.jdom2.Document;
 import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
 
 import com.github.lamsadetools.setCoordinates.UserDetails;
 import com.sun.star.lang.IllegalArgumentException;
@@ -27,17 +25,16 @@ public class GetInfosFromYearbook {
 
 	final static Logger LOGGER = Logger.getLogger(GetInfosFromYearbook.class);
 	// Set the properties file's path
-	static final String path = "src/main/resources/com/github/lamsadetools/yearbookInfos/log4j.properties";
+	static final String path = "src/main/resources/com/github/lamsadetools/log4j.properties";
 
 	/**
 	 * Ask the user for his name and find his informations
 	 *
 	 * @return return a UserDetails filled with the informations from Dauphine's
 	 *         yearbook
-	 * @throws IllegalArgumentException
-	 * @throws IOException
+	 * @throws Throwable
 	 */
-	public static UserDetails getUserDetails() throws IllegalArgumentException, IOException {
+	public static UserDetails getUserDetails() throws Throwable {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Name?:");
 		String name = sc.nextLine();
@@ -53,11 +50,9 @@ public class GetInfosFromYearbook {
 	 * @param firstname
 	 * @return return a UserDetails filled with the informations from Dauphine's
 	 *         yearbook
-	 * @throws IOException
-	 * @throws IllegalArgumentException
+	 * @throws Throwable
 	 */
-	public static UserDetails getUserDetails(String name, String firstname)
-			throws IllegalArgumentException, IOException {
+	public static UserDetails getUserDetails(String name, String firstname) throws Throwable {
 		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, name);
 		UserDetails user = new UserDetails(name, firstname, prof.getFonction(), prof.getTelephone(),
 				prof.getCourrier());
@@ -65,7 +60,7 @@ public class GetInfosFromYearbook {
 
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 		// path configuration for logger
 		PropertyConfigurator.configure(path);
 
@@ -73,10 +68,12 @@ public class GetInfosFromYearbook {
 			String prenom = "Olivier";
 			String nom = "CAILLOUX";
 			GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
+			System.out.println("info profjava:" + profJava.getBureau());
 			LOGGER.info("\n" + profJava.toString());
 		} catch (Exception e) {
 			// the message of the original exception is displayed
 			LOGGER.error("Error : ", e);
+			throw e;
 		}
 	}
 
@@ -86,15 +83,14 @@ public class GetInfosFromYearbook {
 
 	/**
 	 * Constructor using a person's firstname and surname
-	 * 
+	 *
 	 * @param firstname
 	 *            of the person may not be null
 	 * @param surname
 	 *            of the person not be null
-	 * @throws IllegalArgumentException
-	 *             when parameters are null
+	 * @throws Throwable
 	 */
-	public GetInfosFromYearbook(String firstname, String surname) throws IllegalArgumentException {
+	public GetInfosFromYearbook(String firstname, String surname) throws Throwable {
 		if (firstname == null || surname == null) {
 			throw new IllegalArgumentException("Firstname or surname is null");
 		}
@@ -105,6 +101,7 @@ public class GetInfosFromYearbook {
 			retrieveYearbookData(htmlPage);
 		} catch (Throwable t) {
 			LOGGER.error(t);
+			throw t;
 		}
 
 	}
@@ -170,12 +167,11 @@ public class GetInfosFromYearbook {
 	 *             from hashMapConstructor
 	 */
 	public void retrieveYearbookData(String htmlText) throws IOException, IllegalArgumentException, JDOMException {
-		SAXBuilder sb = new SAXBuilder();
-		try {
-			Document doc = sb.build(htmlText);
-		} catch (JDOMException e) {
-			throw new JDOMException("XML from String Error");
-		}
+		/*
+		 * SAXBuilder sb = new SAXBuilder(); try { Document doc =
+		 * sb.build(htmlText); } catch (JDOMException e) { throw new
+		 * JDOMException("XML from String Error"); }
+		 */
 		String line = null;
 		String nextLine = null;
 		ArrayList<String> rawInfos = new ArrayList<String>();

@@ -98,12 +98,12 @@ public class SetCoordinates {
 				}
 			}
 		}
+		System.out.println("PapierEnTete generated");
 	}
 
 	public static void main(String[] args) throws Exception {
 		UserDetails user = promptUserDetails();
 		fillPapierEnTete(user);
-		System.out.println("Done");
 
 	}
 
@@ -174,7 +174,6 @@ public class SetCoordinates {
 				if (runs != null) {
 					for (XWPFRun r : runs) {
 						String text = r.getText(0);
-						System.out.println("text:" + text);
 
 						if ((text != null) && text.contains("Prenom")) {
 							System.out.println("contains prenom");
