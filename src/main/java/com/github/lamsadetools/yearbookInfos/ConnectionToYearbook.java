@@ -5,8 +5,8 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.star.lang.IllegalArgumentException;
 
@@ -18,29 +18,38 @@ import com.sun.star.lang.IllegalArgumentException;
  *
  */
 public class ConnectionToYearbook {
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger(ConnectionToYearbook.class);
 
-	// Set logger
-	final static Logger LOGGER = Logger.getLogger(ConnectionToYearbook.class);
-	// Set the properties file's path
-	static final String path = "src/main/resources/com/github/lamsadetools/log4j.properties";
 	// html page from Yearbook
 	private String htmlPage;
-
+    private String firstname;
+    private String surname;
+    
 	/**
-	 *
-	 * @param firstname
-	 *            may not be null
-	 * @param surname
-	 *            may not be null
-	 * @throws IllegalArgumentException
-	 *             if null parameters
+	 * ConnectionToYearbook's Constructor
+	 * @param firstname may not be null
+	 * @param surname may not be null
+	 * @throws IllegalArgumentException if null parameters
 	 */
 	public ConnectionToYearbook(String firstname, String surname) throws IllegalArgumentException {
 
 		if (firstname == null || surname == null) {
 			throw new IllegalArgumentException("Firstname or surname is null");
 		}
+		this.firstname = firstname;
+		this.surname = surname;
+		
+	}
 
+	/**
+	 * Make the connection to the yearbook from a firstname and a surname
+	 * @param firstname may not be null
+	 * @param surname may not be null
+	 * @throws IllegalArgumentException if webtarget is null
+	 * @throws NullPointerException if no data found
+	 */
+	public void buildConnection() throws IllegalArgumentException, NullPointerException{ 
 		// Build the URL parameter with the firstname's first letter and the
 		// person's surname
 		String param = firstname.toLowerCase().charAt(0) + surname.toLowerCase();
@@ -52,34 +61,26 @@ public class ConnectionToYearbook {
 		// Build the targeted URL
 		WebTarget t1 = client.target(urlConstantPArt).queryParam("param0", param0).queryParam("param1", param);
 		// The entire HTML page is stocked in result
-		try {
-			htmlPageFiller(t1);
-		} catch (Throwable t) {
-			PropertyConfigurator.configure(path);
-			LOGGER.error(t);
-			throw t;
-		}
-
+		htmlPageFiller(t1);
 		client.close();
+		logger.info("Connection Established...");
 	}
 
 	/**
 	 * @return the htmlPage in a string format
 	 */
 
-	public String getHtmlPage() {
+	public String getHtmlPage() {	
+		logger.info("HTML Page is send");
 		return htmlPage;
 	}
 
 	/**
 	 *
-	 * @param webtrgt
-	 *            is the webtarget (url with parameters)
+	 * @param webtrgt is the webtarget (url with parameters)
 	 * @return a filled htmlpage
-	 * @throws IllegalArgumentException
-	 *             if webtarget is null
-	 * @throws NullPointerException
-	 *             if no data found
+	 * @throws IllegalArgumentException if webtarget is null
+	 * @throws NullPointerException if no data found
 	 */
 	private String htmlPageFiller(WebTarget webtrgt) throws IllegalArgumentException, NullPointerException {
 
@@ -92,8 +93,10 @@ public class ConnectionToYearbook {
 		if (htmlPage == null || htmlPage.isEmpty()) {
 			throw new NullPointerException("htmlPage has no data, the yearbook site may be down");
 		} else {
+			logger.info("Yearbook successfully targeted");
 			return htmlPage;
 		}
+		
 	}
 
 }
