@@ -14,17 +14,13 @@ public class TestGetInfosFromYearbook {
 		String firstname = "Olivier";
 		String surname = "CAILLOUX";
 		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, surname);
-		HashMap<String, String> hashTested = new HashMap<String, String>();
-		hashTested = prof.getHashMap();
-		HashMap<String, String> hashTest = new HashMap<String, String>();
-		hashTest.put("Courriel","olivier.cailloux@lamsade.dauphine.fr");
-		hashTest.put("Fonction","MAITRE DE CONFERENCES");
-		hashTest.put("Téléphone","+33 1 44 05 46 53");
-		hashTest.put("Groupes","MIDO - LAMSADE");
-		hashTest.put("Fax","non renseigné");
-		hashTest.put("Bureau","P405 ter");
-		Assert.assertTrue(hashTested.equals(hashTest));
-							
+		prof.retrieveYearbookData();
+		Assert.assertEquals("olivier.cailloux@lamsade.dauphine.fr", prof.getCourrier());
+		Assert.assertEquals("MAITRE DE CONFERENCES", prof.getFonction());
+		Assert.assertEquals("+33 1 44 05 46 53", prof.getTelephone());
+		Assert.assertEquals("MIDO - LAMSADE", prof.getGroupes());
+		Assert.assertEquals("non renseignÃ©", prof.getFax());
+		Assert.assertEquals("P405 ter", prof.getBureau());							
 	}
 	  
 	

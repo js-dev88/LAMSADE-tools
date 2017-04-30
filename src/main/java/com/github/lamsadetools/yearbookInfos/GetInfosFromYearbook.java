@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.jdom2.JDOMException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import com.github.lamsadetools.setCoordinates.UserDetails;
 import com.sun.star.lang.IllegalArgumentException;
@@ -23,59 +23,11 @@ import com.sun.star.lang.IllegalArgumentException;
  */
 public class GetInfosFromYearbook {
 
-	final static Logger LOGGER = Logger.getLogger(GetInfosFromYearbook.class);
-	// Set the properties file's path
-	static final String path = "src/main/resources/com/github/lamsadetools/log4j.properties";
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger(GetInfosFromYearbook.class);
 
-	/**
-	 * Ask the user for his name and find his informations
-	 *
-	 * @return return a UserDetails filled with the informations from Dauphine's
-	 *         yearbook
-	 * @throws Throwable
-	 */
-	public static UserDetails getUserDetails() throws Throwable {
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Name?:");
-		String name = sc.nextLine();
-		System.out.println("FirstName?:");
-		String first_name = sc.nextLine();
-		return getUserDetails(name, first_name);
-	}
-
-	/**
-	 * find informations of the person in parameter
-	 *
-	 * @param name
-	 * @param firstname
-	 * @return return a UserDetails filled with the informations from Dauphine's
-	 *         yearbook
-	 * @throws Throwable
-	 */
-	public static UserDetails getUserDetails(String name, String firstname) throws Throwable {
-		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, name);
-		UserDetails user = new UserDetails(name, firstname, prof.getFonction(), prof.getTelephone(),
-				prof.getCourrier());
-		return user;
-
-	}
-
-	public static void main(String[] args) throws Throwable {
-		// path configuration for logger
-		PropertyConfigurator.configure(path);
-
-		try {
-			String prenom = "Olivier";
-			String nom = "CAILLOUX";
-			GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
-			System.out.println("info profjava:" + profJava.getBureau());
-			LOGGER.info("\n" + profJava.toString());
-		} catch (Exception e) {
-			// the message of the original exception is displayed
-			LOGGER.error("Error : ", e);
-			throw e;
-		}
-	}
+	private String firstname;
+	private String surname;
 
 	// HashMap collection register informations with a key and an associated
 	// value
@@ -90,20 +42,24 @@ public class GetInfosFromYearbook {
 	 *            of the person not be null
 	 * @throws Throwable
 	 */
-	public GetInfosFromYearbook(String firstname, String surname) throws Throwable {
+	public GetInfosFromYearbook(String firstname, String surname) throws IllegalArgumentException {
 		if (firstname == null || surname == null) {
 			throw new IllegalArgumentException("Firstname or surname is null");
 		}
-		String htmlPage;
-		try {
-			ConnectionToYearbook newConnection = new ConnectionToYearbook(firstname, surname);
-			htmlPage = newConnection.getHtmlPage();
-			retrieveYearbookData(htmlPage);
-		} catch (Throwable t) {
-			LOGGER.error(t);
-			throw t;
-		}
+		this.firstname = firstname;
+		this.surname = surname;
 
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		String toString = "";
+		for (String i : informations.keySet()) {
+			toString += i + ": " + informations.get(i) + "\n";
+		}
+		return toString;
 	}
 
 	public String getBureau() {
@@ -132,11 +88,8 @@ public class GetInfosFromYearbook {
 
 	/**
 	 * Construct the HasMap collections with proper label and values
-	 *
-	 * @param rawInfos
-	 *            contains lines with labels and lines with corresponding data
-	 * @throws Exception
-	 *             if the Hashmap contains no data
+	 * @param rawInfos contains lines with labels and lines with corresponding data
+	 * @throws Exception if the Hashmap contains no data
 	 * @return the HAshMap with all the person's informations
 	 */
 	private HashMap<String, String> hashMapConstructor(ArrayList<String> rawInfos) {
@@ -149,22 +102,20 @@ public class GetInfosFromYearbook {
 	}
 
 	/**
-	 * Put all the person's info in a Hashmap with labels for keys and data for
-	 * values
-	 *
-	 * @param htmlText
-	 *            is the yearBook's page in HTML format
-	 * @throws IOException
-	 *             if Nextline function fails
-	 * @throws IllegalArgumentException
-	 *             from hashMapConstructor
+	 * Make connection to the yearbook and retrieve an html page
+	 * Put all the person's info in a Hashmap with labels for keys and data for values
+	 * @param htmlText is the yearBook's page in HTML format
+	 * @throws IOException if Nextline function fails
+	 * @throws IllegalArgumentException from hashMapConstructor
 	 */
-	public void retrieveYearbookData(String htmlText) throws IOException, IllegalArgumentException, JDOMException {
-		/*
-		 * SAXBuilder sb = new SAXBuilder(); try { Document doc =
-		 * sb.build(htmlText); } catch (JDOMException e) { throw new
-		 * JDOMException("XML from String Error"); }
-		 */
+	public void retrieveYearbookData() throws IOException, IllegalArgumentException {
+		
+		//Yearbook connection
+		ConnectionToYearbook connection = new ConnectionToYearbook(firstname, surname);
+		connection.buildConnection();
+		String htmlText = connection.getHtmlPage();
+		
+		
 		String line = null;
 		String nextLine = null;
 		ArrayList<String> rawInfos = new ArrayList<String>();
@@ -217,12 +168,44 @@ public class GetInfosFromYearbook {
 		}
 	}
 
-	@Override
-	public String toString() {
-		String toString = "";
-		for (String i : informations.keySet()) {
-			toString += i + ": " + informations.get(i) + "\n";
-		}
-		return toString;
+	
+	
+	
+	/**
+	 * Ask the user for his name and find his informations
+	 * @return return a UserDetails filled with the informations from Dauphine's yearbook
+	 * @throws Throwable
+	 */
+	public static UserDetails getUserDetails() throws IllegalArgumentException {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Name?:");
+		String name = sc.nextLine();
+		System.out.println("FirstName?:");
+		String first_name = sc.nextLine();
+		return getUserDetails(name, first_name);
+	}
+
+	/**
+	 * find informations of the person in parameter
+	 * @param name
+	 * @param firstname
+	 * @return return a UserDetails filled with the informations from Dauphine's yearbook
+	 * @throws Throwable
+	 */
+	public static UserDetails getUserDetails(String name, String firstname) throws IllegalArgumentException {
+		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, name);
+		UserDetails user = new UserDetails(name, firstname, prof.getFonction(), prof.getTelephone(),
+				prof.getCourrier());
+		return user;
+
+	}
+
+	public static void main(String[] args) throws IllegalArgumentException {
+			String prenom = "Olivier";
+			String nom = "CAILLOUX";
+			GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
+			profJava.retrieveYearbookData();
+			logger.info("info profjava:" + profJava.getBureau());
+			logger.info("Informations sur l'objet GIFYB :\n" + profJava.toString());
 	}
 }

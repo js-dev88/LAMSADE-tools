@@ -6,9 +6,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.github.lamsadetools.yearbookInfos.GetInfosFromYearbook;
 import com.sun.star.lang.IllegalArgumentException;
 
 /**
@@ -16,8 +17,7 @@ import com.sun.star.lang.IllegalArgumentException;
  *
  */
 public class ItineraryMap {
-	private final static Logger LOGGER = Logger.getLogger(AddressInfos.class);
-	private static final String path = "src/test/resources/log4j.properties";
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItineraryMap.class);
 	
 	private String longitudeA;
 	private String latitudeA;
@@ -98,7 +98,7 @@ public class ItineraryMap {
 	}
 	
 	public static void main(String[] args) {
-		PropertyConfigurator.configure(path);
+	
 		
 		String rawAdressA = "Paris";
 		String rawAdressB = "Cologne";

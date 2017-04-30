@@ -13,7 +13,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.lamsadetools.yearbookInfos.GetInfosFromYearbook;
 
 /**
  * This class enable us to store some of the informations that a teacher may
@@ -31,9 +34,8 @@ public class Conference {
 			+ "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 	private static final String DATE_FORMAT = "dd/MM/yyyy";
 
-	final static Logger logger = Logger.getLogger(Conference.class);
-
-	static final String path = "src/main/resources/com/github/lamsadetools/log4j.properties";
+	@SuppressWarnings("unused")
+	private static final Logger logger = LoggerFactory.getLogger(Conference.class);
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
 
