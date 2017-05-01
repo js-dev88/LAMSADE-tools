@@ -54,7 +54,7 @@ public class ItineraryMap {
 	 * Open an URL into the default browser
 	 * @param url (must be a String)
 	 */
-	private void openMapUrl(String url){
+	public void openMapUrl(String url){
 		if(Desktop.isDesktopSupported())
 		{
 			try {
@@ -113,7 +113,7 @@ public class ItineraryMap {
 			System.out.println(url);
 			parisCologne.openMapUrl(url);
 						
-		} catch (IllegalArgumentException | IOException e) {
+		} catch (IOException e) {
 			LOGGER.error("Error : ", e);
 		}	
 		
