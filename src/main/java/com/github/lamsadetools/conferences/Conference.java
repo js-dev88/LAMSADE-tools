@@ -93,7 +93,7 @@ public class Conference {
 	 *
 	 * @return a conference object with the parameters passed by input
 	 */
-	public static Conference createConference() {
+	public static Conference promptConference() {
 		String tableauQuestion[] = { "url", "title", "start date" + " (" + DATE_FORMAT + ")",
 				"end date" + " (" + DATE_FORMAT + ")", "entry fee" };
 		Scanner sc = new Scanner(System.in);
@@ -438,7 +438,7 @@ public class Conference {
 
 			switch (option) {
 			case 1:
-				Conference.createConference();
+				insertInDatabase(Conference.promptConference());
 				break;
 			case 2:
 				Conference.searchMenu();
