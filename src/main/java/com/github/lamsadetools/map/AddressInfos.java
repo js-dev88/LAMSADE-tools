@@ -2,6 +2,7 @@ package com.github.lamsadetools.map;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,7 +11,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
-import com.sun.star.lang.IllegalArgumentException;
 
 public class AddressInfos {
 	
