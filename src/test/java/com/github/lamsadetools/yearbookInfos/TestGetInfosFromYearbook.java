@@ -10,7 +10,7 @@ public class TestGetInfosFromYearbook {
 
 	
 	@Test
-	public void testGetInfosFromYearbookWorks() throws IllegalArgumentException, IOException{
+	public void testGetInfosFromYearbookWorks() throws IllegalArgumentException, IOException, YearbookDataException{
 		String firstname = "Olivier";
 		String surname = "CAILLOUX";
 		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, surname);

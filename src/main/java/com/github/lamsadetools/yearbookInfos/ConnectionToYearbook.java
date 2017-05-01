@@ -1,5 +1,7 @@
 package com.github.lamsadetools.yearbookInfos;
 
+import java.io.File;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -22,7 +24,7 @@ public class ConnectionToYearbook {
 	private static final Logger logger = LoggerFactory.getLogger(ConnectionToYearbook.class);
 
 	// html page from Yearbook
-	private String htmlPage;
+	private File htmlPage;
     private String firstname;
     private String surname;
     
@@ -63,37 +65,37 @@ public class ConnectionToYearbook {
 		// The entire HTML page is stocked in result
 		htmlPageFiller(t1);
 		client.close();
-		logger.info("Connection Established...");
+		logger.debug("Connection Established...");
 	}
 
 	/**
 	 * @return the htmlPage in a string format
 	 */
 
-	public String getHtmlPage() {	
-		logger.info("HTML Page is send");
+	public File getHtmlPage() {	
+		logger.debug("HTML Page is send");
 		return htmlPage;
 	}
 
 	/**
 	 *
 	 * @param webtrgt is the webtarget (url with parameters)
-	 * @return a filled htmlpage
+	 * @return a filled html page File
 	 * @throws IllegalArgumentException if webtarget is null
 	 * @throws NullPointerException if no data found
 	 */
-	private String htmlPageFiller(WebTarget webtrgt) throws IllegalArgumentException, NullPointerException {
+	private File htmlPageFiller(WebTarget webtrgt) throws IllegalArgumentException, NullPointerException {
 
 		if (webtrgt == null) {
 			throw new IllegalArgumentException("Web Target is null, error during the target construction");
 		}
 
-		htmlPage = webtrgt.request(MediaType.TEXT_PLAIN).get(String.class);
+		htmlPage = webtrgt.request(MediaType.TEXT_HTML_TYPE).get(File.class);
 
-		if (htmlPage == null || htmlPage.isEmpty()) {
+		if (htmlPage == null) {
 			throw new NullPointerException("htmlPage has no data, the yearbook site may be down");
 		} else {
-			logger.info("Yearbook successfully targeted");
+			logger.debug("Yearbook successfully targeted");
 			return htmlPage;
 		}
 		
