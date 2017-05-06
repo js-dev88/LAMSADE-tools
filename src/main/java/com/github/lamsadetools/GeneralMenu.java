@@ -2,7 +2,7 @@ package com.github.lamsadetools;
 
 import java.util.Scanner;
 
-import com.github.lamsadetools.conferences.Conference;
+import com.github.lamsadetools.conferences.database.ConferenceDatabasePrompter;
 import com.github.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lamsadetools.setCoordinates.UserDetails;
 import com.github.lamsadetools.yearbookInfos.GetInfosFromYearbook;
@@ -49,7 +49,7 @@ public class GeneralMenu {
 			GeneralMenu.fillAForm();
 			break;
 		case 2:
-			Conference.menu();
+			ConferenceDatabasePrompter.menu();
 			break;
 		default:
 			break;

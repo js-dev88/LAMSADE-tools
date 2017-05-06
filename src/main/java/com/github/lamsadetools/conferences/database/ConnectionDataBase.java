@@ -1,4 +1,4 @@
-package com.github.lamsadetools.conferences;
+package com.github.lamsadetools.conferences.database;
 
 import java.sql.Connection;
 
