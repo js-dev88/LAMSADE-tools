@@ -12,10 +12,19 @@ import org.artofsolving.jodconverter.office.OfficeConnectionProtocol;
 import org.artofsolving.jodconverter.office.OfficeException;
 import org.artofsolving.jodconverter.office.OfficeManager;
 
-public class Convert implements AbstractFileConvertor {
+public class Convert {
 
-	private OfficeManager officeManager = null;
 	private OfficeDocumentConverter converter = null;
+	private OfficeManager officeManager = null;
+
+	public void convertToOdt(final File source, final File destination) throws OfficeException {
+
+		DocumentFormat outputFormat = converter.getFormatRegistry().getFormatByExtension("odt"); // "html"
+																									// ou
+																									// "pdf"
+
+		converter.convert(source, destination, outputFormat);
+	}
 
 	@PostConstruct
 	protected void initOfficeManager() {
@@ -42,16 +51,6 @@ public class Convert implements AbstractFileConvertor {
 
 		officeManager.stop();
 
-	}
-
-	@Override
-	public void convertToOdt(final File source, final File destination) throws OfficeException {
-
-		DocumentFormat outputFormat = converter.getFormatRegistry().getFormatByExtension("odt"); // "html"
-																									// ou
-																									// "pdf"
-
-		converter.convert(source, destination, outputFormat);
 	}
 
 }

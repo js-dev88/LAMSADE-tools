@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.github.lamsadetools.conferences.Conference;
+import com.github.lamsadetools.conferences.database.ConferenceDatabase;
+import com.github.lamsadetools.conferences.database.ConferenceDatabasePrompter;
 
 public class TestGround {
 
@@ -17,13 +19,13 @@ public class TestGround {
 
 		Conference conf = new Conference("Antoine s conf", "url", LocalDate.parse("10/03/2017", dtf),
 				LocalDate.parse("11/03/2017", dtf), 0);
-		Conference.insertInDatabase(conf);
+		ConferenceDatabase.insertInDatabase(conf);
 
 		int id = 10;
-		Conference.removeConferenceFromDatabase(id);
+		ConferenceDatabase.removeConferenceFromDatabase(id);
 
-		Conference.getAllConferencesFromDatabase();
-		Conference.menu();
+		ConferenceDatabase.getAllConferencesFromDatabase();
+		ConferenceDatabasePrompter.menu();
 
 		// Conference.getConferenceFromDatabase(1);
 
