@@ -1,9 +1,24 @@
 package com.github.lamsadetools.conferences;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.Dur;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.ValidationException;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.Organizer;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Version;
 
 /**
  * This class enable us to store some of the informations that a teacher may
@@ -17,9 +32,6 @@ import org.slf4j.LoggerFactory;
 public class Conference {
 
 	public static final String DATE_FORMAT = "dd/MM/yyyy";
-
-	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger(Conference.class);
 
 	private LocalDate end_date;
 
@@ -120,6 +132,99 @@ public class Conference {
 	public String toString() {
 		return "Conference [id=" + id + "title=" + title + ", url=" + url + ", start_date=" + start_date + ",end_date="
 				+ end_date + ", entry_fee=" + entry_fee + "]";
+	}
+
+	/**
+	 * Generates a vcal file with the conference details with this object's data
+	 *
+	 * @throws IOException
+	 * @throws ValidationException
+	 * @throws ParserException
+	 *
+	 * @author Javier Martínez
+	 */
+	void generateCalendarFile() throws IOException, ValidationException, ParserException {
+		String calFile = getTitle() + "ics.";
+
+		// start time
+		java.util.Calendar startCal = java.util.Calendar.getInstance();
+
+		startCal.setTime(java.sql.Date.valueOf(getStart_date()));
+		// end time
+		java.util.Calendar endCal = java.util.Calendar.getInstance();
+		endCal.setTime(java.sql.Date.valueOf(getEnd_date()));
+
+		String subject = "Conference";
+		String description = "A conference with a fee of " + getEntry_fee();
+		String hostEmail = "";
+
+		// Creating a new calendar
+		net.fortuna.ical4j.model.Calendar calendar = new net.fortuna.ical4j.model.Calendar();
+		calendar.getProperties().add(new ProdId("-//Ben Fortuna//iCal4j 1.0//EN"));
+		calendar.getProperties().add(Version.VERSION_2_0);
+		calendar.getProperties().add(CalScale.GREGORIAN);
+
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyyMMdd'T'hhmmss'Z'");
+		String strDate = sdFormat.format(startCal.getTime());
+
+		net.fortuna.ical4j.model.Date startDt = null;
+		try {
+			startDt = new net.fortuna.ical4j.model.Date(strDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		long diff = endCal.getTimeInMillis() - startCal.getTimeInMillis();
+		int min = (int) (diff / (1000 * 60));
+
+		Dur dur = new Dur(0, 0, min, 0);
+
+		// Creating a meeting event
+		VEvent meeting = new VEvent(startDt, dur, subject);
+
+		// This is where you would add a location if there was one
+		// meeting.getProperties().add(new Location(location));
+		meeting.getProperties().add(new Description());
+
+		try {
+			meeting.getProperties().getProperty(Property.DESCRIPTION).setValue(description);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			meeting.getProperties().add(new Organizer(null, "MAILTO:" + hostEmail));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+
+		calendar.getComponents().add(meeting);
+
+		FileOutputStream fout = null;
+
+		try {
+			fout = new FileOutputStream(calFile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		CalendarOutputter outputter = new CalendarOutputter();
+		outputter.setValidating(false);
+
+		try {
+			outputter.output(calendar, fout);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ValidationException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(meeting);
+
 	}
 
 }
