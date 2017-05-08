@@ -109,49 +109,53 @@ public class Tester {
 		 */
 		Group grp_conferencesInfos = new Group(shell, SWT.NONE);
 		GridData gd_conferencesInfos = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_conferencesInfos.heightHint = 160;
+		gd_conferencesInfos.heightHint = 215;
 		gd_conferencesInfos.widthHint = 677;
 		grp_conferencesInfos.setLayoutData(gd_conferencesInfos);
 		grp_conferencesInfos.setText("Conferences");
 
 		Table table = new Table(grp_conferencesInfos, SWT.V_SCROLL);
-		table.setBounds(0, 30, 654, 41);
+		table.setBounds(165, 28, 502, 134);
 		table.setHeaderVisible(true);
 		fillConferenceTable(table);
 
 		Button btn_addNewConf = new Button(grp_conferencesInfos, SWT.NONE);
-		btn_addNewConf.setBounds(533, 137, 121, 25);
-		btn_addNewConf.setText("Add new conference");
+		btn_addNewConf.setBounds(10, 180, 149, 25);
+		btn_addNewConf.setText("Create conference");
 
 		Label lblTitle = new Label(grp_conferencesInfos, SWT.NONE);
-		lblTitle.setBounds(10, 87, 23, 15);
+		lblTitle.setAlignment(SWT.RIGHT);
+		lblTitle.setBounds(25, 38, 50, 15);
 		lblTitle.setText("Title");
 		Text txt_title = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_title.setBounds(42, 84, 76, 21);
+		txt_title.setBounds(81, 35, 78, 21);
 
 		Label lblUrl = new Label(grp_conferencesInfos, SWT.NONE);
+		lblUrl.setAlignment(SWT.RIGHT);
 		lblUrl.setText("URL");
-		lblUrl.setBounds(143, 87, 23, 15);
+		lblUrl.setBounds(25, 66, 50, 15);
 		Text txt_url = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_url.setBounds(167, 84, 76, 21);
+		txt_url.setBounds(81, 63, 78, 21);
 
 		Label lblStartDate = new Label(grp_conferencesInfos, SWT.NONE);
+		lblStartDate.setAlignment(SWT.RIGHT);
 		lblStartDate.setText("Start Date");
-		lblStartDate.setBounds(270, 87, 55, 15);
+		lblStartDate.setBounds(10, 93, 65, 15);
 		Text txt_startDate = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_startDate.setBounds(323, 84, 76, 21);
+		txt_startDate.setBounds(81, 90, 78, 21);
 
 		Label lblEndDate = new Label(grp_conferencesInfos, SWT.NONE);
+		lblEndDate.setAlignment(SWT.RIGHT);
 		lblEndDate.setText("End Date");
-		lblEndDate.setBounds(416, 87, 55, 15);
+		lblEndDate.setBounds(10, 120, 65, 15);
 		Text txt_endDate = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_endDate.setBounds(467, 84, 76, 21);
+		txt_endDate.setBounds(81, 117, 78, 21);
 
 		Label lblFee = new Label(grp_conferencesInfos, SWT.NONE);
 		lblFee.setText("Fee");
-		lblFee.setBounds(557, 87, 23, 15);
+		lblFee.setBounds(42, 147, 33, 15);
 		Text txt_fee = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_fee.setBounds(578, 84, 76, 21);
+		txt_fee.setBounds(81, 144, 78, 21);
 
 		/*
 		 * Behavior of a click on the add new conference button
@@ -206,22 +210,24 @@ public class Tester {
 		gd_map.widthHint = 679;
 		grp_map.setLayoutData(gd_map);
 		Text departure = new Text(grp_map, SWT.BORDER);
-		departure.setLocation(100, 22);
+		departure.setLocation(101, 22);
 		departure.setSize(196, 21);
 		Text arrival = new Text(grp_map, SWT.BORDER);
-		arrival.setLocation(449, 22);
+		arrival.setLocation(101, 51);
 		arrival.setSize(196, 21);
 
 		Button btnItinerary = new Button(grp_map, SWT.NONE);
 		btnItinerary.setText("Validate");
-		btnItinerary.setBounds(597, 49, 48, 25);
+		btnItinerary.setBounds(303, 49, 68, 25);
 
 		Label lblDeparture = new Label(grp_map, SWT.NONE);
-		lblDeparture.setBounds(29, 25, 55, 15);
+		lblDeparture.setAlignment(SWT.RIGHT);
+		lblDeparture.setBounds(10, 25, 73, 15);
 		lblDeparture.setText("Departure");
 
 		Label lblArrival = new Label(grp_map, SWT.NONE);
-		lblArrival.setBounds(388, 25, 55, 15);
+		lblArrival.setAlignment(SWT.RIGHT);
+		lblArrival.setBounds(10, 54, 73, 15);
 		lblArrival.setText("Arrival");
 
 		/*
