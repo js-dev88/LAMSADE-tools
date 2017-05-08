@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
@@ -28,10 +29,14 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.com.lamsadetools.utils.Util;
 import com.github.lamsadetools.conferences.Conference;
 import com.github.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lamsadetools.map.AddressInfos;
 import com.github.lamsadetools.map.ItineraryMap;
+
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.ValidationException;
 
 /**
  * The Tester class is the interface of the LAMSADE-Tools application It allows
@@ -41,8 +46,15 @@ import com.github.lamsadetools.map.ItineraryMap;
 public class Tester {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Tester.class);
 
+	/**
+	 * Converts a LocalDate passed by parameter into a string
+	 *
+	 * @param localdate
+	 *            the date to be converted
+	 * @return
+	 */
 	private static String convertLocaldateToString(LocalDate localdate) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/LLLL/yyyy");
 		String formattedDate = localdate.format(formatter);
 		return formattedDate;
 	}
@@ -82,6 +94,7 @@ public class Tester {
 
 	public static void main(String[] args) throws SQLException {
 
+		System.setProperty("SWT_GTK3", "0");
 		Display display = new Display();
 		Shell shell = new Shell(display);
 
@@ -150,12 +163,64 @@ public class Tester {
 		lblEndDate.setBounds(10, 120, 65, 15);
 		Text txt_endDate = new Text(grp_conferencesInfos, SWT.BORDER);
 		txt_endDate.setBounds(81, 117, 78, 21);
-
 		Label lblFee = new Label(grp_conferencesInfos, SWT.NONE);
 		lblFee.setText("Fee");
 		lblFee.setBounds(42, 147, 33, 15);
 		Text txt_fee = new Text(grp_conferencesInfos, SWT.BORDER);
 		txt_fee.setBounds(81, 144, 78, 21);
+
+		// Create new Conference object, assign it values from
+		// selection, then pass it function to export to desktop
+		// public Conference(int id, String title, String url, LocalDate
+		// start_date, LocalDate end_date, double entry_fee)
+		Button btnExportEvent = new Button(grp_conferencesInfos, SWT.NONE);
+		btnExportEvent.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/M/yyyy");
+
+				TableItem[] ti = table.getSelection();
+
+				if (ti.length == 0) {
+					// Put somewhere that an event should be selected
+				} else {
+					Conference conf = new Conference(ti[0].getText(0), ti[0].getText(1),
+							LocalDate.parse(ti[0].getText(2), formatter), LocalDate.parse(ti[0].getText(3), formatter),
+							Double.parseDouble(ti[0].getText(4)));
+					try {
+						FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+						dialog.setFilterNames(new String[] { "Calendar Files", "All Files (*.*)" });
+						dialog.setFilterExtensions(new String[] { "*.ics", "*.*" }); // Windows
+
+						switch (Util.getOS()) {
+						case WINDOWS:
+							dialog.setFilterPath("c:\\");
+							break;
+						case LINUX:
+							dialog.setFilterPath("/");
+							break;
+						case MAC:
+							dialog.setFilterPath("/");
+							break;
+						case SOLARIS:
+							dialog.setFilterPath("/");
+							break;
+						default:
+							dialog.setFilterPath("/");
+						}
+
+						dialog.setFileName("conference.ics");
+						conf.generateCalendarFile(dialog.open());
+					} catch (IOException | ValidationException | ParserException e2) {
+						e2.printStackTrace();
+					}
+				}
+
+			}
+		});
+		btnExportEvent.setBounds(165, 178, 104, 28);
+		btnExportEvent.setText("Export Event");
 
 		/*
 		 * Behavior of a click on the add new conference button
