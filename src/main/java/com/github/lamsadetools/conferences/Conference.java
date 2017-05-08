@@ -16,7 +16,6 @@ import net.fortuna.ical4j.model.ValidationException;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.Description;
-import net.fortuna.ical4j.model.property.Organizer;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Version;
 
@@ -137,14 +136,16 @@ public class Conference {
 	/**
 	 * Generates a vcal file with the conference details with this object's data
 	 *
+	 * @param filename:
+	 *            the path including the name of the file to be generated
 	 * @throws IOException
 	 * @throws ValidationException
 	 * @throws ParserException
 	 *
 	 * @author Javier Martínez
 	 */
-	void generateCalendarFile() throws IOException, ValidationException, ParserException {
-		String calFile = getTitle() + "ics.";
+	public void generateCalendarFile(String filename) throws IOException, ValidationException, ParserException {
+		String calFile = filename;
 
 		// start time
 		java.util.Calendar startCal = java.util.Calendar.getInstance();
@@ -196,11 +197,12 @@ public class Conference {
 			e.printStackTrace();
 		}
 
-		try {
-			meeting.getProperties().add(new Organizer(null, "MAILTO:" + hostEmail));
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		// try {
+		// meeting.getProperties().add(new Organizer(null, "MAILTO:" +
+		// hostEmail));
+		// } catch (URISyntaxException e) {
+		// e.printStackTrace();
+		// }
 
 		calendar.getComponents().add(meeting);
 
