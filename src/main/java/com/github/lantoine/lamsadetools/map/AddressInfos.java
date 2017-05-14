@@ -1,22 +1,35 @@
 package com.github.lantoine.lamsadetools.map;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
-import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import com.github.lantoine.lamsadetools.yearbookInfos.YearbookDataException;
 
 
 public class AddressInfos {
 	
 	
-	private String rawAdress;
-	private HashMap<String, String> information = new HashMap<String, String>();
+	private String rawAddress;
+	private String formatted_address;
+	private String longitude;
+	private String latitude;
 
 	
 	/**
@@ -25,155 +38,94 @@ public class AddressInfos {
 	 * 
 	 * @param rawAdress
 	 * @throws IllegalArgumentException
-	 * @throws IOException
 	 */
-	public AddressInfos(String rawAdress) throws IllegalArgumentException, IOException {
+	public AddressInfos(String rawAdress) throws IllegalArgumentException {
 		if(rawAdress == null ){
 			throw new IllegalArgumentException("The rawAdress cannot be null");
 		}		
-		this.rawAdress = rawAdress;		
-		//Build the URL parameter with the address needed
-		String param1 = rawAdress;
-		//This part of the url is always the same
-		String urlConstantPart = "http://maps.googleapis.com/maps/api/geocode/xml?sensor=true";
-		//First step of the JAX rs class => Client initialization
-		Client client = ClientBuilder.newClient();
-		//Build the targeted URL
-		WebTarget t1 = client.target(urlConstantPart);
-		WebTarget t2 = t1.queryParam("address", param1);
-		
-		//The entire HTML page is stocked in result
-		String result = t2.request(MediaType.TEXT_PLAIN).get(String.class);
-		retrieveGeocodeResponse(result);
-		client.close();	
+		this.rawAddress = rawAdress;
+		this.formatted_address = "";
+		this.longitude ="0";
+		this.latitude="0";
 	}
-	
-	
 	
 	/**
 	 * 
-	 * retrieveGeocodeResponse read a string which contains a geocode response from maps.googleapis
-	 * it fills a hashmap with the address, latitude and longitude and their corresponding values.
+	 * retrieveGeocodeResponse connects to maps.googleapis
+	 * enters the rawAddress and gets a geocode response
+	 * It takes from the geocode response : the formatted_address, latitude and longitude 
+	 * and sets the corresponding class attributs 
 	 * 
-	 * @param xmlText
 	 * @throws IOException
-	 * @throws IllegalArgumentException
 	 * 
 	 * 
-	 */
-	private void retrieveGeocodeResponse(String xmlText) throws IOException, IllegalArgumentException {
-
-		String line = null;
-		String nextLine = null;
-		ArrayList<String> rawInfos = new ArrayList<String>();
-
-		// read each line and add it into rawInfos
-		try (BufferedReader br = new BufferedReader(new StringReader(xmlText))) {
-			while ((line = br.readLine()) != null) {
-				//check whether the status of the resquest is OK or not
-				if (line.contains("<status>")) { 
-					superfluousRemover(rawInfos);
-					if (!line.contains("OK")){
-						throw new IllegalArgumentException("the address typed doesn't exist: " + rawAdress);
-					}
-				}
-				// Add the formatted address into rawInfos
-				if (line.contains("<formatted_address>")){
-					rawInfos.add("Address");
-					rawInfos.add(line);
-				}
-				
-				//Add the longitude and latitude into rawInfos
-				if (line.contains("<location>") ){
-					while (!(nextLine = br.readLine()).contains("</location>")){
-						if (nextLine.contains("<lat>")){
-							rawInfos.add("Latitude");
-							rawInfos.add(nextLine);
-						}
-						
-						if (nextLine.contains("<lng>")){
-							rawInfos.add("Longitude");
-							rawInfos.add(nextLine);
-						}		
-					}
+	 */	
+	public void retrieveGeocodeResponse() throws IOException,
+	SAXException, ParserConfigurationException, IllegalArgumentException {
+		DocumentBuilderFactory factory = null;
+		DocumentBuilder builder = null;
+		Document htmlDoc = null;
+		
+		//Connection to the google maps api 
+		ConnectionToGoogleMapsApi connection = new ConnectionToGoogleMapsApi(this.rawAddress);
+		connection.buildConnection();
+		InputStream htmlText = connection.getHtmlPage();
+		
+		// InputStream transformed in DOM Document
+		factory = DocumentBuilderFactory.newInstance();
+		builder = factory.newDocumentBuilder();
+		htmlDoc = builder.parse(new InputSource(htmlText));
+		// close the stream
+		htmlText.close();
+		NodeList status = htmlDoc.getElementsByTagName("status");
+		// Checks if the request has a positive result
+		if (status.getLength() != 0) {
+			for (int i = 0; i < status.getLength(); i++) {
+				if (!status.item(i).getTextContent().contains("OK")) {
+					throw new IllegalArgumentException("the address typed doesn't exist: " + rawAddress);
 				}
 			}
-		} catch (IOException e2) {
-			throw new IOException("Error when trying to read Nextline", e2);
 		}
-		superfluousRemover(rawInfos);
-		hashMapConstructor(rawInfos);
-
+		@SuppressWarnings("hiding")
+		NodeList formatted_address = htmlDoc.getElementsByTagName("formatted_address");
+		if (formatted_address.getLength() != 0) {
+			for (int i = 0; i < formatted_address.getLength(); i++) {
+				this.formatted_address = formatted_address.item(i).getTextContent();
+			}
+		}
+		NodeList location = htmlDoc.getElementsByTagName("location");
+		for (int i = 0; i < location.getLength(); i++) {
+			NodeList lat = htmlDoc.getElementsByTagName("lat");
+			latitude = lat.item(0).getTextContent();
+			NodeList lng = htmlDoc.getElementsByTagName("lng");
+			longitude = lng.item(0).getTextContent();
+		}
+		
 	}
-	
-	/**
-	 * Remove unnecessary html/xml tags and spaces (before the first character and after the last one).
-	 * @param rawInfos
-	 * 
-	 */
-	private void superfluousRemover(ArrayList<String> rawInfos) {
-		for (int i = 0; i < rawInfos.size(); ++i) {
-			rawInfos.set(i, rawInfos.get(i).replaceAll("<[^>]+>", "")); // delete
-																	// every
-																	// XML tags
-			rawInfos.set(i, rawInfos.get(i).trim()); // delete every spaces
-												// surrounding the string
-		}
-	}
-	
-	/**
-	 * Construct the HasMap collections with proper label and values
-	 *
-	 * @param rawInfos
-	 *            contains lines with labels and lines with corresponding data
-	 * @throws IllegalArgumentException
-	 *             if rawInfos is null, this indicates that the address is wrong, 
-	 *             no data is found or the original HTML page is a 404.
-	 * @throws IllegalArgumentException
-	 *             if the rawInfos contains no data
-	 * @return the HAshMap with all the person's informations
-	 */
-	private HashMap<String, String> hashMapConstructor(ArrayList<String> rawInfos) throws IllegalArgumentException {
-		if (rawInfos.isEmpty() || rawInfos.size() == 0) {
-			throw new IllegalArgumentException("Wrong parameters or site is unreachable");
-		}
-		int j = 0;
-		while (j < rawInfos.size()) {
-			information.put(rawInfos.get(j), rawInfos.get(j + 1));
-			j += 2;
-		}
-		return information;
-	}
-	
-	
 	
 	@Override
 	public String toString() {
 		String toString = "";
-		for (String i : information.keySet()) {
-			toString += i + ": " + information.get(i) + "\n";
-		}
+		toString += "rawAddress = " + rawAddress + "\n" +
+				"formatted_address = " + formatted_address + "\n"+
+				"latitude = " + latitude + "\n"+
+				"longitude = " + longitude;
 		return toString;
 	}
 	
-	public String getRawAdress() {
-		return rawAdress;
+	public String getRawAddress() {
+		return rawAddress;
 	}
 
-	public HashMap<String, String> getInformation() {
-		return information;
-	}
-	
-	public String getAddress() {
-		return information.get("Address");
+	public String getFormatted_address() {
+		return formatted_address;
 	}
 	
 	public String getLatitude() {
-		return information.get("Latitude");
+		return latitude;
 	}
 	
 	public String getLongitude() {
-		return information.get("Longitude");
+		return longitude;
 	}
-	
 }

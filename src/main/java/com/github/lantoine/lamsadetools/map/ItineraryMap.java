@@ -41,6 +41,22 @@ public class ItineraryMap {
 	}
 	
 	/**
+	 * ItineraryMap needs two AddressInfos.
+	 * 
+	 * 
+	 * @param longitudeA
+	 * @param latitudeA
+	 * @param longitudeB
+	 * @param latitudeB
+	 */
+	public ItineraryMap(AddressInfos addressA, AddressInfos addressB) {
+		this.latitudeA=addressA.getLatitude();
+		this.longitudeA= addressA.getLongitude();
+		this.latitudeB=addressB.getLatitude();
+		this.longitudeB=addressB.getLongitude();
+	}
+	
+	/**
 	 * This method sets the openstreetmap url according to the longitudes and latitudes entered in the class attributes
 	 * @return url (a String)
 	 */
@@ -102,20 +118,15 @@ public class ItineraryMap {
 		
 		String rawAdressA = "Paris";
 		String rawAdressB = "Cologne";
-		try {
-			AddressInfos paris = new AddressInfos(rawAdressA);
-			AddressInfos cologne = new AddressInfos(rawAdressB);
-			ItineraryMap parisCologne = new ItineraryMap(paris.getLongitude(), paris.getLatitude(), 
-					cologne.getLongitude(), cologne.getLatitude());
-			LOGGER.info("\n" + paris.toString());
-			LOGGER.info("\n" + cologne.toString());
-			String url = parisCologne.setMapUrl();
-			System.out.println(url);
-			parisCologne.openMapUrl(url);
-						
-		} catch (IOException e) {
-			LOGGER.error("Error : ", e);
-		}	
+		AddressInfos paris = new AddressInfos(rawAdressA);
+		AddressInfos cologne = new AddressInfos(rawAdressB);
+		ItineraryMap parisCologne = new ItineraryMap(paris.getLongitude(), paris.getLatitude(), 
+				cologne.getLongitude(), cologne.getLatitude());
+		LOGGER.info("\n" + paris.toString());
+		LOGGER.info("\n" + cologne.toString());
+		String url = parisCologne.setMapUrl();
+		System.out.println(url);
+		parisCologne.openMapUrl(url);	
 		
 	}	
 }
