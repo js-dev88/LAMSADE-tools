@@ -48,7 +48,7 @@ public class SetCoordinates {
 
 		// define source and target
 		ClassLoader classLoader = SetCoordinates.class.getClassLoader();
-		String source = classLoader.getResource("com/github/lamsadetools/setCoordinates/papier_a_en_tete.fodt")
+		String source = classLoader.getResource("com/github/lantoine/lamsadetools/setCoordinates/papier_a_en_tete.fodt")
 				.getPath();
 		String target = path.toAbsolutePath() + "/papier_a_en_tete_Clone.fodt";
 
