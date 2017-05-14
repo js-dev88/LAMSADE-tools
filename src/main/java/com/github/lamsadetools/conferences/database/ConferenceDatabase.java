@@ -17,6 +17,8 @@ public class ConferenceDatabase {
 	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
 			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
 			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, " + "entry_fee        double, "
+			+ "City            varchar(255) NOT NULL, "
+			+"Address            varchar(255) NOT NULL, "
 			+ "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
@@ -63,6 +65,7 @@ public class ConferenceDatabase {
 			new_statement = actual_statement + "AND " + field + " = \"" + content + "\" ";
 		}
 		return new_statement;
+		
 	}
 
 	/**
@@ -74,6 +77,7 @@ public class ConferenceDatabase {
 	 * @throws SQLException
 	 */
 	public static boolean editConferenceInDatabase(Conference conf) throws SQLException {
+		
 		String where_statement = "WHERE conferenceID = \"" + conf.getId() + "\"";
 		String set_statement = "";
 		if (!conf.getTitle().isEmpty()) {
@@ -93,6 +97,13 @@ public class ConferenceDatabase {
 		if (!(conf.getEntry_fee() == -1)) {
 			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "entry_fee",
 					Double.toString(conf.getEntry_fee()));
+		}
+		if (!conf.getCity().isEmpty()) {
+			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "Title", conf.getTitle());
+		}
+		
+		if (!conf.getAddress().isEmpty()) {
+			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "Title", conf.getTitle());
 		}
 		set_statement = "UPDATE conferences " + set_statement + where_statement + ";";
 
@@ -163,13 +174,16 @@ public class ConferenceDatabase {
 					LocalDate start_date = LocalDate.parse(result.getString(4));
 					LocalDate end_date = LocalDate.parse(result.getString(5));
 					double entry_fee = result.getDouble(6);
-					conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee));
+					String city = result.getString(7);
+					String address = result.getString(8);
+					conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee, city, address));
 				}
 
 				for (Conference i : conferencesArray) {
 					System.out.println("####################");
 					System.out.println("Conference: " + i.getTitle() + " (" + i.getUrl() + ")");
 					System.out.println("From the " + i.getStart_date() + " to the " + i.getEnd_date());
+					System.out.println("in" + i.getCity() + " to this address " + i.getAddress());
 					System.out.println("Fee: " + i.getEntry_fee());
 				}
 
@@ -210,9 +224,11 @@ public class ConferenceDatabase {
 			LocalDate start_date = LocalDate.parse(result.getString(4));
 			LocalDate end_date = LocalDate.parse(result.getString(5));
 			double entry_fee = result.getDouble(6);
+			String city = result.getString(7);
+			String address = result.getString(8);
 			result.close();
 			state.close();
-			return new Conference(id, title, url, start_date, end_date, entry_fee);
+			return new Conference(id, title, url, start_date, end_date, entry_fee, city, address);
 		}
 	}
 
@@ -306,7 +322,9 @@ public class ConferenceDatabase {
 					LocalDate _start_date = LocalDate.parse(result.getString(4));
 					LocalDate _end_date = LocalDate.parse(result.getString(5));
 					double _entry_fee = result.getDouble(6);
-					conferencesArray.add(new Conference(_id, _url, _title, _start_date, _end_date, _entry_fee));
+					String city = result.getString(7);
+					String address = result.getString(8);
+					conferencesArray.add(new Conference(_id, _url, _title, _start_date, _end_date, _entry_fee, city, address));
 				}
 
 				result.close();

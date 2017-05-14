@@ -18,7 +18,7 @@ public class TestGround {
 		dtf.withLocale(Locale.FRANCE);
 
 		Conference conf = new Conference("Antoine s conf", "url", LocalDate.parse("10/03/2017", dtf),
-				LocalDate.parse("11/03/2017", dtf), 0);
+				LocalDate.parse("11/03/2017", dtf), 0, "city", "address");
 		ConferenceDatabase.insertInDatabase(conf);
 
 		int id = 10;

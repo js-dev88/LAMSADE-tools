@@ -52,7 +52,11 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 		LocalDate end_date = LocalDate.parse(sc.nextLine(), dtf);
 		System.out.println("New title (optional): ");
 		double entry_fee = sc.nextDouble();
-		Conference conf = new Conference(id, title, url, start_date, end_date, entry_fee);
+		System.out.println("New city: ");
+		String city = sc.nextLine();
+		System.out.println("New address: ");
+		String address = sc.nextLine();
+		Conference conf = new Conference(id, title, url, start_date, end_date, entry_fee, city, address);
 		if (ConferenceDatabase.editConferenceInDatabase(conf)) {
 			System.out.println("Edit Successful");
 		} else {
@@ -151,6 +155,8 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 			System.out.println("1. Search by name");
 			System.out.println("2. Search by URL.");
 			System.out.println("3. Search by start date");
+			System.out.println("4. Search by city");
+			System.out.println("5. Search by address");
 			System.out.println("0. Exit");
 			String optionstr = io.scanner.nextLine();
 			// Verify input is an integer
@@ -171,7 +177,12 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 				break;
 			case 3:
 				ConferenceDatabase.getAllConferencesFromDatabase(getValidSearchQuery(), "startdate");
-
+				break;
+			case 4:
+				ConferenceDatabase.getAllConferencesFromDatabase(getValidSearchQuery(), "city");
+				break;
+			case 5:
+				ConferenceDatabase.getAllConferencesFromDatabase(getValidSearchQuery(), "address");
 				break;
 			default:
 			}

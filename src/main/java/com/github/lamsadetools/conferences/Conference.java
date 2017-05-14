@@ -32,19 +32,26 @@ public class Conference {
 	private String title;
 
 	private String url;
+	
+	private String city;
+	
+	private String address;
 
 
-	public Conference(int id, String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee) {
+	public Conference(int id, String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee, String city, String address) {
 		this.id = id;
 		this.url = url;
 		this.title = title;
 		this.start_date = start_date;
 		this.end_date = end_date;
 		this.entry_fee = entry_fee;
+		this.city = city;
+		this.address = address;
+		
 	}
 
-	public Conference(String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee) {
-		this(0, title, url, start_date, end_date, entry_fee);
+	public Conference(String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee, String city, String address) {
+		this(0, title, url, start_date, end_date, entry_fee,city,address );
 	}
 
 	@Override
@@ -58,12 +65,22 @@ public class Conference {
 			System.out.println(conference2.toString());
 			if (title.equals(conference2.title) && url.equals(conference2.url)
 					&& start_date.equals(conference2.start_date) && end_date.equals(conference2.end_date)
-					&& (entry_fee == conference2.entry_fee)) {
+					&& (entry_fee == conference2.entry_fee)&&(city.equals(conference2.city)&& address.equals(conference2.address))) {
 				return true;
 			}
 		}
 		return false;
 	}
+
+	public String getCity() {
+		return city;
+	}
+
+
+	public String getAddress() {
+		return address;
+	}
+
 
 	public LocalDate getEnd_date() {
 		return end_date;
@@ -116,11 +133,19 @@ public class Conference {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+	public void setCity(String city) {
+		this.city = city;
+	}
+	
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
 	@Override
 	public String toString() {
 		return "Conference [id=" + id + "title=" + title + ", url=" + url + ", start_date=" + start_date + ",end_date="
-				+ end_date + ", entry_fee=" + entry_fee + "]";
+				+ end_date + ", entry_fee=" + entry_fee +",city=" + city +", address=" + address+"]";
 	}
 
 }
