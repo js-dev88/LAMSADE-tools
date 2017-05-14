@@ -160,7 +160,7 @@ public class ConferenceDatabase {
 
 			try (ResultSet result = type.isEmpty() && value.isEmpty() ? state.executeQuery("SELECT * FROM conference")
 					: state.executeQuery(
-							"SELECT * FROM conference WHERE " + type + " = '" + value + "' ORDER BY start_date;")) {
+							"SELECT * FROM conference WHERE " + value + " = '" + type + "' ORDER BY start_date;")) {
 
 				DateFormat format = new SimpleDateFormat(Conference.DATE_FORMAT);
 				format.setLenient(false);
@@ -183,7 +183,7 @@ public class ConferenceDatabase {
 					System.out.println("####################");
 					System.out.println("Conference: " + i.getTitle() + " (" + i.getUrl() + ")");
 					System.out.println("From the " + i.getStart_date() + " to the " + i.getEnd_date());
-					System.out.println("in" + i.getCity() + " to this address " + i.getAddress());
+					System.out.println("in " + i.getCity() + " to this address " + i.getAddress());
 					System.out.println("Fee: " + i.getEntry_fee());
 				}
 
@@ -258,9 +258,9 @@ public class ConferenceDatabase {
 
 		ConferenceDatabase.getConnectionDataBase().sqlQuery(CREATETABLE);
 
-		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
+		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee, city, address)   VALUES ('"
 				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getStart_date() + "','" + conf.getEnd_date()
-				+ "','" + conf.getEntry_fee() + "' );";
+				+ "','" + conf.getEntry_fee() + "','" + conf.getCity() + "','" + conf.getAddress()+"' );";
 
 		ConferenceDatabase.getConnectionDataBase().sqlQuery(insert_statement);
 		ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
