@@ -1,10 +1,12 @@
 package com.github.lantoine.lamsadetools.yearbookInfos;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -27,28 +29,12 @@ public class TestConnectionToYearbook {
 		
 		ConnectionToYearbook test = new ConnectionToYearbook("Olivier", "Cailloux");
 		test.buildConnection();
-		File HTMLPage = test.getHtmlPage();
+		InputStream HTMLPage = test.getHtmlPage();
 		Assert.assertNotNull(HTMLPage);
-		
+		HTMLPage.close();
 		
 					
 	}
 	
-	@Test
-	public void testContentOfHtmlAndAvoid404() throws IOException, URISyntaxException, IllegalArgumentException{
-		
-		ConnectionToYearbook test = new ConnectionToYearbook("Olivier", "Cailloux");
-		test.buildConnection();
-		File HTMLPage = test.getHtmlPage();
-		//Used to create a reference file 
-		/*FileInputStream fis = new FileInputStream(HTMLPage);
-	    File targetFile = new File("src/test/resources/com/github/lamsadetools/yearbookInfos/testHtmlPage.html");
-	    java.nio.file.Files.copy(
-	    		  fis, 
-			      targetFile.toPath(), 
-			      StandardCopyOption.REPLACE_EXISTING);
-	    IOUtils.closeQuietly(fis);*/
-		File file = new File(TestConnectionToYearbook.class.getResource("testHtmlPage.html").getFile());
-		Assert.assertEquals(FileUtils.readLines(file), FileUtils.readLines(HTMLPage));
-	}
+	
 }

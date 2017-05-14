@@ -1,10 +1,11 @@
 package com.github.lantoine.lamsadetools.yearbookInfos;
 
 import java.io.IOException;
-import java.util.HashMap;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import com.github.lantoine.lamsadetools.yearbookInfos.GetInfosFromYearbook;
 import com.github.lantoine.lamsadetools.yearbookInfos.YearbookDataException;
@@ -13,7 +14,7 @@ public class TestGetInfosFromYearbook {
 
 	
 	@Test
-	public void testGetInfosFromYearbookWorks() throws IllegalArgumentException, IOException, YearbookDataException{
+	public void testGetInfosFromYearbookWorks() throws IllegalArgumentException, IOException, YearbookDataException, SAXException, ParserConfigurationException{
 		String firstname = "Olivier";
 		String surname = "CAILLOUX";
 		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, surname);

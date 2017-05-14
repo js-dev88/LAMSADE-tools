@@ -1,24 +1,30 @@
 package com.github.lantoine.lamsadetools.yearbookInfos;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.sun.star.lang.IllegalArgumentException;
 
 /**
  * GetInfosFromYearbook will get information from Dauphine's yearbook It needs
- * the name and the surname of the person you want to get information.
- * To retrive the information
+ * the name and the surname of the person you want to get information. To
+ * retrive the information
+ * 
  * @author Abdelkader ZEROUALI, Antony Entremont, Julien Saussier
  *
  */
@@ -30,14 +36,17 @@ public class GetInfosFromYearbook {
 	private String firstname;
 	private String surname;
 
-	// HashMap collection register informations with a key and an associated value
+	// HashMap collection register informations with a key and an associated
+	// value
 	private HashMap<String, String> informations = new HashMap<String, String>();
 
 	/**
 	 * Constructor using a person's firstname and surname
 	 *
-	 * @param firstname of the person may not be null
-	 * @param surname of the person not be null
+	 * @param firstname
+	 *            of the person may not be null
+	 * @param surname
+	 *            of the person not be null
 	 * @throws Throwable
 	 */
 	public GetInfosFromYearbook(String firstname, String surname) throws IllegalArgumentException {
@@ -48,7 +57,7 @@ public class GetInfosFromYearbook {
 		this.surname = surname;
 
 	}
-		
+
 	@Override
 	public String toString() {
 		String toString = "";
@@ -57,58 +66,81 @@ public class GetInfosFromYearbook {
 		}
 		return toString;
 	}
-	
+
 	/**
-	 * Make connection to the yearbook and retrieve an html page
-	 * Put all the person's info in a Hashmap with labels for keys and data for values
-	 * @param htmlText is the yearBook's page in HTML format
-	 * @throws IOException if Nextline function fails
-	 * @throws IllegalArgumentException from hashMapConstructor
-	 * @throws YearbookDataException 
+	 * Make connection to the yearbook and retrieve an html page Put all the
+	 * person's info in a Hashmap with labels for keys and data for values
+	 * 
+	 * @param htmlText
+	 *            is the yearBook's page in HTML format
+	 * @throws IOException
+	 *             if Nextline function fails
+	 * @throws IllegalArgumentException
+	 *             from hashMapConstructor
+	 * @throws YearbookDataException
+	 *             from ConnectionToYearbook
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
 	 */
-	public void retrieveYearbookData() throws IOException, IllegalArgumentException, YearbookDataException {
-		
-		//Yearbook connection
+	public void retrieveYearbookData() throws IOException, IllegalArgumentException, YearbookDataException,
+			SAXException, ParserConfigurationException {
+		DocumentBuilderFactory factory = null;
+		DocumentBuilder builder = null;
+		Document htmlDoc = null;
+
+		// Yearbook connection
 		ConnectionToYearbook connection = new ConnectionToYearbook(firstname, surname);
 		connection.buildConnection();
-		File htmlText = connection.getHtmlPage();
-		
-		//Instanciate a jsoup document
-		org.jsoup.nodes.Document jsoupDoc = Jsoup.parse(htmlText, StandardCharsets.UTF_8.name());
-        //Verify parameters
-		if(!jsoupDoc.getElementsByTag("h3").isEmpty()){
-			if(jsoupDoc.getElementsByTag("h3").text() == "Erreur 404"){
-				throw new YearbookDataException("404 Error - Wrong name or surname");
-			}
-		}
-		//If parameters are valid create a Hashmap with Professor's information
-		Elements ulList = jsoupDoc.getElementsByTag("ul");
+		InputStream htmlText = connection.getHtmlPage();
 
-		for(Element ul : ulList){
-			String category ="";
-			String info ="";
-			Elements listOfli = ul.children();
-			for(Element li : listOfli){
-				if(li.hasClass("label")){
-					category = li.text().trim();
-				}else if(li.hasClass("value")){
-					info = li.text().trim();
+		// InputStream transformed in DOM Document
+		factory = DocumentBuilderFactory.newInstance();
+		builder = factory.newDocumentBuilder();
+		htmlDoc = builder.parse(new InputSource(htmlText));
+
+		// close the stream
+		htmlText.close();
+
+		NodeList h3 = htmlDoc.getElementsByTagName("h3");
+
+		// Verify parameters
+		if (h3.getLength() != 0) {
+			for (int i = 0; i < h3.getLength(); i++) {
+				if (h3.item(i).getNodeValue() == "Erreur 404") {
+					throw new YearbookDataException("404 Error - Wrong name or surname");
+				}
+			}
+
+		}
+		// If parameters are valid create a Hashmap with Professor's information
+		NodeList ulList = htmlDoc.getElementsByTagName("ul");
+
+		for (int i = 0; i < ulList.getLength(); i++) {
+			String category = "";
+			String info = "";
+			NodeList listOfLi = ulList.item(i).getChildNodes();
+			for (int j = 0; j < listOfLi.getLength(); j++) {
+				if (listOfLi.item(j).getNodeName() == "li") {
+					Element li = (Element) listOfLi.item(j);
+					if (li.getAttribute("class").equals("label")) {
+						logger.debug("cat: "+ li.getTextContent().trim());
+						category = li.getTextContent().trim();
+					} else if (li.getAttribute("class").equals("value")) {
+						info = li.getTextContent().trim();
+					}
 				}
 				informations.put(category, info);
-				
 			}
-			
-			
+
 		}
 
-	    if(informations.size() > 7){
-	    	throw new YearbookDataException("Too many rows in Hashmap");
-	    }else if(informations.size() < 7){
-	    	throw new YearbookDataException("Some yearbook's informations are missing");
-	    }
+		if (informations.size() > 7) {
+			throw new YearbookDataException("Too many rows in Hashmap");
+		} else if (informations.size() < 7) {
+			throw new YearbookDataException("Some yearbook's informations are missing");
+		}
 		logger.debug("Professor's Informations are ready to be exploited...");
 	}
-
 
 	public String getBureau() {
 		return informations.get("Bureau");
@@ -134,43 +166,51 @@ public class GetInfosFromYearbook {
 		return informations.get("Téléphone");
 	}
 
-	
-
-
-
-	
-	
 	/**
 	 * Ask the user for his name and find his informations
-	 * @return return a UserDetails filled with the informations from Dauphine's yearbook
-	 * @throws YearbookDataException 
-	 * @throws IOException 
+	 * 
+	 * @return return a UserDetails filled with the informations from Dauphine's
+	 *         yearbook
+	 * @throws YearbookDataException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
 	 * @throws Throwable
 	 */
-	/*No Upperletter for a function only for constructor, 
-	 * please report this code in the UserDetails class or any class from setcoordinates
+	/*
+	 * No Upperletter for a function only for constructor, please report this
+	 * code in the UserDetails class or any class from setcoordinates
 	 */
-	public static UserDetails getUserDetails() throws IllegalArgumentException, IOException, YearbookDataException {
+	public static UserDetails getUserDetails() throws IllegalArgumentException, IOException, YearbookDataException,
+			SAXException, ParserConfigurationException {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Name?:");
 		String name = sc.nextLine();
 		System.out.println("FirstName?:");
 		String first_name = sc.nextLine();
+		sc.close();
 		return getUserDetails(name, first_name);
 	}
 
 	/**
 	 * find informations of the person in parameter
+	 * 
 	 * @param name
 	 * @param firstname
-	 * @return return a UserDetails filled with the informations from Dauphine's yearbook
-	 * @throws IOException 
-	 * @throws YearbookDataException 
+	 * @return return a UserDetails filled with the informations from Dauphine's
+	 *         yearbook
+	 * @throws IOException
+	 * @throws YearbookDataException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
 	 * @throws Throwable
 	 */
-	/*No Upperletter for a function only for constructor
-	  Userdetails instanciation must be in the setcoordinates package*/
-	public static UserDetails getUserDetails(String name, String firstname) throws IllegalArgumentException, IOException, YearbookDataException {
+	/*
+	 * No Upperletter for a function only for constructor Userdetails
+	 * instanciation must be in the setcoordinates package
+	 */
+	public static UserDetails getUserDetails(String name, String firstname) throws IllegalArgumentException,
+			IOException, YearbookDataException, SAXException, ParserConfigurationException {
 		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, name);
 		prof.retrieveYearbookData();
 		UserDetails user = new UserDetails(name, firstname, prof.getFonction(), prof.getTelephone(),
@@ -179,13 +219,14 @@ public class GetInfosFromYearbook {
 
 	}
 
-	public static void main(String[] args) throws IllegalArgumentException, IOException, YearbookDataException {
-			String prenom = "Olivier";
-			String nom = "CAILLOUX";
-		
-			GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
-			profJava.retrieveYearbookData();
-			logger.info("info profjava:" + profJava.getBureau());
-			logger.info("Informations sur l'objet GIFYB :\n" + profJava.toString());
+	public static void main(String[] args) throws IllegalArgumentException, IOException, YearbookDataException,
+			SAXException, ParserConfigurationException {
+		String prenom = "Olivier";
+		String nom = "CAILLOUX";
+
+		GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
+		profJava.retrieveYearbookData();
+		logger.info("info profjava:" + profJava.getBureau());
+		logger.info("Informations sur l'objet GIFYB :\n" + profJava.toString());
 	}
 }

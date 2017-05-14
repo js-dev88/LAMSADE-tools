@@ -1,7 +1,9 @@
 package com.github.lantoine.lamsadetools.yearbookInfos;
 
 import java.io.File;
-
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -24,15 +26,20 @@ public class ConnectionToYearbook {
 	private static final Logger logger = LoggerFactory.getLogger(ConnectionToYearbook.class);
 
 	// html page from Yearbook
-	private File htmlPage;
-    private String firstname;
-    private String surname;
-    
+	private File htmlPageFile;
+	private InputStream htmlPage;
+	private String firstname;
+	private String surname;
+
 	/**
 	 * ConnectionToYearbook's Constructor
-	 * @param firstname may not be null
-	 * @param surname may not be null
-	 * @throws IllegalArgumentException if null parameters
+	 * 
+	 * @param firstname
+	 *            may not be null
+	 * @param surname
+	 *            may not be null
+	 * @throws IllegalArgumentException
+	 *             if null parameters
 	 */
 	public ConnectionToYearbook(String firstname, String surname) throws IllegalArgumentException {
 
@@ -41,17 +48,23 @@ public class ConnectionToYearbook {
 		}
 		this.firstname = firstname;
 		this.surname = surname;
-		
+
 	}
 
 	/**
 	 * Make the connection to the yearbook from a firstname and a surname
-	 * @param firstname may not be null
-	 * @param surname may not be null
-	 * @throws IllegalArgumentException if webtarget is null
-	 * @throws NullPointerException if no data found
+	 * 
+	 * @param firstname
+	 *            may not be null
+	 * @param surname
+	 *            may not be null
+	 * @throws IllegalArgumentException
+	 *             if webtarget is null
+	 * @throws NullPointerException
+	 *             if no data found
+	 * @throws FileNotFoundException
 	 */
-	public void buildConnection() throws IllegalArgumentException, NullPointerException{ 
+	public void buildConnection() throws IllegalArgumentException, NullPointerException, FileNotFoundException {
 		// Build the URL parameter with the firstname's first letter and the
 		// person's surname
 		String param = firstname.toLowerCase().charAt(0) + surname.toLowerCase();
@@ -72,33 +85,39 @@ public class ConnectionToYearbook {
 	 * @return the htmlPage in a string format
 	 */
 
-	public File getHtmlPage() {	
+	public InputStream getHtmlPage() {
 		logger.debug("HTML Page is send");
 		return htmlPage;
 	}
 
 	/**
 	 *
-	 * @param webtrgt is the webtarget (url with parameters)
+	 * @param webtrgt
+	 *            is the webtarget (url with parameters)
 	 * @return a filled html page File
-	 * @throws IllegalArgumentException if webtarget is null
-	 * @throws NullPointerException if no data found
+	 * @throws IllegalArgumentException
+	 *             if webtarget is null
+	 * @throws NullPointerException
+	 *             if no data found
+	 * @throws FileNotFoundException
 	 */
-	private File htmlPageFiller(WebTarget webtrgt) throws IllegalArgumentException, NullPointerException {
+	private InputStream htmlPageFiller(WebTarget webtrgt)
+			throws IllegalArgumentException, NullPointerException, FileNotFoundException {
 
 		if (webtrgt == null) {
 			throw new IllegalArgumentException("Web Target is null, error during the target construction");
 		}
 
-		htmlPage = webtrgt.request(MediaType.TEXT_HTML_TYPE).get(File.class);
+		htmlPageFile = webtrgt.request(MediaType.TEXT_HTML_TYPE).get(File.class);
 
-		if (htmlPage == null) {
+		if (htmlPageFile == null) {
 			throw new NullPointerException("htmlPage has no data, the yearbook site may be down");
 		} else {
 			logger.debug("Yearbook successfully targeted");
+			htmlPage = new FileInputStream(htmlPageFile);
 			return htmlPage;
 		}
-		
+
 	}
 
 }
