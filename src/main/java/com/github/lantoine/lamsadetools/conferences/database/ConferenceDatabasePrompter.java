@@ -107,6 +107,7 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 			System.out.println("3. View all conferences.");
 			System.out.println("4. Edit a conference."); // by URL or title
 			System.out.println("5. Delete a conference.");
+			System.out.println("6. Delete the database.");
 			System.out.println("0. Exit");
 
 			String optionstr = io.scanner.nextLine();
@@ -133,6 +134,9 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 				break;
 			case 5:
 				ConferenceDatabasePrompter.deleteMenu();
+				break;
+			case 6:
+				ConferenceDatabase.clearDataBase();
 				break;
 			default:
 				break;

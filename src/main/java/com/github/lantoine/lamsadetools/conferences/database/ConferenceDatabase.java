@@ -25,6 +25,20 @@ public class ConferenceDatabase {
 			+ "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
+	
+	/**
+	 * Create the table conference and return a message asking to execute delete the database if there was a problem
+	 */
+	private static void createTable(){
+		Connection conn;
+		try {
+			conn = ConferenceDatabase.getConnectionDataBase().getConnection();
+			conn.createStatement().execute(CREATETABLE);
+		} catch (SQLException e) {
+			System.out.println("The database could not be created or upgraded, there must be an old version on your computer, please execute the function Detete database");
+		}
+		
+	}
 
 	/**
 	 * Drop the table conference in order to erase all the conferences stored in
@@ -125,7 +139,7 @@ public class ConferenceDatabase {
 		 * conn.createStatement().execute(set_statement);
 		 */
 
-		ConferenceDatabase.getConnectionDataBase().sqlQuery(CREATETABLE);
+		createTable();
 
 		ConferenceDatabase.getConnectionDataBase().sqlQuery(set_statement);
 
@@ -157,7 +171,7 @@ public class ConferenceDatabase {
 		 * JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
 		 */
 		Connection conn = ConferenceDatabase.getConnectionDataBase().getConnection();
-		conn.createStatement().execute(CREATETABLE);
+		createTable();
 
 		//Prepared statement to avoid SQL injection 
 		PreparedStatement preparedStatement = null;
@@ -289,7 +303,7 @@ public class ConferenceDatabase {
 
 		Connection con= ConferenceDatabase.getConnectionDataBase().getConnection();
 
-		ConferenceDatabase.getConnectionDataBase().sqlQuery(CREATETABLE);
+		createTable();
 
 		preparedStatement = con.prepareStatement(insertQuery);
 
@@ -361,7 +375,7 @@ public class ConferenceDatabase {
 
 		ArrayList<Conference> conferencesArray = new ArrayList<>();
 		Connection conn = ConferenceDatabase.getConnectionDataBase().getConnection();
-		conn.createStatement().execute(CREATETABLE);
+		createTable();
 
 		try (Statement state = conn.createStatement()) {
 
