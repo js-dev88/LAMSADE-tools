@@ -68,7 +68,7 @@ public class ConferenceDatabase {
 			new_statement = actual_statement + "AND " + field + " = \"" + content + "\" ";
 		}
 		return new_statement;
-		
+
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class ConferenceDatabase {
 	 * @throws SQLException
 	 */
 	public static boolean editConferenceInDatabase(Conference conf) throws SQLException {
-		
+
 		String where_statement = "WHERE conferenceID = \"" + conf.getId() + "\"";
 		String set_statement = "";
 		if (!conf.getTitle().isEmpty()) {
@@ -104,7 +104,7 @@ public class ConferenceDatabase {
 		if (!conf.getCity().isEmpty()) {
 			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "Title", conf.getTitle());
 		}
-		
+
 		if (!conf.getAddress().isEmpty()) {
 			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "Title", conf.getTitle());
 		}
@@ -158,31 +158,40 @@ public class ConferenceDatabase {
 		 */
 		Connection conn = ConferenceDatabase.getConnectionDataBase().getConnection();
 		conn.createStatement().execute(CREATETABLE);
-		
+
 		//Prepared statement to avoid SQL injection 
 		PreparedStatement preparedStatement = null;
 		PreparedStatement preparedStatement1 = null;
-		
-		
+
+
 		String fieldName =value ;
 		String selectAllSQL = "SELECT * from conference;";
+
 		String selectSQL= "SELECT * FROM conference WHERE "+fieldName+" = ? ORDER BY start_date;";
-		
+
 		System.out.println(value);
-		
+
 		try (Statement state = conn.createStatement()) {
-			
-			preparedStatement= conn.prepareStatement(selectAllSQL);
-			preparedStatement1= conn.prepareStatement(selectSQL);
+
+			if(fieldName == "" ){
+				
+				preparedStatement = conn.prepareStatement(selectAllSQL);
+
+			}else{
+
+				preparedStatement1 = conn.prepareStatement(selectSQL);
+				preparedStatement1.setString(1, type);
+			}
 
 			/*try (ResultSet result = type.isEmpty() && value.isEmpty() ? state.executeQuery("SELECT * FROM conference")
 					: state.executeQuery(
 							"SELECT * FROM conference WHERE " + value + " = '" + type + "' ORDER BY start_date;")) {*/
-			preparedStatement1.setString(1, type);
 			
 			
-		try (ResultSet result = type.isEmpty() && value.isEmpty() ? preparedStatement.executeQuery() : preparedStatement1.executeQuery() ) {
-			
+
+
+			try (ResultSet result = (type.isEmpty() && value.isEmpty()) ? preparedStatement.executeQuery() : preparedStatement1.executeQuery() ) {
+
 				DateFormat format = new SimpleDateFormat(Conference.DATE_FORMAT);
 				format.setLenient(false);
 				ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
@@ -274,16 +283,16 @@ public class ConferenceDatabase {
 		 *
 		 * conn.createStatement().execute(CREATETABLE);
 		 */
-		
+
 		String insertQuery = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee, city, address)   VALUES (?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement preparedStatement = null;
-		
+
 		Connection con= ConferenceDatabase.getConnectionDataBase().getConnection();
 
 		ConferenceDatabase.getConnectionDataBase().sqlQuery(CREATETABLE);
-		
+
 		preparedStatement = con.prepareStatement(insertQuery);
-		
+
 		preparedStatement.setString(1, conf.getTitle() );
 		preparedStatement.setString(2, conf.getUrl() );
 		preparedStatement.setDate(3,java.sql.Date.valueOf(conf.getStart_date()));
@@ -291,11 +300,11 @@ public class ConferenceDatabase {
 		preparedStatement.setDouble(5, conf.getEntry_fee());
 		preparedStatement.setString(6, conf.getCity());
 		preparedStatement.setString(7, conf.getAddress());
-		
-	
-		
+
+
+
 		preparedStatement.executeUpdate();
-		
+
 		/*String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee, city, address)   VALUES ('"
 				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getStart_date() + "','" + conf.getEnd_date()
 				+ "','" + conf.getEntry_fee() + "','" + conf.getCity() + "','" + conf.getAddress()+"' );";
@@ -332,12 +341,12 @@ public class ConferenceDatabase {
 		Connection conn = ConferenceDatabase.getConnectionDataBase().getConnection();
 		PreparedStatement preparedStatement = null;
 		String deleteQuery = "Delete from conference where conferenceID = ? ;";
-		
+
 		preparedStatement = conn.prepareStatement(deleteQuery);
 		preparedStatement.setInt(1, id);
-		
+
 		//ConferenceDatabase.getConnectionDataBase().sqlQuery("Delete from conference where conferenceID =" + id + ";");
-		
+
 		preparedStatement.executeUpdate();
 		ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
 	}
