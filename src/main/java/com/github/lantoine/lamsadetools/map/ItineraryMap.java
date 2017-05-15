@@ -6,8 +6,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import com.github.lantoine.lamsadetools.yearbookInfos.GetInfosFromYearbook;
 import com.sun.star.lang.IllegalArgumentException;
@@ -119,7 +122,17 @@ public class ItineraryMap {
 		String rawAdressA = "Paris";
 		String rawAdressB = "Cologne";
 		AddressInfos paris = new AddressInfos(rawAdressA);
+		try {
+			paris.retrieveGeocodeResponse();
+		} catch (java.lang.IllegalArgumentException | IOException | SAXException | ParserConfigurationException e) {
+			throw new IllegalStateException(e);
+		}
 		AddressInfos cologne = new AddressInfos(rawAdressB);
+		try {
+			cologne.retrieveGeocodeResponse();
+		} catch (java.lang.IllegalArgumentException | IOException | SAXException | ParserConfigurationException e) {
+			throw new IllegalStateException(e);
+		}
 		ItineraryMap parisCologne = new ItineraryMap(paris.getLongitude(), paris.getLatitude(), 
 				cologne.getLongitude(), cologne.getLatitude());
 		LOGGER.info("\n" + paris.toString());
