@@ -66,7 +66,7 @@
 	</profiles>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.lantoine.lamsadetools</groupId>
-	<artifactId>LAMSADE_tools</artifactId>
+	<artifactId>lamsade_tools</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Lamsade Tools</name>
 	<description>A series of tools for the use of Lamsade</description>
