@@ -16,6 +16,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.sun.star.lang.IllegalArgumentException;
@@ -96,7 +97,12 @@ public class GetInfosFromYearbook {
 		// InputStream transformed in DOM Document
 		factory = DocumentBuilderFactory.newInstance();
 		builder = factory.newDocumentBuilder();
-		htmlDoc = builder.parse(new InputSource(htmlText));
+		try{
+			htmlDoc = builder.parse(new InputSource(htmlText));
+		}catch(SAXParseException E){
+			throw new YearbookDataException("Error 404 you should verify parameters");
+		}
+		
 
 		// close the stream
 		htmlText.close();
@@ -123,7 +129,7 @@ public class GetInfosFromYearbook {
 				if (listOfLi.item(j).getNodeName() == "li") {
 					Element li = (Element) listOfLi.item(j);
 					if (li.getAttribute("class").equals("label")) {
-						logger.debug("cat: "+ li.getTextContent().trim());
+						logger.debug("cat: " + li.getTextContent().trim());
 						category = li.getTextContent().trim();
 					} else if (li.getAttribute("class").equals("value")) {
 						info = li.getTextContent().trim();
@@ -188,7 +194,6 @@ public class GetInfosFromYearbook {
 		String name = sc.nextLine();
 		System.out.println("FirstName?:");
 		String first_name = sc.nextLine();
-		sc.close();
 		return getUserDetails(name, first_name);
 	}
 
@@ -213,8 +218,8 @@ public class GetInfosFromYearbook {
 			IOException, YearbookDataException, SAXException, ParserConfigurationException {
 		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, name);
 		prof.retrieveYearbookData();
-		UserDetails user = new UserDetails(name, firstname, prof.getFonction(), prof.getTelephone(),
-				prof.getCourrier());
+		UserDetails user = new UserDetails(name, firstname, prof.getFonction(), prof.getTelephone(), prof.getCourrier(),
+				prof.getGroupes(), prof.getFax(), prof.getBureau());
 		return user;
 
 	}
