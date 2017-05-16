@@ -17,7 +17,7 @@ Le LAMSADE est une unité de recherche de Paris-Dauphine. Ce projet a pour but d
 
  - [x] Création conférence. URL, Titre, Date début et fin, Frais d’inscription. **Conferences**
 
- - [ ] Génèration d'un fichier / entrée format VCal à partir des dates de conférences.
+ - [x] Génèration d'un fichier / entrée format VCal à partir des dates de conférences.
 
  - [ ] Lecture du fichier et édition conférences.
 
