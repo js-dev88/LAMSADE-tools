@@ -1,14 +1,7 @@
 package com.github.lantoine.lamsadetools.setCoordinates;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.odftoolkit.odfdom.incubator.search.TextNavigation;
-import org.odftoolkit.simple.TextDocument;
-import org.odftoolkit.simple.common.navigation.TextSelection;
-import org.w3c.dom.*;
 
 public class PRESGenerator
 
@@ -21,7 +14,8 @@ public class PRESGenerator
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		OdfTextDocument textdoc = OdfTextDocument.loadDocument("com/github/lamsadetools/setCoordinates/Premier_test_template.odt");
+		OdfTextDocument textdoc = OdfTextDocument
+				.loadDocument("com/github/lamsadetools/setCoordinates/Premier_test_template.odt");
 
 		/* Creation of search for every word needed to be replaced */
 		TextNavigation searchN;
@@ -39,37 +33,37 @@ public class PRESGenerator
 		/* Verify all the word and replace them by the value */
 		while (searchN.hasNext()) {
 
-			TextSelection item = (TextSelection) searchN.nextSelection();
+			// TextSelection item = (TextSelection) searchN.nextSelection();
 
-			item.replaceWith("Test");
+			// item.replaceWith("Test");
 
 		}
 		while (searchP.hasNext()) {
 
-			TextSelection item = (TextSelection) searchP.nextSelection();
+			// TextSelection item = (TextSelection) searchP.nextSelection();
 
-			item.replaceWith("Test");
+			// item.replaceWith("Test");
 
 		}
 		while (searchG.hasNext()) {
 
-			TextSelection item = (TextSelection) searchG.nextSelection();
+			// TextSelection item = (TextSelection) searchG.nextSelection();
 
-			item.replaceWith("Test");
+			// item.replaceWith("Test");
 
 		}
 		while (searchE.hasNext()) {
 
-			TextSelection item = (TextSelection) searchE.nextSelection();
+			// TextSelection item = (TextSelection) searchE.nextSelection();
 
-			item.replaceWith("Test");
+			// item.replaceWith("Test");
 
 		}
 		while (searchT.hasNext()) {
 
-			TextSelection item = (TextSelection) searchT.nextSelection();
+			// TextSelection item = (TextSelection) searchT.nextSelection();
 
-			item.replaceWith("Test");
+			// item.replaceWith("Test");
 
 		}
 
