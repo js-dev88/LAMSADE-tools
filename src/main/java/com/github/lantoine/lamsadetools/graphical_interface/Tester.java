@@ -314,7 +314,7 @@ public class Tester {
 						System.out.println(url);
 						itinerary.openMapUrl(url);
 
-					} catch (IllegalArgumentException | IOException e) {
+					} catch (IllegalArgumentException e) {
 						LOGGER.error("Error : ", e);
 					}
 				} else {
