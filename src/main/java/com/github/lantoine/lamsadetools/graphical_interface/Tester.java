@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import com.github.lantoine.lamsadetools.conferences.Conference;
 import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.map.AddressInfos;
-import com.github.lantoine.lamsadetools.map.ItineraryMap;
+import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
 import com.github.lantoine.lamsadetools.utils.Util;
 
 import net.fortuna.ical4j.data.ParserException;
@@ -308,8 +308,12 @@ public class Tester {
 					try {
 						AddressInfos dep = new AddressInfos(departure.getText());
 						AddressInfos arr = new AddressInfos(arrival.getText());
-						ItineraryMap itinerary = new ItineraryMap(dep.getLongitude(), dep.getLatitude(),
-								arr.getLongitude(), arr.getLatitude());
+						// ItineraryMap itinerary = new
+						// ItineraryMap(dep.getLongitude(),
+						// dep.getLatitude(),arr.getLongitude(),
+						// arr.getLatitude());
+
+						GoogleItineraryMap itinerary = new GoogleItineraryMap(departure.getText(), arrival.getText());
 						String url = itinerary.setMapUrl();
 						System.out.println(url);
 						itinerary.openMapUrl(url);
