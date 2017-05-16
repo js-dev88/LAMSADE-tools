@@ -52,19 +52,19 @@ public class Conference {
 		this.city = city;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getCountry() {
+		return country;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 	private String city;
 	
-	private String address;
+	private String country;
 
-	public Conference(int id, String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee, String city, String address) {
+	public Conference(int id, String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee, String city, String country) {
 		this.id = id;
 		this.url = url;
 		this.title = title;
@@ -72,12 +72,12 @@ public class Conference {
 		this.end_date = end_date;
 		this.entry_fee = entry_fee;
 		this.city = city;
-		this.address = address;
+		this.country = country;
 		
 	}
 
-	public Conference(String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee,String city, String address) {
-		this(0, title, url, start_date, end_date, entry_fee, city, address);
+	public Conference(String title, String url, LocalDate start_date, LocalDate end_date, double entry_fee,String city, String country) {
+		this(0, title, url, start_date, end_date, entry_fee, city, country);
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class Conference {
 	@Override
 	public String toString() {
 		return "Conference [id=" + id + "title=" + title + ", url=" + url + ", start_date=" + start_date + ",end_date="
-				+ end_date + ", entry_fee=" + entry_fee +",city=" + city +", address=" + address+"]";
+				+ end_date + ", entry_fee=" + entry_fee +",city=" + city +", country=" + country+"]";
 	}
 
 	/**

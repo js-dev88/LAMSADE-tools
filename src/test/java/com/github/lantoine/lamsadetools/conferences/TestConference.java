@@ -19,9 +19,9 @@ public class TestConference {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(dateFormat);
 		dtf.withLocale(Locale.FRANCE);
 		Conference conf1 = new Conference("Antoine s conf", "url", LocalDate.parse("10/03/2017", dtf),
-				LocalDate.parse("11/03/2017", dtf), 0);
+				LocalDate.parse("11/03/2017", dtf), 0, "madrid", "47 rue victor hugo");
 		Conference conf2 = new Conference("Antoine s conf", "url", LocalDate.parse("10/03/2017", dtf),
-				LocalDate.parse("11/03/2017", dtf), 0);
+				LocalDate.parse("11/03/2017", dtf), 0, "madrid", "47 rue victor hugo");
 		if (!conf1.equals(conf2)) {
 			fail("Equals not functionning");
 		}
