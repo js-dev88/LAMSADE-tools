@@ -22,7 +22,7 @@ public class ConferenceDatabase {
 	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
 			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
 			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, " + "entry_fee        double, "
-			+ "City            varchar(255) NOT NULL, " + "Adress            varchar(255) NOT NULL, "
+			+ "City            varchar(255) NOT NULL, " + "Address            varchar(255) NOT NULL, "
 			+ "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
@@ -188,7 +188,7 @@ public class ConferenceDatabase {
 		}
 
 		ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
-
+		con.close();
 	}
 
 	/**
