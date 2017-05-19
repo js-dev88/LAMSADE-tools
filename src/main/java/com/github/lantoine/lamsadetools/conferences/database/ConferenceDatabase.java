@@ -1,6 +1,8 @@
 package com.github.lantoine.lamsadetools.conferences.database;
 
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -8,18 +10,42 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.lantoine.lamsadetools.conferences.Conference;
+import com.github.lantoine.lamsadetools.yearbookInfos.ConnectionToYearbook;
 
 public class ConferenceDatabase {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ConferenceDatabase.class);
 	private static ConnectionDataBase connectionDataBase;
 	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
 			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
 			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, " + "entry_fee        double, "
+			+ "City            varchar(255) NOT NULL, "
+			+ "Country            varchar(255) NOT NULL, "
 			+ "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
+	
+	
+	/**
+	 * Create the table conference and return a message asking to execute delete the database if there was a problem
+	 */
+	static void createTable(){
+		Connection conn;
+		try {
+			conn = ConferenceDatabase.getConnectionDataBase().getConnection();
+			conn.createStatement().execute(CREATETABLE);
+		} catch (SQLException e) {
+			System.out.println("The database could not be created or upgraded, there must be an old version on your computer, please execute the function Detete database");
+		}
+		
+	}
 
 	/**
 	 * Drop the table conference in order to erase all the conferences stored in
@@ -28,17 +54,6 @@ public class ConferenceDatabase {
 	 * @throws SQLException
 	 */
 	public static void clearDataBase() throws SQLException {
-
-		/*
-		 * JdbcConnectionPool cp; Connection conn;
-		 *
-		 * cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		 * conn = cp.getConnection();
-		 *
-		 * conn.createStatement().execute(CREATETABLE);
-		 * conn.createStatement().execute("DROP table Conference;");
-		 * conn.close(); cp.dispose();
-		 */
 
 		ConferenceDatabase.getConnectionDataBase().getConnection();
 		ConferenceDatabase.getConnectionDataBase().sqlQuery(CREATETABLE);
@@ -63,65 +78,9 @@ public class ConferenceDatabase {
 			new_statement = actual_statement + "AND " + field + " = \"" + content + "\" ";
 		}
 		return new_statement;
+
 	}
 
-	/**
-	 * Take a conference in parameter, and change the conference from the
-	 * database which has the same ID to match the non null variables of the
-	 * conference from parameters
-	 *
-	 * @return true if the edit was successful
-	 * @throws SQLException
-	 */
-	public static boolean editConferenceInDatabase(Conference conf) throws SQLException {
-		String where_statement = "WHERE conferenceID = \"" + conf.getId() + "\"";
-		String set_statement = "";
-		if (!conf.getTitle().isEmpty()) {
-			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "Title", conf.getTitle());
-		}
-		if (!conf.getUrl().isEmpty()) {
-			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "URL", conf.getUrl());
-		}
-		if (!conf.getStart_date().isEqual(LocalDate.parse("1970-01-01"))) {
-			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "start_date",
-					conf.getStart_date().toString());
-		}
-		if (!conf.getEnd_date().isEqual(LocalDate.parse("1970-01-01"))) {
-			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "end_date",
-					conf.getEnd_date().toString());
-		}
-		if (!(conf.getEntry_fee() == -1)) {
-			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "entry_fee",
-					Double.toString(conf.getEntry_fee()));
-		}
-		set_statement = "UPDATE conferences " + set_statement + where_statement + ";";
-
-		/*
-		 * JdbcConnectionPool cp; Connection conn;
-		 *
-		 * cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		 * conn = cp.getConnection();
-		 */
-
-		ConferenceDatabase.getConnectionDataBase().getConnection();
-
-		/*
-		 * conn.createStatement().execute(CREATETABLE);
-		 *
-		 * conn.createStatement().execute(set_statement);
-		 */
-
-		ConferenceDatabase.getConnectionDataBase().sqlQuery(CREATETABLE);
-
-		ConferenceDatabase.getConnectionDataBase().sqlQuery(set_statement);
-
-		/*
-		 * conn.close(); cp.dispose();
-		 */
-		ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
-
-		return true;
-	}
 
 	/**
 	 * display all the conferences present in the database ordered by start date
@@ -130,26 +89,45 @@ public class ConferenceDatabase {
 	 */
 	public static void getAllConferencesFromDatabase() throws SQLException {
 
-		ConferenceDatabase.getAllConferencesFromDatabase("", "");
+		ConferenceDatabase.getConferencesFromDatabase("", "");
 
 	}
 
 	/**
 	 *
 	 */
-	public static void getAllConferencesFromDatabase(String type, String value) throws SQLException {
-		/*
-		 * JdbcConnectionPool cp; Connection conn; cp =
-		 * JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		 */
+	public static void getConferencesFromDatabase(String type, String value) throws SQLException {
+		
 		Connection conn = ConferenceDatabase.getConnectionDataBase().getConnection();
-		conn.createStatement().execute(CREATETABLE);
+		createTable();
+
+		//Prepared statement to avoid SQL injection 
+		PreparedStatement preparedStatement = null;
+		PreparedStatement preparedStatement1 = null;
+
+
+		String fieldName =type ;
+		String selectAllSQL = "SELECT * from conference;";
+
+		String selectSQL= "SELECT * FROM conference WHERE "+fieldName+" = ? ORDER BY start_date;";
+
+		System.out.println(type);
 
 		try (Statement state = conn.createStatement()) {
 
-			try (ResultSet result = type.isEmpty() && value.isEmpty() ? state.executeQuery("SELECT * FROM conference")
-					: state.executeQuery(
-							"SELECT * FROM conference WHERE " + type + " = '" + value + "' ORDER BY start_date;")) {
+			if(fieldName == "" ){
+				
+				preparedStatement = conn.prepareStatement(selectAllSQL);
+
+			}else{
+
+				preparedStatement1 = conn.prepareStatement(selectSQL);
+				preparedStatement1.setString(1, type);
+			}
+
+
+
+			try (ResultSet result = (type.isEmpty() && type.isEmpty()) ? preparedStatement.executeQuery() : preparedStatement1.executeQuery() ) {
 
 				DateFormat format = new SimpleDateFormat(Conference.DATE_FORMAT);
 				format.setLenient(false);
@@ -163,13 +141,16 @@ public class ConferenceDatabase {
 					LocalDate start_date = LocalDate.parse(result.getString(4));
 					LocalDate end_date = LocalDate.parse(result.getString(5));
 					double entry_fee = result.getDouble(6);
-					conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee));
+					String city = result.getString(7);
+					String country = result.getString(8);
+					conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee, city, country));
 				}
 
 				for (Conference i : conferencesArray) {
 					System.out.println("####################");
 					System.out.println("Conference: " + i.getTitle() + " (" + i.getUrl() + ")");
 					System.out.println("From the " + i.getStart_date() + " to the " + i.getEnd_date());
+					System.out.println("in " + i.getCity() + " to this country " + i.getCountry());
 					System.out.println("Fee: " + i.getEntry_fee());
 				}
 
@@ -179,41 +160,6 @@ public class ConferenceDatabase {
 			state.close();
 		}
 		return;
-	}
-
-	/**
-	 * get the conference from the database whose conferenceID is the same than
-	 * the one in parameter
-	 *
-	 * @param conferenceID
-	 * @return
-	 * @throws SQLException
-	 * @throws ParseException
-	 */
-	public static Conference getConferenceFromDatabase(int conferenceID) throws SQLException, ParseException {
-		/*
-		 * JdbcConnectionPool cp; Connection conn; cp =
-		 * JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa"); conn
-		 * = cp.getConnection();
-		 */
-		Connection conn = ConferenceDatabase.getConnectionDataBase().getConnection();
-		Statement state = conn.createStatement();
-		try (ResultSet result = state.executeQuery("SELECT * FROM conference WHERE conferenceID = " + conferenceID)) {
-
-			DateFormat format = new SimpleDateFormat(SQL_DATE_FORMAT);
-			format.setLenient(false);
-
-			result.next();
-			int id = result.getInt(1);
-			String url = result.getString(2);
-			String title = result.getObject(3).toString();
-			LocalDate start_date = LocalDate.parse(result.getString(4));
-			LocalDate end_date = LocalDate.parse(result.getString(5));
-			double entry_fee = result.getDouble(6);
-			result.close();
-			state.close();
-			return new Conference(id, title, url, start_date, end_date, entry_fee);
-		}
 	}
 
 	public static ConnectionDataBase getConnectionDataBase() {
@@ -227,32 +173,37 @@ public class ConferenceDatabase {
 	 * @throws SQLException
 	 */
 	public static void insertInDatabase(Conference conf) throws SQLException {
-		/*
-		 * JdbcConnectionPool cp; Connection conn;
-		 *
-		 * cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		 * conn = cp.getConnection();
-		 *
-		 *
-		 *
-		 * conn.createStatement().execute(CREATETABLE);
-		 */
+		
+		
+		
+		String insertQuery = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee, city, country)   VALUES (?, ?, ?, ?, ?, ?, ?);";
+		PreparedStatement preparedStatement = null;
 
-		ConferenceDatabase.getConnectionDataBase().getConnection();
+		Connection con= ConferenceDatabase.getConnectionDataBase().getConnection();
 
-		ConferenceDatabase.getConnectionDataBase().sqlQuery(CREATETABLE);
+		createTable();
 
-		String insert_statement = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee)   VALUES ('"
-				+ conf.getTitle() + "','" + conf.getUrl() + "','" + conf.getStart_date() + "','" + conf.getEnd_date()
-				+ "','" + conf.getEntry_fee() + "' );";
+		preparedStatement = con.prepareStatement(insertQuery);
 
-		ConferenceDatabase.getConnectionDataBase().sqlQuery(insert_statement);
+		preparedStatement.setString(1, conf.getTitle() );
+		preparedStatement.setString(2, conf.getUrl() );
+		preparedStatement.setDate(3,java.sql.Date.valueOf(conf.getStart_date()));
+		preparedStatement.setDate(4, java.sql.Date.valueOf(conf.getEnd_date()));
+		preparedStatement.setDouble(5, conf.getEntry_fee());
+		preparedStatement.setString(6, conf.getCity());
+		preparedStatement.setString(7, conf.getCountry());
+
+
+		try{
+		preparedStatement.executeUpdate();
+		}catch (SQLException e) {
+			System.out.println("The database could not be created or upgraded, there must be an old version on your computer, please execute the function Detete database");
+			logger.debug("The database could not be created or upgraded, there must be an old version on your computer");
+			
+		}
+		
 		ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
-
-		/*
-		 * conn.createStatement().execute(insert_statement); conn.close();
-		 * cp.dispose();
-		 */
+		
 
 	}
 
@@ -263,20 +214,15 @@ public class ConferenceDatabase {
 	 */
 	public static void removeConferenceFromDatabase(int id) throws SQLException {
 
-		/*
-		 * JdbcConnectionPool cp; Connection conn;
-		 *
-		 * cp = JdbcConnectionPool.create("jdbc:h2:~/conferences", "sa", "sa");
-		 *
-		 * conn = cp.getConnection();
-		 *
-		 * conn.createStatement().
-		 * execute("Delete from conference where conferenceID =" + id + ";");
-		 * conn.close(); cp.dispose();
-		 */
 
-		ConferenceDatabase.getConnectionDataBase().getConnection();
-		ConferenceDatabase.getConnectionDataBase().sqlQuery("Delete from conference where conferenceID =" + id + ";");
+		Connection conn = ConferenceDatabase.getConnectionDataBase().getConnection();
+		PreparedStatement preparedStatement = null;
+		String deleteQuery = "Delete from conference where conferenceID = ? ;";
+
+		preparedStatement = conn.prepareStatement(deleteQuery);
+		preparedStatement.setInt(1, id);
+
+		preparedStatement.executeUpdate();
 		ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
 	}
 
@@ -290,7 +236,7 @@ public class ConferenceDatabase {
 
 		ArrayList<Conference> conferencesArray = new ArrayList<>();
 		Connection conn = ConferenceDatabase.getConnectionDataBase().getConnection();
-		conn.createStatement().execute(CREATETABLE);
+		createTable();
 
 		try (Statement state = conn.createStatement()) {
 
@@ -306,7 +252,9 @@ public class ConferenceDatabase {
 					LocalDate _start_date = LocalDate.parse(result.getString(4));
 					LocalDate _end_date = LocalDate.parse(result.getString(5));
 					double _entry_fee = result.getDouble(6);
-					conferencesArray.add(new Conference(_id, _url, _title, _start_date, _end_date, _entry_fee));
+					String city = result.getString(7);
+					String country = result.getString(8);
+					conferencesArray.add(new Conference(_id, _url, _title, _start_date, _end_date, _entry_fee, city, country));
 				}
 
 				result.close();

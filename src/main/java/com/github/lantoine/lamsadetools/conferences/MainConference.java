@@ -2,6 +2,7 @@ package com.github.lantoine.lamsadetools.conferences;
 
 import java.sql.SQLException;
 
+import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabasePrompter;
 
 /**
@@ -14,7 +15,8 @@ import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabaseP
 public class MainConference {
 
 	public static void main(String[] args) throws SQLException {
-
+		
+		//ConferenceDatabase.clearDataBase();
 		ConferenceDatabasePrompter.menu();
 
 	}

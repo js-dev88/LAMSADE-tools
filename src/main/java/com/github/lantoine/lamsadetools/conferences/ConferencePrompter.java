@@ -14,10 +14,10 @@ public class ConferencePrompter {
 	 */
 	public static Conference promptConference() {
 		String tableauQuestion[] = { "url", "title", "start date" + " (" + Conference.DATE_FORMAT + ")",
-				"end date" + " (" + Conference.DATE_FORMAT + ")", "entry fee" };
+				"end date" + " (" + Conference.DATE_FORMAT + ")", "entry fee", "City" , "Country"};
 		Scanner sc = new Scanner(System.in);
 
-		String url = "", title = "", entry_fee = "";
+		String url = "", title = "", entry_fee = "", city="", country="";
 		LocalDate start_date = null, end_date = null;
 
 		for (int i = 0; i <= (tableauQuestion.length - 1); i++) {
@@ -40,11 +40,18 @@ public class ConferencePrompter {
 			case 4:
 				entry_fee = sc.nextLine();
 				break;
+			case 5:
+				city = sc.nextLine();
+				break;
+			case 6:
+				country = sc.nextLine();
+				break;
+				
 			default:
 				break;
 			}
 		}
-		return new Conference(url, title, start_date, end_date, Double.parseDouble(entry_fee));
+		return new Conference(url, title, start_date, end_date, Double.parseDouble(entry_fee), city, country);
 	}
 
 	/**

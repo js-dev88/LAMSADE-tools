@@ -52,8 +52,12 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 		LocalDate end_date = LocalDate.parse(sc.nextLine(), dtf);
 		System.out.println("New title (optional): ");
 		double entry_fee = sc.nextDouble();
-		Conference conf = new Conference(id, title, url, start_date, end_date, entry_fee);
-		if (ConferenceDatabase.editConferenceInDatabase(conf)) {
+		System.out.println("New city: ");
+		String city = sc.nextLine();
+		System.out.println("New country: ");
+		String country = sc.nextLine();
+		Conference conf = new Conference(id, title, url, start_date, end_date, entry_fee, city, country);
+		if (ConferenceDatabasePrompter.editConferenceInDatabase(conf)) {
 			System.out.println("Edit Successful");
 		} else {
 			System.out.println("Edit failed");
@@ -103,6 +107,7 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 			System.out.println("3. View all conferences.");
 			System.out.println("4. Edit a conference."); // by URL or title
 			System.out.println("5. Delete a conference.");
+			System.out.println("6. Delete the database.");
 			System.out.println("0. Exit");
 
 			String optionstr = io.scanner.nextLine();
@@ -130,6 +135,9 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 			case 5:
 				ConferenceDatabasePrompter.deleteMenu();
 				break;
+			case 6:
+				ConferenceDatabase.clearDataBase();
+				break;
 			default:
 				break;
 			}
@@ -151,6 +159,8 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 			System.out.println("1. Search by name");
 			System.out.println("2. Search by URL.");
 			System.out.println("3. Search by start date");
+			System.out.println("4. Search by city");
+			System.out.println("5. Search by country");
 			System.out.println("0. Exit");
 			String optionstr = io.scanner.nextLine();
 			// Verify input is an integer
@@ -163,18 +173,78 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 
 			switch (option) {
 			case 1:
-				ConferenceDatabase.getAllConferencesFromDatabase(getValidSearchQuery(), "title");
+				ConferenceDatabase.getConferencesFromDatabase("title",getValidSearchQuery());
 				break;
 			case 2:
 
-				ConferenceDatabase.getAllConferencesFromDatabase(getValidSearchQuery(), "url");
+				ConferenceDatabase.getConferencesFromDatabase("url", getValidSearchQuery());
 				break;
 			case 3:
-				ConferenceDatabase.getAllConferencesFromDatabase(getValidSearchQuery(), "startdate");
-
+				ConferenceDatabase.getConferencesFromDatabase("startdate", getValidSearchQuery());
+				break;
+			case 4:
+				ConferenceDatabase.getConferencesFromDatabase("city", getValidSearchQuery());
+				break;
+			case 5:
+				ConferenceDatabase.getConferencesFromDatabase("country", getValidSearchQuery());
 				break;
 			default:
 			}
 		}
 	}
+	
+	/**
+	 * Take a conference in parameter, and change the conference from the
+	 * database which has the same ID to match the non null variables of the
+	 * conference from parameters
+	 *
+	 * @return true if the edit was successful
+	 * @throws SQLException
+	 */
+	public static boolean editConferenceInDatabase(Conference conf) throws SQLException {
+
+		String where_statement = "WHERE conferenceID = \"" + conf.getId() + "\"";
+		String set_statement = "";
+		if (!conf.getTitle().isEmpty()) {
+			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "Title", conf.getTitle());
+		}
+		if (!conf.getUrl().isEmpty()) {
+			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "URL", conf.getUrl());
+		}
+		if (!conf.getStart_date().isEqual(LocalDate.parse("1970-01-01"))) {
+			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "start_date",
+					conf.getStart_date().toString());
+		}
+		if (!conf.getEnd_date().isEqual(LocalDate.parse("1970-01-01"))) {
+			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "end_date",
+					conf.getEnd_date().toString());
+		}
+		if (!(conf.getEntry_fee() == -1)) {
+			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "entry_fee",
+					Double.toString(conf.getEntry_fee()));
+		}
+		if (!conf.getCity().isEmpty()) {
+			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "City", conf.getTitle());
+		}
+
+		if (!conf.getCountry().isEmpty()) {
+			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "Country", conf.getTitle());
+		}
+		set_statement = "UPDATE conferences " + set_statement + where_statement + ";";
+
+		ConferenceDatabase.getConnectionDataBase().getConnection();
+		
+		ConferenceDatabase.createTable();
+	
+		ConferenceDatabase.getConnectionDataBase().sqlQuery(set_statement);
+
+		/*
+		 * conn.close(); cp.dispose();
+		 */
+		ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
+
+		return true;
+	}
+	
+	
 }

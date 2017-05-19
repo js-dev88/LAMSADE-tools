@@ -67,7 +67,7 @@ public class Tester {
 	 * @throws SQLException
 	 */
 	private static void fillConferenceTable(Table table) throws SQLException {
-		String[] titles = { "Title", "URL", "Start Date", "End Date", "Fee" };
+		String[] titles = { "Title", "URL", "Start Date", "End Date", "Fee", "City", "Address"};
 		ArrayList<Conference> confs = ConferenceDatabase.returnAllConferencesFromDatabase();
 
 		for (String title : titles) {
@@ -84,6 +84,8 @@ public class Tester {
 			item.setText(2, convertLocaldateToString(i.getStart_date()));
 			item.setText(3, convertLocaldateToString(i.getEnd_date()));
 			item.setText(4, Double.toString(i.getEntry_fee()));
+			item.setText(5, i.getCity());
+			item.setText(6, i.getAddress());
 		}
 
 		for (int loopIndex = 0; loopIndex < titles.length; loopIndex++) {
@@ -135,6 +137,13 @@ public class Tester {
 		Button btn_addNewConf = new Button(grp_conferencesInfos, SWT.NONE);
 		btn_addNewConf.setBounds(10, 180, 149, 25);
 		btn_addNewConf.setText("Create conference");
+		
+		Label lblCity= new Label(grp_conferencesInfos, SWT.NONE);
+		lblCity.setAlignment(SWT.RIGHT);
+		lblCity.setBounds(25, 38, 50, 15);
+		lblCity.setText("City");
+		Text txt_city = new Text(grp_conferencesInfos, SWT.BORDER);
+		txt_city.setBounds(81, 35, 78, 21);
 
 		Label lblTitle = new Label(grp_conferencesInfos, SWT.NONE);
 		lblTitle.setAlignment(SWT.RIGHT);
@@ -156,18 +165,38 @@ public class Tester {
 		lblStartDate.setBounds(10, 93, 65, 15);
 		Text txt_startDate = new Text(grp_conferencesInfos, SWT.BORDER);
 		txt_startDate.setBounds(81, 90, 78, 21);
-
+		
 		Label lblEndDate = new Label(grp_conferencesInfos, SWT.NONE);
 		lblEndDate.setAlignment(SWT.RIGHT);
 		lblEndDate.setText("End Date");
 		lblEndDate.setBounds(10, 120, 65, 15);
 		Text txt_endDate = new Text(grp_conferencesInfos, SWT.BORDER);
 		txt_endDate.setBounds(81, 117, 78, 21);
+		
 		Label lblFee = new Label(grp_conferencesInfos, SWT.NONE);
 		lblFee.setText("Fee");
 		lblFee.setBounds(42, 147, 33, 15);
 		Text txt_fee = new Text(grp_conferencesInfos, SWT.BORDER);
 		txt_fee.setBounds(81, 144, 78, 21);
+
+		// add news fields 
+		
+		/*Label lblCity= new Label(grp_conferencesInfos, SWT.NONE);
+		lblCity.setAlignment(SWT.RIGHT);
+		lblCity.setBounds(25, 38, 50, 15);
+		lblCity.setText("City");
+		Text txt_city = new Text(grp_conferencesInfos, SWT.BORDER);
+		txt_city.setBounds(81, 35, 78, 21);*/
+		
+		Label lbladdress= new Label(grp_conferencesInfos, SWT.NONE);
+		lbladdress.setAlignment(SWT.RIGHT);
+		lbladdress.setBounds(25, 38, 50, 15);
+		lbladdress.setText("Address");
+		Text txt_address = new Text(grp_conferencesInfos, SWT.BORDER);
+		txt_address.setBounds(81, 35, 78, 21);
+		
+		
+		
 
 		// Create new Conference object, assign it values from
 		// selection, then pass it function to export to desktop
@@ -187,7 +216,7 @@ public class Tester {
 				} else {
 					Conference conf = new Conference(ti[0].getText(0), ti[0].getText(1),
 							LocalDate.parse(ti[0].getText(2), formatter), LocalDate.parse(ti[0].getText(3), formatter),
-							Double.parseDouble(ti[0].getText(4)));
+							Double.parseDouble(ti[0].getText(4)), ti[0].getText(5), ti[0].getText(6));
 					try {
 						FileDialog dialog = new FileDialog(shell, SWT.SAVE);
 						dialog.setFilterNames(new String[] { "Calendar Files", "All Files (*.*)" });
@@ -238,7 +267,7 @@ public class Tester {
 						LocalDate startDate = LocalDate.parse(txt_startDate.getText(), formatter);
 						LocalDate endDate = LocalDate.parse(txt_endDate.getText(), formatter);
 						Conference conf = new Conference(txt_title.getText(), txt_url.getText(), startDate, endDate,
-								Double.parseDouble(txt_fee.getText()));
+								Double.parseDouble(txt_fee.getText()),txt_city.getText(), txt_address.getText() );
 						ConferenceDatabase.insertInDatabase(conf);
 						/*
 						 * Reload the conference table
