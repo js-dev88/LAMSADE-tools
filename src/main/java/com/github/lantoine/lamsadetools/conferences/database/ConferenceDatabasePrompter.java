@@ -77,7 +77,7 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 		io.scanner = new Scanner(System.in);
 		String in = io.scanner.nextLine();
 
-		while (in.isEmpty() || (in.length() < 3)) {
+		while (in.isEmpty() || in.length() < 3) {
 			System.out.print("Please type in at least 3 characters");
 			in = io.scanner.nextLine();
 		}
@@ -173,7 +173,7 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 
 			switch (option) {
 			case 1:
-				ConferenceDatabase.getConferencesFromDatabase("title",getValidSearchQuery());
+				ConferenceDatabase.getConferencesFromDatabase("title", getValidSearchQuery());
 				break;
 			case 2:
 
@@ -192,7 +192,7 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 			}
 		}
 	}
-	
+
 	/**
 	 * Take a conference in parameter, and change the conference from the
 	 * database which has the same ID to match the non null variables of the
@@ -227,15 +227,15 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "City", conf.getTitle());
 		}
 
-		if (!conf.getCountry().isEmpty()) {
+		if (!conf.getAddress().isEmpty()) {
 			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "Country", conf.getTitle());
 		}
 		set_statement = "UPDATE conferences " + set_statement + where_statement + ";";
 
 		ConferenceDatabase.getConnectionDataBase().getConnection();
-		
+
 		ConferenceDatabase.createTable();
-	
+
 		ConferenceDatabase.getConnectionDataBase().sqlQuery(set_statement);
 
 		/*
@@ -245,6 +245,5 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 
 		return true;
 	}
-	
-	
+
 }
