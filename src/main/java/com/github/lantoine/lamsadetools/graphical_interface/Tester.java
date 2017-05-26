@@ -33,7 +33,9 @@ import com.github.lantoine.lamsadetools.conferences.Conference;
 import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.map.AddressInfos;
 import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
+import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.github.lantoine.lamsadetools.utils.Util;
+import com.github.lantoine.lamsadetools.yearbookInfos.GetInfosFromYearbook;
 
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.ValidationException;
@@ -45,6 +47,16 @@ import net.fortuna.ical4j.model.ValidationException;
  */
 public class Tester {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Tester.class);
+	private static Text txt_firstname;
+	private static Text txt_lastname;
+	private static Text txt_function;
+	private static Text txt_number;
+	private static Text txt_email;
+	private static Text txt_group;
+	private static Text txt_fax;
+	private static Text txt_office;
+	private static Text txt_city_ud;
+	private static Text txt_country_ud;
 
 	/**
 	 * Converts a LocalDate passed by parameter into a string
@@ -113,7 +125,7 @@ public class Tester {
 
 		final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
-		shell.setSize(new Point(716, 381));
+		shell.setSize(new Point(888, 661));
 
 		/*
 		 * Initialize Group conferencesInfos which will include : -The Grid data
@@ -122,10 +134,117 @@ public class Tester {
 		 * -The fields that will allow the user to add a new conference in the
 		 * database
 		 */
+		
+		Group grpUserDetails = new Group(shell, SWT.NONE);
+		GridData gd_grpUserDetails = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_grpUserDetails.widthHint = 848;
+		gd_grpUserDetails.heightHint = 155;
+		grpUserDetails.setLayoutData(gd_grpUserDetails);
+		grpUserDetails.setText("User Details");
+		
+		Label lblFirstname = new Label(grpUserDetails, SWT.NONE);
+		lblFirstname.setBounds(10, 26, 70, 15);
+		lblFirstname.setText("First Name");
+		
+		Label lblNewLabel_1 = new Label(grpUserDetails, SWT.NONE);
+		lblNewLabel_1.setBounds(10, 53, 55, 15);
+		lblNewLabel_1.setText("Last Name");
+		
+		txt_firstname = new Text(grpUserDetails, SWT.BORDER);
+		txt_firstname.setBounds(86, 23, 98, 21);
+		
+		txt_lastname = new Text(grpUserDetails, SWT.BORDER);
+		txt_lastname.setBounds(86, 50, 98, 21);
+		
+		/*
+		 * Handle the User Info's Search
+		 * Throws exception if firstname or lastname is wrong
+		 */
+		
+		Button btn_searchInfo = new Button(grpUserDetails, SWT.NONE);
+		btn_searchInfo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				try{
+					UserDetails user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(),txt_firstname.getText());
+					txt_function.setText(user.getFunction());
+					txt_number.setText(user.getNumber());
+					txt_email.setText(user.getEmail());
+					txt_group.setText(user.getGroup());
+					txt_fax.setText(user.getFax());
+					txt_office.setText(user.getOffice());
+					txt_city_ud.setText(user.getCity());
+					txt_country_ud.setText(user.getCountry());
+				}catch(@SuppressWarnings("unused") Exception e){
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("Error");
+					mb.setMessage("Please verify firstname and lastname");
+					mb.open();
+				}
+			}
+		});
+		btn_searchInfo.setBounds(10, 87, 114, 25);
+		btn_searchInfo.setText("Search My Infos");
+		
+		Label lbl_function = new Label(grpUserDetails, SWT.NONE);
+		lbl_function.setBounds(224, 26, 55, 15);
+		lbl_function.setText("Function");
+		
+		Label lbl_number = new Label(grpUserDetails, SWT.NONE);
+		lbl_number.setBounds(224, 56, 55, 15);
+		lbl_number.setText("Phone");
+		
+		Label lbl_email = new Label(grpUserDetails, SWT.NONE);
+		lbl_email.setBounds(224, 92, 55, 15);
+		lbl_email.setText("E-mail");
+		
+		Label lbl_group = new Label(grpUserDetails, SWT.NONE);
+		lbl_group.setBounds(224, 124, 55, 15);
+		lbl_group.setText("Group");
+		
+		txt_function = new Text(grpUserDetails, SWT.BORDER);
+		txt_function.setBounds(285, 20, 219, 21);
+		
+		txt_number = new Text(grpUserDetails, SWT.BORDER);
+		txt_number.setBounds(285, 53, 219, 21);
+		
+		txt_email = new Text(grpUserDetails, SWT.BORDER);
+		txt_email.setBounds(285, 87, 219, 21);
+		
+		txt_group = new Text(grpUserDetails, SWT.BORDER);
+		txt_group.setBounds(285, 121, 219, 21);
+		
+		Label lbl_fax = new Label(grpUserDetails, SWT.NONE);
+		lbl_fax.setText("Fax");
+		lbl_fax.setBounds(535, 26, 55, 15);
+		
+		Label lbl_office = new Label(grpUserDetails, SWT.NONE);
+		lbl_office.setText("Office");
+		lbl_office.setBounds(535, 59, 55, 15);
+		
+		Label lbl_city = new Label(grpUserDetails, SWT.NONE);
+		lbl_city.setText("City");
+		lbl_city.setBounds(535, 92, 55, 15);
+		
+		Label lbl_country = new Label(grpUserDetails, SWT.NONE);
+		lbl_country.setText("Country");
+		lbl_country.setBounds(535, 124, 55, 15);
+		
+		txt_fax = new Text(grpUserDetails, SWT.BORDER);
+		txt_fax.setBounds(596, 23, 219, 21);
+		
+		txt_office = new Text(grpUserDetails, SWT.BORDER);
+		txt_office.setBounds(596, 56, 219, 21);
+		
+		txt_city_ud = new Text(grpUserDetails, SWT.BORDER);
+		txt_city_ud.setBounds(596, 89, 219, 21);
+		
+		txt_country_ud = new Text(grpUserDetails, SWT.BORDER);
+		txt_country_ud.setBounds(596, 121, 219, 21);
 		Group grp_conferencesInfos = new Group(shell, SWT.NONE);
 		GridData gd_conferencesInfos = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_conferencesInfos.heightHint = 215;
-		gd_conferencesInfos.widthHint = 677;
+		gd_conferencesInfos.widthHint = 854;
 		grp_conferencesInfos.setLayoutData(gd_conferencesInfos);
 		grp_conferencesInfos.setText("Conferences");
 
@@ -301,7 +420,7 @@ public class Tester {
 		grp_map.setText("Visualize your travel");
 		GridData gd_map = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
 		gd_map.heightHint = 85;
-		gd_map.widthHint = 679;
+		gd_map.widthHint = 860;
 		grp_map.setLayoutData(gd_map);
 		Text departure = new Text(grp_map, SWT.BORDER);
 		departure.setLocation(101, 22);

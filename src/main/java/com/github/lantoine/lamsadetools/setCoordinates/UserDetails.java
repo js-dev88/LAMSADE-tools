@@ -10,12 +10,14 @@ public class UserDetails {
 	private String group; 
 	private String fax;
 	private String office;
+	private String city;
+	private String country;
 
 	public UserDetails() {
-		this("unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown","unknown");
+		this("unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown","unknown","unknown","unknown");
 	}
 
-	public UserDetails(String name, String firstName, String function, String number, String email, String group, String fax, String office) {
+	public UserDetails(String name, String firstName, String function, String number, String email, String group, String fax, String office,String city,String country) {
 		this.name = name;
 		this.firstName = firstName;
 		this.function = function;
@@ -24,6 +26,8 @@ public class UserDetails {
 		this.group = group;
 		this.fax = fax;
 		this.office = office;
+		this.city = city;
+		this.country = country;
 	}
 
 	public String getEmail() {
@@ -57,9 +61,17 @@ public class UserDetails {
 	public String getOffice() {
 		return office;
 	}
+	
+	public String getCity() {
+		return city;
+	}
+	
+	public String getCountry() {
+		return country;
+	}
 
 	public boolean isFilled() {
-		if (email != null && firstName != null && function != null && name != null && number != null && group != null && fax != null && office != null)
+		if (email != null && firstName != null && function != null && name != null && number != null && group != null && fax != null && office != null && city != null && country != null)
 			return true;
 		return false;
 	}
@@ -85,15 +97,23 @@ public class UserDetails {
 	}
 	
 	public void setGroup(String group) {
-		this.number = group;
+		this.group = group;
 	}
 	
 	public void setFax(String fax) {
-		this.number = fax;
+		this.fax = fax;
 	}
 	
 	public void setOffice(String office) {
-		this.number = office;
+		this.office = office;
+	}
+	
+	public void setCity() {
+		this.city = "Paris";
+	}
+	
+	public void setCountry() {
+		this.country = "France";
 	}
 
 }
