@@ -112,11 +112,11 @@ public class ConnectionToYearbook {
 
 		if (htmlPageFile == null) {
 			throw new NullPointerException("htmlPage has no data, the yearbook site may be down");
-		} else {
-			logger.debug("Yearbook successfully targeted");
-			htmlPage = new FileInputStream(htmlPageFile);
-			return htmlPage;
-		}
+		} 
+		logger.debug("Yearbook successfully targeted");
+		htmlPage = new FileInputStream(htmlPageFile);
+		return htmlPage;
+		
 
 	}
 

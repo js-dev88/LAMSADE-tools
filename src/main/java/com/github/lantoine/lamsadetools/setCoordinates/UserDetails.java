@@ -35,6 +35,8 @@ public class UserDetails {
 	}
 
 	public String getFirstName() {
+		firstName.toLowerCase();
+		firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
 		return firstName;
 	}
 
@@ -43,6 +45,8 @@ public class UserDetails {
 	}
 
 	public String getName() {
+		name.toLowerCase();
+		name = name.substring(0, 1).toUpperCase() + name.substring(1);
 		return name;
 	}
 
