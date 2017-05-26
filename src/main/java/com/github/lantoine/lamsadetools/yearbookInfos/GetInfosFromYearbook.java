@@ -219,7 +219,7 @@ public class GetInfosFromYearbook {
 		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, name);
 		prof.retrieveYearbookData();
 		UserDetails user = new UserDetails(name, firstname, prof.getFonction(), prof.getTelephone(), prof.getCourrier(),
-				prof.getGroupes(), prof.getFax(), prof.getBureau());
+				prof.getGroupes(), prof.getFax(), prof.getBureau(), "Paris","France");
 		return user;
 
 	}
@@ -228,10 +228,10 @@ public class GetInfosFromYearbook {
 			SAXException, ParserConfigurationException {
 		String prenom = "Olivier";
 		String nom = "CAILLOUX";
-
-		GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
-		profJava.retrieveYearbookData();
-		logger.info("info profjava:" + profJava.getBureau());
-		logger.info("Informations sur l'objet GIFYB :\n" + profJava.toString());
+		UserDetails user = GetInfosFromYearbook.getUserDetails(nom,prenom);
+		//GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
+		//profJava.retrieveYearbookData();
+		//logger.info("info profjava:" + profJava.getBureau());
+		logger.info("Informations sur l'objet GIFYB :\n" + user.toString());
 	}
 }

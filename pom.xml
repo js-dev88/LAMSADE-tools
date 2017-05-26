@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<!-- Used to adapt SWT to every OS we have-->
 	<profiles>
 		<profile>
 			<id>Mac</id>
@@ -39,17 +40,39 @@
 				</dependency>
 			</dependencies>
 		</profile>
-				<profile>
-			<id>Windows</id>
+		<profile>
+			<id>Windows64</id>
 			<activation>
-				<os><family>windows</family></os>
+				<os>
+					<family>windows</family>
+					<arch>x86_64</arch>
+				</os>
+				
 			</activation>
 			<dependencies>
+				<!-- https://mvnrepository.com/artifact/org.eclipse.swt/org.eclipse.swt.win32.win32.x86_64 -->
 				<dependency>
-				    <groupId>org.eclipse.swt.org.eclipse.swt.win32.win32.x86_64.4.3.swt</groupId>
-				    <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-				    <version>4.3</version>
+    				<groupId>org.eclipse.swt</groupId>
+    				<artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+   					<version>4.3</version>	
+   					<exclusions>
+						<exclusion>
+							<groupId>org.eclipse.platform</groupId>
+							<artifactId>org.eclipse.swt</artifactId>
+						</exclusion>
+					</exclusions>		
 				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>Windows32</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<arch>x86</arch>
+				</os>
+			</activation>
+			<dependencies>				
 				<dependency>
     				<groupId>org.eclipse.swt</groupId>
     				<artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
@@ -82,19 +105,19 @@
 		</repository>
 	</repositories>
 	<dependencies>	
-	    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+	    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api used for logging  -->
 		<dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-api</artifactId>
 		    <version>1.7.25</version>
 		</dependency>
-	    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+	    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic used for logging-->
 		<dependency>
 		    <groupId>ch.qos.logback</groupId>
 		    <artifactId>logback-classic</artifactId>
 		    <version>1.2.3</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
+		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core used for logging-->
 		<dependency>
 		    <groupId>ch.qos.logback</groupId>
 		    <artifactId>logback-core</artifactId>
@@ -111,31 +134,30 @@
    		 <artifactId>ical4j</artifactId>
     	<version>0.9.20</version>
     	<exclusions>
+    		<!-- no need for log4j framework  -->
     		<exclusion>
     			<groupId>log4j</groupId>
     			<artifactId>log4j</artifactId>
     		</exclusion>
     	</exclusions>
 		</dependency>
+		<!-- Jax RS => REST API for yearBookInfo and map package -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom2</artifactId>
-			<version>2.0.6</version>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-client</artifactId>
 			<version>3.0.2.Final</version>
 			<exclusions>
+			    <!-- slf4j double  -->
 				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-simple</artifactId>
 				</exclusion>
+				<!-- slf4j dependance's double removed  -->
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
@@ -152,11 +174,13 @@
 			<artifactId>jodconverter-core</artifactId>
 			<version>3.0-NX10</version>
 		</dependency>
+		<!-- Is this usefull?-->
 		<dependency>
 			<groupId>org.odftoolkit</groupId>
 			<artifactId>odfdom-java</artifactId>
 			<version>0.8.7</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.odftoolkit/simple-odf used for missionOrder and setCoordinate package-->
 		<dependency>
 			<groupId>org.apache.odftoolkit</groupId>
 			<artifactId>simple-odf</artifactId>
@@ -201,7 +225,7 @@
 			<artifactId>poi</artifactId>
 			<version>3.16-beta2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<!-- https://mvnrepository.com/artifact/junit/junit used for Unitary Test dependance-->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
