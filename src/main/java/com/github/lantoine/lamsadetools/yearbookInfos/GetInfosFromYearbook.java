@@ -39,7 +39,7 @@ public class GetInfosFromYearbook {
 
 	// HashMap collection register informations with a key and an associated
 	// value
-	private HashMap<String, String> informations = new HashMap<String, String>();
+	private HashMap<String, String> informations = new HashMap<>();
 
 	/**
 	 * Constructor using a person's firstname and surname
@@ -92,20 +92,16 @@ public class GetInfosFromYearbook {
 		// Yearbook connection
 		ConnectionToYearbook connection = new ConnectionToYearbook(firstname, surname);
 		connection.buildConnection();
-		InputStream htmlText = connection.getHtmlPage();
-
-		// InputStream transformed in DOM Document
 		factory = DocumentBuilderFactory.newInstance();
 		builder = factory.newDocumentBuilder();
-		try{
-			htmlDoc = builder.parse(new InputSource(htmlText));
-		}catch(SAXParseException E){
-			throw new YearbookDataException("Error 404 you should verify parameters");
+		
+		try (InputStream htmlText = connection.getHtmlPage()) {
+		      htmlDoc = builder.parse(new InputSource(htmlText));
+		}catch(SAXParseException e){
+			  logger.debug(e.getMessage());
+			  throw new YearbookDataException("Error 404 you should verify parameters");
 		}
 		
-
-		// close the stream
-		htmlText.close();
 
 		NodeList h3 = htmlDoc.getElementsByTagName("h3");
 
@@ -146,6 +142,7 @@ public class GetInfosFromYearbook {
 			throw new YearbookDataException("Some yearbook's informations are missing");
 		}
 		logger.debug("Professor's Informations are ready to be exploited...");
+
 	}
 
 	public String getBureau() {
@@ -189,12 +186,14 @@ public class GetInfosFromYearbook {
 	 */
 	public static UserDetails getUserDetails() throws IllegalArgumentException, IOException, YearbookDataException,
 			SAXException, ParserConfigurationException {
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Name?:");
-		String name = sc.nextLine();
-		System.out.println("FirstName?:");
-		String first_name = sc.nextLine();
-		return getUserDetails(name, first_name);
+		try(Scanner sc = new Scanner(System.in)){
+			System.out.println("Name?:");
+			String name = sc.nextLine();
+			System.out.println("FirstName?:");
+			String first_name = sc.nextLine();
+			return getUserDetails(name, first_name);
+		}
+		
 	}
 
 	/**
