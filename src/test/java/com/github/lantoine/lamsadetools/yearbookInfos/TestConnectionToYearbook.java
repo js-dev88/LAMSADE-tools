@@ -29,9 +29,11 @@ public class TestConnectionToYearbook {
 		
 		ConnectionToYearbook test = new ConnectionToYearbook("Olivier", "Cailloux");
 		test.buildConnection();
-		InputStream HTMLPage = test.getHtmlPage();
-		Assert.assertNotNull(HTMLPage);
-		HTMLPage.close();
+		try(InputStream HTMLPage = test.getHtmlPage()){
+			Assert.assertNotNull(HTMLPage);
+			HTMLPage.close();
+		}
+		
 		
 					
 	}
