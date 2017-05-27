@@ -153,7 +153,7 @@ public class Util {
 	 *            The address to send the email to
 	 * @throws IllegalStateException
 	 */
-	public static void sendEmail(String to_address) throws IllegalStateException {
-		sendEmail(to_address, "");
+	public static int sendEmail(String to_address) throws IllegalStateException {
+		return sendEmail(to_address, "");
 	}
 }
