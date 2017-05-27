@@ -108,7 +108,15 @@
 			<url>http://maven-eclipse.github.io/maven</url>
 		</repository>
 	</repositories>
-	<dependencies>	
+	<dependencies>
+	<!-- Send Emails -->
+	<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
+<dependency>
+    <groupId>javax.mail</groupId>
+    <artifactId>mail</artifactId>
+    <version>1.5.0-b01</version>
+</dependency>
+		
 	    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api used for logging  -->
 		<dependency>
 		    <groupId>org.slf4j</groupId>
