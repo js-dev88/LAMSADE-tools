@@ -33,7 +33,7 @@ public class Util {
 	private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
 	public static void main(String[] args) throws IllegalStateException {
-		sendEmail("edoreld@gmail.com");
+		sendEmail("edoreld@gmail.com", "/Users/edoreld/Desktop/presentation.pdf");
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class Util {
 			msg.setSubject("Une conference a été partagée avec vous");
 
 			if (filename == "") {
-				msg.setText("Le fichier ci-joint contient la conference que votre collège a partagé avec vous");
+				msg.setText("Email Test");
 			} else {
 				Multipart multipart = new MimeMultipart();
 
@@ -128,7 +128,7 @@ public class Util {
 			}
 
 			try {
-				transport.sendMessage(msg, msg.getAllRecipients());
+				transport.sendMessage(message, msg.getAllRecipients());
 			} catch (SendFailedException e) {
 				logger.error("Something went wrong trying to send the message");
 				throw new IllegalStateException(e);
@@ -148,12 +148,13 @@ public class Util {
 
 	/**
 	 * Overloading sendEmail to be able to call it with a default empty filename
+	 * for testing purposes **only**
 	 *
 	 * @param to_address
 	 *            The address to send the email to
 	 * @throws IllegalStateException
 	 */
-	public static int sendEmail(String to_address) throws IllegalStateException {
+	static int sendEmail(String to_address) throws IllegalStateException {
 		return sendEmail(to_address, "");
 	}
 }
