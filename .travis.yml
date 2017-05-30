@@ -4,3 +4,5 @@ git:
 jdk:
   - oraclejdk8
 dist: trustyq
+notifications:
+    slack: lamsadetools:zq3aEnZmRWoqp6mjdGfnljO6
