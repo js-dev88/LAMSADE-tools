@@ -222,13 +222,6 @@ public class Conference {
 			e.printStackTrace();
 		}
 
-		// try {
-		// meeting.getProperties().add(new Organizer(null, "MAILTO:" +
-		// hostEmail));
-		// } catch (URISyntaxException e) {
-		// e.printStackTrace();
-		// }
-
 		calendar.getComponents().add(meeting);
 
 		FileOutputStream fout = null;

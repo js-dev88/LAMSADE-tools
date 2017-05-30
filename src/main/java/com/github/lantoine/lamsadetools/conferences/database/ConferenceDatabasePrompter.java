@@ -238,9 +238,6 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 
 		ConferenceDatabase.getConnectionDataBase().sqlQuery(set_statement);
 
-		/*
-		 * conn.close(); cp.dispose();
-		 */
 		ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
 
 		return true;
