@@ -15,12 +15,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
+
 
 import com.github.lantoine.lamsadetools.conferences.IO;
 
@@ -33,14 +28,14 @@ public class SetCoordinates {
 	 * @param target
 	 * @throws IOException
 	 */
-	public static void copy(File source, File target) throws IOException {
-		// try with resources
-		try (FileInputStream FIS = new FileInputStream(source); FileOutputStream FOS = new FileOutputStream(target);) {
-			try (FileChannel sourceChannel = FIS.getChannel(); FileChannel targetChannel = FOS.getChannel();) {
-				targetChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
-			}
-		}
-	}
+//	public static void copy(File source, File target) throws IOException {
+//		// try with resources
+//		try (FileInputStream FIS = new FileInputStream(source); FileOutputStream FOS = new FileOutputStream(target);) {
+//			try (FileChannel sourceChannel = FIS.getChannel(); FileChannel targetChannel = FOS.getChannel();) {
+//				targetChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+//			}
+//		}
+//	}
 
 	public static void fillPapierEnTete(UserDetails user) throws Exception {
 		Path path = FileSystems.getDefault().getPath("");
@@ -146,82 +141,82 @@ public class SetCoordinates {
 		return user;
 	}
 
-	/**
-	 * Add the user details to the source file and return the result in the
-	 * destination file
-	 *
-	 * @param source
-	 * @param destinationFile
-	 * @param user
-	 * @throws IOException
-	 * @throws InvalidFormatException
-	 */
-	public static void setDetails(UserDetails user) throws IOException, InvalidFormatException {
-		String source = "com/github/lamsadetools/setCoordinates/papier_en_tete.docx";
-		String destination = "com/github/lamsadetools/setCoordinates/papier_en_tete_CloneTest.docx";
-
-		ClassLoader classLoader = SetCoordinates.class.getClassLoader();
-
-		File sourceFile = new File(classLoader.getResource(source).getFile());
-		File destinationFile = new File(classLoader.getResource(destination).getFile());
-		copy(sourceFile, destinationFile);
-
-		try (XWPFDocument doc = new XWPFDocument(OPCPackage.open(sourceFile))) {
-			XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
-
-			for (XWPFParagraph p : policy.getFirstPageHeader().getParagraphs()) {
-				List<XWPFRun> runs = p.getRuns();
-				if (runs != null) {
-					for (XWPFRun r : runs) {
-						String text = r.getText(0);
-
-						if ((text != null) && text.contains("Prenom")) {
-							System.out.println("contains prenom");
-							text = text.replace("Prenom", user.getFirstName());
-
-							r.setText(text, 0);
-
-						}
-
-						else if ((text != null) && text.contains("Nom")) {
-							text = text.replace("Nom", user.getName());
-
-							r.setText(text, 0);
-
-						}
-
-						else if ((text != null) && text.contains("e-mail")) {
-							text = text.replace("e-mail", user.getEmail());
-
-							r.setText(text, 0);
-
-						}
-
-						else if ((text != null) && text.contains("tel.")) {
-							text = text.replace("tel.", user.getNumber());
-
-							r.setText(text, 0);
-
-						}
-
-						else if ((text != null) && text.contains("Fonction")) {
-							text = text.replace("Fonction", user.getFunction());
-
-							r.setText(text, 0);
-
-						}
-
-					}
-				}
-			}
-			try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
-				doc.write(fos);
-			}
-		}
-
-		long start = System.currentTimeMillis();
-
-		System.err.println("Generate papier_en_tete.html with " + (System.currentTimeMillis() - start) + "ms");
-	}
+//	/**
+//	 * Add the user details to the source file and return the result in the
+//	 * destination file
+//	 *
+//	 * @param source
+//	 * @param destinationFile
+//	 * @param user
+//	 * @throws IOException
+//	 * @throws InvalidFormatException
+//	 */
+//	public static void setDetails(UserDetails user) throws IOException, InvalidFormatException {
+//		String source = "com/github/lamsadetools/setCoordinates/papier_en_tete.docx";
+//		String destination = "com/github/lamsadetools/setCoordinates/papier_en_tete_CloneTest.docx";
+//
+//		ClassLoader classLoader = SetCoordinates.class.getClassLoader();
+//
+//		File sourceFile = new File(classLoader.getResource(source).getFile());
+//		File destinationFile = new File(classLoader.getResource(destination).getFile());
+//		copy(sourceFile, destinationFile);
+//
+//		try (XWPFDocument doc = new XWPFDocument(OPCPackage.open(sourceFile))) {
+//			XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
+//
+//			for (XWPFParagraph p : policy.getFirstPageHeader().getParagraphs()) {
+//				List<XWPFRun> runs = p.getRuns();
+//				if (runs != null) {
+//					for (XWPFRun r : runs) {
+//						String text = r.getText(0);
+//
+//						if ((text != null) && text.contains("Prenom")) {
+//							System.out.println("contains prenom");
+//							text = text.replace("Prenom", user.getFirstName());
+//
+//							r.setText(text, 0);
+//
+//						}
+//
+//						else if ((text != null) && text.contains("Nom")) {
+//							text = text.replace("Nom", user.getName());
+//
+//							r.setText(text, 0);
+//
+//						}
+//
+//						else if ((text != null) && text.contains("e-mail")) {
+//							text = text.replace("e-mail", user.getEmail());
+//
+//							r.setText(text, 0);
+//
+//						}
+//
+//						else if ((text != null) && text.contains("tel.")) {
+//							text = text.replace("tel.", user.getNumber());
+//
+//							r.setText(text, 0);
+//
+//						}
+//
+//						else if ((text != null) && text.contains("Fonction")) {
+//							text = text.replace("Fonction", user.getFunction());
+//
+//							r.setText(text, 0);
+//
+//						}
+//
+//					}
+//				}
+//			}
+//			try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
+//				doc.write(fos);
+//			}
+//		}
+//
+//		long start = System.currentTimeMillis();
+//
+//		System.err.println("Generate papier_en_tete.html with " + (System.currentTimeMillis() - start) + "ms");
+//	}
 
 }
