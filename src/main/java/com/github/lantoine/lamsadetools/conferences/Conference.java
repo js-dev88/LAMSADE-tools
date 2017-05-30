@@ -93,7 +93,8 @@ public class Conference {
 			System.out.println(conference2.toString());
 			if (title.equals(conference2.title) && url.equals(conference2.url)
 					&& start_date.equals(conference2.start_date) && end_date.equals(conference2.end_date)
-					&& entry_fee == conference2.entry_fee) {
+					&& entry_fee == conference2.entry_fee && city.equals(conference2.city)
+					&& address.equals(conference2.address)) {
 				return true;
 			}
 		}
@@ -129,7 +130,8 @@ public class Conference {
 	 */
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+		return title.hashCode() + url.hashCode() + start_date.hashCode() + end_date.hashCode() + city.hashCode()
+				+ address.hashCode();
 	}
 
 	public void setEnd_date(LocalDate end_date) {
