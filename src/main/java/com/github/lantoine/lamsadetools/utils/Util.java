@@ -33,7 +33,7 @@ public class Util {
 	private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
 	public static void main(String[] args) throws IllegalStateException {
-		sendEmail("edoreld@gmail.com", "/Users/edoreld/Desktop/presentation.pdf");
+		sendEmail("edoreld@gmail.com");
 	}
 
 	/**
@@ -58,7 +58,9 @@ public class Util {
 	}
 
 	/**
-	 * Sends an email to an address passed by parameter.
+	 * Sends an email to an address passed by parameter. If there is an error
+	 * other than lack of an Internet connection, the program will exit with a
+	 * stack trace.
 	 *
 	 * @param to_address
 	 *            the address to send the email to
@@ -66,6 +68,7 @@ public class Util {
 	 *            if it's not empty, it will send the file referenced to by the
 	 *            filename as an attachment
 	 * @throws IllegalStateException
+	 * @returns 0 if it all went well, -1 if there was some error.
 	 */
 	public static int sendEmail(String to_address, String filename) throws IllegalStateException {
 
@@ -82,24 +85,22 @@ public class Util {
 
 		Session session = Session.getInstance(props, null);
 
-		MimeMessage msg = new MimeMessage(session);
-
 		Message message = new MimeMessage(session);
 
 		logger.info("Trying to send an email to " + to_address);
 
 		try {
 			try {
-				msg.addRecipient(Message.RecipientType.TO, new InternetAddress(to_address));
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(to_address));
 			} catch (AddressException e) {
 				logger.error("There is a problem with the address");
 				throw new IllegalStateException(e);
 			}
-			msg.setFrom(new InternetAddress(smtp_username));
-			msg.setSubject("Une conference a été partagée avec vous");
+			message.setFrom(new InternetAddress(smtp_username));
 
 			if (filename == "") {
-				msg.setText("Email Test");
+				message.setSubject("Email Test Subject");
+				message.setText("Email Test Body");
 			} else {
 				Multipart multipart = new MimeMultipart();
 
@@ -125,10 +126,11 @@ public class Util {
 				transport.connect(smtp_host, smtp_port, smtp_username, smtp_password);
 			} catch (MessagingException e) {
 				logger.debug("There seems to be a problem with the connection. Try again later");
+				return -1;
 			}
 
 			try {
-				transport.sendMessage(message, msg.getAllRecipients());
+				transport.sendMessage(message, message.getAllRecipients());
 			} catch (SendFailedException e) {
 				logger.error("Something went wrong trying to send the message");
 				throw new IllegalStateException(e);
@@ -148,7 +150,8 @@ public class Util {
 
 	/**
 	 * Overloading sendEmail to be able to call it with a default empty filename
-	 * for testing purposes **only**
+	 * for testing purposes **only**. This sends a **test** email to the address
+	 * passed by parameter.
 	 *
 	 * @param to_address
 	 *            The address to send the email to
