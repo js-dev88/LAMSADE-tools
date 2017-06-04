@@ -7,12 +7,15 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -28,14 +31,17 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import com.github.lantoine.lamsadetools.conferences.Conference;
 import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.map.AddressInfos;
 import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
+import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.github.lantoine.lamsadetools.utils.Util;
 import com.github.lantoine.lamsadetools.yearbookInfos.GetInfosFromYearbook;
+import com.github.lantoine.lamsadetools.yearbookInfos.YearbookDataException;
 
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.ValidationException;
@@ -47,16 +53,17 @@ import net.fortuna.ical4j.model.ValidationException;
  */
 public class Tester {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Tester.class);
-	private static Text txt_firstname;
-	private static Text txt_lastname;
-	private static Text txt_function;
-	private static Text txt_number;
-	private static Text txt_email;
-	private static Text txt_group;
-	private static Text txt_fax;
-	private static Text txt_office;
+	private static Shell shell;
 	private static Text txt_city_ud;
 	private static Text txt_country_ud;
+	private static Text txt_email;
+	private static Text txt_fax;
+	private static Text txt_firstname;
+	private static Text txt_function;
+	private static Text txt_group;
+	private static Text txt_lastname;
+	private static Text txt_number;
+	private static Text txt_office;
 
 	/**
 	 * Converts a LocalDate passed by parameter into a string
@@ -79,7 +86,7 @@ public class Tester {
 	 * @throws SQLException
 	 */
 	private static void fillConferenceTable(Table table) throws SQLException {
-		String[] titles = { "Title", "URL", "Start Date", "End Date", "Fee", "City", "Address"};
+		String[] titles = { "Title", "URL", "Start Date", "End Date", "Fee", "City", "Address" };
 		ArrayList<Conference> confs = ConferenceDatabase.returnAllConferencesFromDatabase();
 
 		for (String title : titles) {
@@ -106,16 +113,55 @@ public class Tester {
 
 	}
 
+	/**
+	 *
+	 * @return user informations, returns null if failed to get the informations
+	 */
+	public static UserDetails getUserDetails() {
+		if (txt_firstname.getText().isEmpty() || txt_lastname.getText().isEmpty()) {
+			MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+			mb.setText("Infromation missing");
+			mb.setMessage("Please fill name and first name");
+			mb.open();
+			return null;
+		}
+
+		UserDetails user = null;
+		if (txt_office.getText().isEmpty() || txt_number.getText().isEmpty() || txt_group.getText().isEmpty()
+				|| txt_function.getText().isEmpty() || txt_fax.getText().isEmpty() || txt_email.getText().isEmpty()
+				|| txt_country_ud.getText().isEmpty() || txt_city_ud.getText().isEmpty()) {
+			try {
+				LOGGER.debug("Launching GetInfosFromYearbook.getUserDetails with : " + txt_lastname.getText() + " and "
+						+ txt_firstname.getText());
+				user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(), txt_firstname.getText());
+			} catch (com.sun.star.lang.IllegalArgumentException | IOException | YearbookDataException | SAXException
+					| ParserConfigurationException e) {
+				LOGGER.error("getUserDetails: an error occurend while getting the informations");
+				MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+				mb.setText("Error");
+				mb.setMessage(
+						"Could not get the informations from the yearbook\nThere is probably an error in the name or firstname");
+				mb.open();
+			}
+
+		} else {
+			user = new UserDetails(txt_firstname.getText(), txt_lastname.getText(), txt_function.getText(),
+					txt_number.getText(), txt_email.getText(), txt_group.getText(), txt_fax.getText(),
+					txt_office.getText(), txt_city_ud.getText(), txt_country_ud.getText());
+		}
+		return user;
+	}
+
 	public static void main(String[] args) throws SQLException {
 
 		System.setProperty("SWT_GTK3", "0");
 		Display display = new Display();
-		Shell shell = new Shell(display);
+		shell = new Shell(display);
 
-		// shell.setSize(300, 300);
 		shell.setText("Conference List");
 
 		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 1;
 
 		shell.setLayout(gridLayout);
 
@@ -125,7 +171,7 @@ public class Tester {
 
 		final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
-		shell.setSize(new Point(888, 661));
+		shell.setSize(new Point(888, 800));
 
 		/*
 		 * Initialize Group conferencesInfos which will include : -The Grid data
@@ -134,39 +180,42 @@ public class Tester {
 		 * -The fields that will allow the user to add a new conference in the
 		 * database
 		 */
-		
+
 		Group grpUserDetails = new Group(shell, SWT.NONE);
 		GridData gd_grpUserDetails = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_grpUserDetails.widthHint = 848;
+		gd_grpUserDetails.widthHint = 860;
 		gd_grpUserDetails.heightHint = 155;
 		grpUserDetails.setLayoutData(gd_grpUserDetails);
 		grpUserDetails.setText("User Details");
-		
+
 		Label lblFirstname = new Label(grpUserDetails, SWT.NONE);
 		lblFirstname.setBounds(10, 26, 70, 15);
 		lblFirstname.setText("First Name");
-		
+
 		Label lblNewLabel_1 = new Label(grpUserDetails, SWT.NONE);
 		lblNewLabel_1.setBounds(10, 53, 55, 15);
 		lblNewLabel_1.setText("Last Name");
-		
+
 		txt_firstname = new Text(grpUserDetails, SWT.BORDER);
 		txt_firstname.setBounds(86, 23, 98, 21);
-		
+
 		txt_lastname = new Text(grpUserDetails, SWT.BORDER);
 		txt_lastname.setBounds(86, 50, 98, 21);
-		
+
 		/*
-		 * Handle the User Info's Search
-		 * Throws exception if firstname or lastname is wrong
+		 * Handle the User Info's Search Throws exception if firstname or
+		 * lastname is wrong
 		 */
-		
+
 		Button btn_searchInfo = new Button(grpUserDetails, SWT.NONE);
 		btn_searchInfo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				try{
-					UserDetails user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(),txt_firstname.getText());
+				try {
+					LOGGER.debug("Launching GetInfosFromYearbook.getUserDetails with : " + txt_lastname.getText()
+							+ " and " + txt_firstname.getText());
+					UserDetails user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(),
+							txt_firstname.getText());
 					txt_function.setText(user.getFunction());
 					txt_number.setText(user.getNumber());
 					txt_email.setText(user.getEmail());
@@ -175,7 +224,7 @@ public class Tester {
 					txt_office.setText(user.getOffice());
 					txt_city_ud.setText(user.getCity());
 					txt_country_ud.setText(user.getCountry());
-				}catch(@SuppressWarnings("unused") Exception e){
+				} catch (@SuppressWarnings("unused") Exception e) {
 					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 					mb.setText("Error");
 					mb.setMessage("Please verify firstname and lastname");
@@ -185,137 +234,138 @@ public class Tester {
 		});
 		btn_searchInfo.setBounds(10, 87, 114, 25);
 		btn_searchInfo.setText("Search My Infos");
-		
+
 		Label lbl_function = new Label(grpUserDetails, SWT.NONE);
 		lbl_function.setBounds(224, 26, 55, 15);
 		lbl_function.setText("Function");
-		
+
 		Label lbl_number = new Label(grpUserDetails, SWT.NONE);
 		lbl_number.setBounds(224, 56, 55, 15);
 		lbl_number.setText("Phone");
-		
+
 		Label lbl_email = new Label(grpUserDetails, SWT.NONE);
 		lbl_email.setBounds(224, 92, 55, 15);
 		lbl_email.setText("E-mail");
-		
+
 		Label lbl_group = new Label(grpUserDetails, SWT.NONE);
 		lbl_group.setBounds(224, 124, 55, 15);
 		lbl_group.setText("Group");
-		
+
 		txt_function = new Text(grpUserDetails, SWT.BORDER);
 		txt_function.setBounds(285, 20, 219, 21);
-		
+
 		txt_number = new Text(grpUserDetails, SWT.BORDER);
 		txt_number.setBounds(285, 53, 219, 21);
-		
+
 		txt_email = new Text(grpUserDetails, SWT.BORDER);
 		txt_email.setBounds(285, 87, 219, 21);
-		
+
 		txt_group = new Text(grpUserDetails, SWT.BORDER);
 		txt_group.setBounds(285, 121, 219, 21);
-		
+
 		Label lbl_fax = new Label(grpUserDetails, SWT.NONE);
 		lbl_fax.setText("Fax");
 		lbl_fax.setBounds(535, 26, 55, 15);
-		
+
 		Label lbl_office = new Label(grpUserDetails, SWT.NONE);
 		lbl_office.setText("Office");
 		lbl_office.setBounds(535, 59, 55, 15);
-		
+
 		Label lbl_city = new Label(grpUserDetails, SWT.NONE);
 		lbl_city.setText("City");
 		lbl_city.setBounds(535, 92, 55, 15);
-		
+
 		Label lbl_country = new Label(grpUserDetails, SWT.NONE);
 		lbl_country.setText("Country");
 		lbl_country.setBounds(535, 124, 55, 15);
-		
+
 		txt_fax = new Text(grpUserDetails, SWT.BORDER);
 		txt_fax.setBounds(596, 23, 219, 21);
-		
+
 		txt_office = new Text(grpUserDetails, SWT.BORDER);
 		txt_office.setBounds(596, 56, 219, 21);
-		
+
 		txt_city_ud = new Text(grpUserDetails, SWT.BORDER);
 		txt_city_ud.setBounds(596, 89, 219, 21);
-		
+
 		txt_country_ud = new Text(grpUserDetails, SWT.BORDER);
 		txt_country_ud.setBounds(596, 121, 219, 21);
+		new Label(shell, SWT.NONE);
+
+		// Group Conferences informations
 		Group grp_conferencesInfos = new Group(shell, SWT.NONE);
 		GridData gd_conferencesInfos = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_conferencesInfos.heightHint = 215;
-		gd_conferencesInfos.widthHint = 854;
+		gd_conferencesInfos.heightHint = 237;
+		gd_conferencesInfos.widthHint = 860;
 		grp_conferencesInfos.setLayoutData(gd_conferencesInfos);
 		grp_conferencesInfos.setText("Conferences");
 
 		Table table = new Table(grp_conferencesInfos, SWT.V_SCROLL);
-		table.setBounds(165, 28, 502, 134);
+		table.setBounds(165, 16, 502, 134);
 		table.setHeaderVisible(true);
 		fillConferenceTable(table);
 
 		Button btn_addNewConf = new Button(grp_conferencesInfos, SWT.NONE);
-		btn_addNewConf.setBounds(10, 180, 149, 25);
+		btn_addNewConf.setBounds(165, 156, 149, 25);
 		btn_addNewConf.setText("Create conference");
-		
-		Label lblCity= new Label(grp_conferencesInfos, SWT.NONE);
-		lblCity.setAlignment(SWT.RIGHT);
-		lblCity.setBounds(25, 38, 50, 15);
-		lblCity.setText("City");
-		Text txt_city = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_city.setBounds(81, 35, 78, 21);
 
 		Label lblTitle = new Label(grp_conferencesInfos, SWT.NONE);
 		lblTitle.setAlignment(SWT.RIGHT);
-		lblTitle.setBounds(25, 38, 50, 15);
+		lblTitle.setBounds(25, 16, 50, 15);
 		lblTitle.setText("Title");
 		Text txt_title = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_title.setBounds(81, 35, 78, 21);
+		txt_title.setBounds(81, 15, 78, 21);
 
 		Label lblUrl = new Label(grp_conferencesInfos, SWT.NONE);
 		lblUrl.setAlignment(SWT.RIGHT);
 		lblUrl.setText("URL");
-		lblUrl.setBounds(25, 66, 50, 15);
+		lblUrl.setBounds(25, 45, 50, 15);
 		Text txt_url = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_url.setBounds(81, 63, 78, 21);
+		txt_url.setBounds(81, 42, 78, 21);
 
 		Label lblStartDate = new Label(grp_conferencesInfos, SWT.NONE);
 		lblStartDate.setAlignment(SWT.RIGHT);
 		lblStartDate.setText("Start Date");
-		lblStartDate.setBounds(10, 93, 65, 15);
+		lblStartDate.setBounds(10, 72, 65, 15);
 		Text txt_startDate = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_startDate.setBounds(81, 90, 78, 21);
-		
+		txt_startDate.setBounds(81, 69, 78, 21);
+
 		Label lblEndDate = new Label(grp_conferencesInfos, SWT.NONE);
 		lblEndDate.setAlignment(SWT.RIGHT);
 		lblEndDate.setText("End Date");
-		lblEndDate.setBounds(10, 120, 65, 15);
+		lblEndDate.setBounds(10, 99, 65, 15);
 		Text txt_endDate = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_endDate.setBounds(81, 117, 78, 21);
-		
+		txt_endDate.setBounds(81, 96, 78, 21);
+
 		Label lblFee = new Label(grp_conferencesInfos, SWT.NONE);
 		lblFee.setText("Fee");
-		lblFee.setBounds(42, 147, 33, 15);
+		lblFee.setBounds(42, 126, 33, 15);
 		Text txt_fee = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_fee.setBounds(81, 144, 78, 21);
+		txt_fee.setBounds(81, 123, 78, 21);
 
-		// add news fields 
-		
-		/*Label lblCity= new Label(grp_conferencesInfos, SWT.NONE);
+		// add news fields
+
+		/*
+		 * Label lblCity= new Label(grp_conferencesInfos, SWT.NONE);
+		 * lblCity.setAlignment(SWT.RIGHT); lblCity.setBounds(25, 38, 50, 15);
+		 * lblCity.setText("City"); Text txt_city = new
+		 * Text(grp_conferencesInfos, SWT.BORDER); txt_city.setBounds(81, 35,
+		 * 78, 21);
+		 */
+
+		Label lblCity = new Label(grp_conferencesInfos, SWT.NONE);
 		lblCity.setAlignment(SWT.RIGHT);
-		lblCity.setBounds(25, 38, 50, 15);
+		lblCity.setBounds(25, 153, 50, 15);
 		lblCity.setText("City");
 		Text txt_city = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_city.setBounds(81, 35, 78, 21);*/
-		
-		Label lbladdress= new Label(grp_conferencesInfos, SWT.NONE);
+		txt_city.setBounds(81, 150, 78, 21);
+
+		Label lbladdress = new Label(grp_conferencesInfos, SWT.NONE);
 		lbladdress.setAlignment(SWT.RIGHT);
-		lbladdress.setBounds(25, 38, 50, 15);
+		lbladdress.setBounds(25, 180, 50, 15);
 		lbladdress.setText("Address");
 		Text txt_address = new Text(grp_conferencesInfos, SWT.BORDER);
-		txt_address.setBounds(81, 35, 78, 21);
-		
-		
-		
+		txt_address.setBounds(81, 177, 78, 21);
 
 		// Create new Conference object, assign it values from
 		// selection, then pass it function to export to desktop
@@ -367,7 +417,7 @@ public class Tester {
 
 			}
 		});
-		btnExportEvent.setBounds(165, 178, 104, 28);
+		btnExportEvent.setBounds(320, 154, 104, 28);
 		btnExportEvent.setText("Export Event");
 
 		/*
@@ -386,7 +436,7 @@ public class Tester {
 						LocalDate startDate = LocalDate.parse(txt_startDate.getText(), formatter);
 						LocalDate endDate = LocalDate.parse(txt_endDate.getText(), formatter);
 						Conference conf = new Conference(txt_title.getText(), txt_url.getText(), startDate, endDate,
-								Double.parseDouble(txt_fee.getText()),txt_city.getText(), txt_address.getText() );
+								Double.parseDouble(txt_fee.getText()), txt_city.getText(), txt_address.getText());
 						ConferenceDatabase.insertInDatabase(conf);
 						/*
 						 * Reload the conference table
@@ -411,10 +461,6 @@ public class Tester {
 
 			}
 		});
-
-		/*
-		 * This group will help the user to see his itinerary into the browser
-		 */
 
 		Group grp_map = new Group(shell, SWT.NONE);
 		grp_map.setText("Visualize your travel");
@@ -443,12 +489,50 @@ public class Tester {
 		lblArrival.setBounds(10, 54, 73, 15);
 		lblArrival.setText("Arrival");
 
+		// Fill paper group
+		Group grpFillPapers = new Group(shell, SWT.NONE);
+		grpFillPapers.setText("Fill papers");
+		grpFillPapers.setLayout(new FillLayout(SWT.HORIZONTAL));
+		GridData fill_papers_layout_data = new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1);
+		fill_papers_layout_data.heightHint = 85;
+		fill_papers_layout_data.widthHint = 860;
+		grpFillPapers.setLayoutData(fill_papers_layout_data);
+
+		Button btn_paper_with_header = new Button(grpFillPapers, SWT.NONE);
+		btn_paper_with_header.setText("Paper with header");
+		btn_paper_with_header.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				LOGGER.debug("Button clicked : Paper with header");
+				UserDetails user = getUserDetails();
+				if (user != null) {
+					try {
+						MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+						mb.setText("Success");
+						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user));
+						LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
+						mb.open();
+					} catch (Exception e) {
+						throw new IllegalStateException(e);
+					}
+
+				} else {
+					LOGGER.error("Could not run SetCoordinates.fillPapierEnTete");
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("Error");
+					mb.setMessage("Could not fill the paper with header");
+					mb.open();
+				}
+			}
+		});
+
 		/*
 		 * Behavior of the btnItinerary : Takes the addresses entered in
 		 * departure and arrival Texts and call the ItineraryMap class to open
 		 * the itinerary into the browser
 		 */
 		btnItinerary.addSelectionListener(new SelectionAdapter() {
+
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				System.out.println("Appui sur le bouton");

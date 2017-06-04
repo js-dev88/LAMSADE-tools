@@ -50,4 +50,19 @@ public class TestConferenceDataBases {
 		ConferenceDatabase.getConferencesFromDatabase("title", "string");
 
 	}
+
+	@Test
+	public void getConnectionDataBase() {
+		ConferenceDatabase.getConnectionDataBase();
+	}
+
+	@Test
+	public void removeConferenceFromDatabase() throws SQLException {
+		ConferenceDatabase.removeConferenceFromDatabase(0);
+	}
+
+	@Test
+	public void returnAllConferencesFromDatabase() throws SQLException {
+		ConferenceDatabase.returnAllConferencesFromDatabase();
+	}
 }

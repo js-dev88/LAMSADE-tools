@@ -33,8 +33,9 @@ public class AddressInfos {
 
 	
 	/**
-	 * Enter an address and you'll be able to get a formatted address, 
-	 * the latitude and the longitude of the address you've entered.
+	 * Enter an address to set the rawAddress attribute. 
+	 * the latitude and the longitude of the address you've entered will be set to empty
+	 * Please use retrieveGeocodeResponse() method to set those attributes.
 	 * 
 	 * @param rawAdress
 	 * @throws IllegalArgumentException
@@ -54,7 +55,7 @@ public class AddressInfos {
 	 * retrieveGeocodeResponse connects to maps.googleapis
 	 * enters the rawAddress and gets a geocode response
 	 * It takes from the geocode response : the formatted_address, latitude and longitude 
-	 * and sets the corresponding class attributs 
+	 * and sets the corresponding class attributes 
 	 * 
 	 * @throws IOException
 	 * 

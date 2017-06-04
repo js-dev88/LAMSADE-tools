@@ -42,7 +42,14 @@ public class SetCoordinates {
 		}
 	}
 
-	public static void fillPapierEnTete(UserDetails user) throws Exception {
+	/**
+	 * fill the paper with header
+	 * 
+	 * @param user
+	 * @return path where the file is saved
+	 * @throws Exception
+	 */
+	public static String fillPapierEnTete(UserDetails user) throws Exception {
 		Path path = FileSystems.getDefault().getPath("");
 		System.out.println("The File will be saved in: " + path.toAbsolutePath());
 
@@ -99,6 +106,7 @@ public class SetCoordinates {
 			}
 		}
 		System.out.println("PapierEnTete generated");
+		return path.toAbsolutePath().toString();
 	}
 
 	public static void main(String[] args) throws Exception {
