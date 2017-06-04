@@ -131,13 +131,16 @@ public class Tester {
 				|| txt_function.getText().isEmpty() || txt_fax.getText().isEmpty() || txt_email.getText().isEmpty()
 				|| txt_country_ud.getText().isEmpty() || txt_city_ud.getText().isEmpty()) {
 			try {
+				LOGGER.debug("Launching GetInfosFromYearbook.getUserDetails with : " + txt_lastname.getText() + " and "
+						+ txt_firstname.getText());
 				user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(), txt_firstname.getText());
 			} catch (com.sun.star.lang.IllegalArgumentException | IOException | YearbookDataException | SAXException
 					| ParserConfigurationException e) {
 				LOGGER.error("getUserDetails: an error occurend while getting the informations");
 				MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 				mb.setText("Error");
-				mb.setMessage("Could not get the informations from the yearbook");
+				mb.setMessage(
+						"Could not get the informations from the yearbook\nThere is probably an error in the name or firstname");
 				mb.open();
 			}
 
@@ -209,6 +212,8 @@ public class Tester {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
+					LOGGER.debug("Launching GetInfosFromYearbook.getUserDetails with : " + txt_lastname.getText()
+							+ " and " + txt_firstname.getText());
 					UserDetails user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(),
 							txt_firstname.getText());
 					txt_function.setText(user.getFunction());
@@ -457,11 +462,6 @@ public class Tester {
 			}
 		});
 
-		/*
-		 * This group will help the user to see his itinerary into the browser
-		 */
-		new Label(shell, SWT.NONE);
-
 		Group grp_map = new Group(shell, SWT.NONE);
 		grp_map.setText("Visualize your travel");
 		GridData gd_map = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
@@ -520,7 +520,7 @@ public class Tester {
 					LOGGER.error("Could not run SetCoordinates.fillPapierEnTete");
 					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 					mb.setText("Error");
-					mb.setMessage("Could not run SetCoordinates.fillPapierEnTete");
+					mb.setMessage("Could not fill the paper with header");
 					mb.open();
 				}
 			}
