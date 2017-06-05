@@ -104,7 +104,7 @@ public class Tester {
 			item.setText(3, convertLocaldateToString(i.getEnd_date()));
 			item.setText(4, Double.toString(i.getEntry_fee()));
 			item.setText(5, i.getCity());
-			item.setText(6, i.getAddress());
+			item.setText(6, i.getCountry());
 		}
 
 		for (int loopIndex = 0; loopIndex < titles.length; loopIndex++) {

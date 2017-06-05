@@ -22,7 +22,7 @@ public class ConferenceDatabase {
 	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
 			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
 			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, " + "entry_fee        double, "
-			+ "City            varchar(255) NOT NULL, " + "Address            varchar(255) NOT NULL, "
+			+ "City            varchar(255) NOT NULL, " + "Country            varchar(255) NOT NULL, "
 			+ "CONSTRAINT conferenceID PRIMARY KEY (conferenceID) ); ";
 
 	private static final String SQL_DATE_FORMAT = "yyyy-MM-dd";
@@ -131,15 +131,15 @@ public class ConferenceDatabase {
 				LocalDate end_date = LocalDate.parse(result.getString(5));
 				double entry_fee = result.getDouble(6);
 				String city = result.getString(7);
-				String address = result.getString(8);
-				conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee, city, address));
+				String country = result.getString(8);
+				conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee, city, country));
 			}
 
 			for (Conference i : conferencesArray) {
 				System.out.println("####################");
 				System.out.println("Conference: " + i.getTitle() + " (" + i.getUrl() + ")");
 				System.out.println("From the " + i.getStart_date() + " to the " + i.getEnd_date());
-				System.out.println("in " + i.getCity() + " to this address " + i.getAddress());
+				System.out.println("in " + i.getCity() + " to this country " + i.getCountry());
 				System.out.println("Fee: " + i.getEntry_fee());
 			}
 
@@ -160,7 +160,7 @@ public class ConferenceDatabase {
 	 */
 	public static void insertInDatabase(Conference conf) throws SQLException {
 
-		String insertQuery = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee, city, address)   VALUES (?, ?, ?, ?, ?, ?, ?);";
+		String insertQuery = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee, City, Country)   VALUES (?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement preparedStatement = null;
 
 		Connection con = ConferenceDatabase.getConnectionDataBase().getConnection();
@@ -175,7 +175,7 @@ public class ConferenceDatabase {
 		preparedStatement.setDate(4, java.sql.Date.valueOf(conf.getEnd_date()));
 		preparedStatement.setDouble(5, conf.getEntry_fee());
 		preparedStatement.setString(6, conf.getCity());
-		preparedStatement.setString(7, conf.getAddress());
+		preparedStatement.setString(7, conf.getCountry());
 
 		try {
 			preparedStatement.executeUpdate();
