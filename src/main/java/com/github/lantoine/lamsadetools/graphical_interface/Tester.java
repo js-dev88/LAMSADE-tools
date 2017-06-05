@@ -193,7 +193,7 @@ public class Tester {
 		lblFirstname.setText("First Name");
 
 		Label lblNewLabel_1 = new Label(grpUserDetails, SWT.NONE);
-		lblNewLabel_1.setBounds(10, 53, 55, 15);
+		lblNewLabel_1.setBounds(10, 53, 70, 15);
 		lblNewLabel_1.setText("Last Name");
 
 		txt_firstname = new Text(grpUserDetails, SWT.BORDER);
@@ -232,8 +232,8 @@ public class Tester {
 				}
 			}
 		});
-		btn_searchInfo.setBounds(10, 87, 114, 25);
-		btn_searchInfo.setText("Search My Infos");
+		btn_searchInfo.setBounds(43, 87, 141, 25);
+		btn_searchInfo.setText("Search My Info");
 
 		Label lbl_function = new Label(grpUserDetails, SWT.NONE);
 		lbl_function.setBounds(224, 26, 55, 15);
@@ -477,7 +477,7 @@ public class Tester {
 
 		Button btnItinerary = new Button(grp_map, SWT.NONE);
 		btnItinerary.setText("Validate");
-		btnItinerary.setBounds(303, 49, 68, 25);
+		btnItinerary.setBounds(303, 49, 95, 25);
 
 		Label lblDeparture = new Label(grp_map, SWT.NONE);
 		lblDeparture.setAlignment(SWT.RIGHT);
