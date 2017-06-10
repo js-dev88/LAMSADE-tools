@@ -49,7 +49,6 @@
 					<family>windows</family>
 					<arch>x86_64</arch>
 				</os>
-				
 			</activation>
 			<dependencies>
 			<!--  SWT Support for Windows 32 Bits x86_64  -->
@@ -116,7 +115,12 @@
     <artifactId>mail</artifactId>
     <version>1.5.0-b01</version>
 </dependency>
-		
+		<!-- https://mvnrepository.com/artifact/com.github.peter-gergely-horvath/windpapi4j API for keyring on Windows-->
+		<dependency>
+		    <groupId>com.github.peter-gergely-horvath</groupId>
+		    <artifactId>windpapi4j</artifactId>
+		    <version>1.0</version>
+		</dependency>
 	    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api used for logging  -->
 		<dependency>
 		    <groupId>org.slf4j</groupId>

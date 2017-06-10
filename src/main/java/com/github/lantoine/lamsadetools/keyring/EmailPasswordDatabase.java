@@ -26,7 +26,7 @@ public class EmailPasswordDatabase {
 	private static final String DROPSTATEMENT = "DROP table EMAILPASSWORD;";
 
 	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS EMAILPASSWORD ("
-			+ "emailPasswordID	SERIAL, " + "email varchar(255) NOT NULL, " + "encryptedPassword varchar(255) NOT NULL, "
+			+ "emailPasswordID	SERIAL, " + "email varchar(255) NOT NULL, " + "encryptedPassword varchar(500) NOT NULL, "
 			+ "CONSTRAINT emailPasswordID PRIMARY KEY (emailPasswordID)); ";
 
 	private static final String INSERTQUERY = "INSERT INTO EMAILPASSWORD (email, encryptedPassword) VALUES (?, ?);";
@@ -84,7 +84,7 @@ public class EmailPasswordDatabase {
 			try (PreparedStatement preparedStatement = conn.prepareStatement(INSERTQUERY);) {
 
 				preparedStatement.setString(1, email.getEmail());
-				preparedStatement.setString(2, email.getNonEncryptedPassword());
+				preparedStatement.setString(2, email.getEncryptedPassword());
 
 				try {
 					preparedStatement.executeUpdate();
@@ -143,7 +143,7 @@ public class EmailPasswordDatabase {
 						}
 						String selectEmail = result.getString(2);
 						String selectEncryptedPassword = result.getString(3);
-						EmailPassword retrievedEmail = new EmailPassword(selectEmail, selectEncryptedPassword);
+						EmailPassword retrievedEmail = new EmailPassword(selectEmail, null, selectEncryptedPassword);
 						return retrievedEmail;
 
 					}
@@ -153,17 +153,6 @@ public class EmailPasswordDatabase {
 			}
 		}
 	}
-    public static void main(String[] args) throws SQLException, NullPointerException {
-		
-    	EmailPassword test = new EmailPassword("test", "test");
-    	EmailPassword tested;
-    	
-    	EmailPasswordDatabase.createTable();
-    	EmailPasswordDatabase.insertInDatabase(test);
-    	tested = EmailPasswordDatabase.getEmailPassword("test");
-        LOGGER.debug(tested.toString());
-        EmailPasswordDatabase.removeConferenceFromDatabase("test");
-        EmailPasswordDatabase.clearDataBase();
-	}
+  
 
 }
