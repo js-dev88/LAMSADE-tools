@@ -2,6 +2,8 @@ package com.github.lantoine.lamsadetools.graphical_interface;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -119,10 +121,10 @@ public class Tester {
 	 */
 	public static UserDetails getUserDetails() {
 		if (txt_firstname.getText().isEmpty() || txt_lastname.getText().isEmpty()) {
-			MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-			mb.setText("Infromation missing");
-			mb.setMessage("Please fill name and first name");
-			mb.open();
+			// MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+			// mb.setText("Information missing");
+			// mb.setMessage("Please fill name and first name");
+			// mb.open();
 			return null;
 		}
 
@@ -311,12 +313,18 @@ public class Tester {
 				} else {
 					LOGGER.error("Could not run SetCoordinates.fillPapierEnTete");
 					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					mb.setText("Error");
-					mb.setMessage("Could not fill the paper with header");
+					mb.setText("Information missing");
+					mb.setMessage("Please fill name and first name");
 					mb.open();
 				}
 			}
 		});
+
+		Label label = new Label(grpUserDetails, SWT.NONE);
+		label.setBounds(21, 190, 59, 14);
+		label.setText("New Label");
+		new Label(shell, SWT.NONE);
+
 		btnGeneratePapierEn.setBounds(25, 118, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
 
@@ -325,13 +333,22 @@ public class Tester {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+				LOGGER.info("Opening the file dialog for user to choose a file to save to the app");
 				String dialogResult = dialog.open();
+				LOGGER.info("File chosen: " + dialogResult);
 
 				if (dialogResult == null) {
 					LOGGER.info("User closed the file save dialog");
 				} else {
-					boolean exists = new File(dialogResult).exists();
-					if (exists) {
+					// Check if there exists a file with the same name in our
+					// missions directory
+					Path path = FileSystems.getDefault().getPath("");
+					File pathToProject = new File(
+							path.toAbsolutePath() + "/missions/" + new File(dialogResult).getName());
+
+					boolean exists = pathToProject.exists();
+					if (exists == true) {
+						LOGGER.info("Duplicate Detected");
 						MessageBox mBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
 						mBox.setText("Duplicate detected");
 						mBox.setMessage("A file with that name already exists. Would you like to replace it?");
@@ -340,16 +357,18 @@ public class Tester {
 							LOGGER.info("User chose not to replace the existing file");
 						} else {
 							LOGGER.info("User chose to replace the existing file");
+							Util.saveFile(dialogResult);
+							label.setText("PENIS");
 						}
 					} else {
 						Util.saveFile(dialogResult);
+						label.setText("PENIS");
 					}
 				}
 			}
 		});
 		btnSaveOrdreMission.setBounds(26, 152, 158, 28);
 		btnSaveOrdreMission.setText("Save Ordre Mission");
-		new Label(shell, SWT.NONE);
 
 		// Group Conferences informations
 		Group grp_conferencesInfos = new Group(shell, SWT.NONE);
