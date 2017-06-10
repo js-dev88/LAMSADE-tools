@@ -1,5 +1,6 @@
 package com.github.lantoine.lamsadetools.graphical_interface;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -324,7 +325,26 @@ public class Tester {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-				Util.saveFile(dialog.open());
+				String dialogResult = dialog.open();
+
+				if (dialogResult == null) {
+					LOGGER.info("User closed the file save dialog");
+				} else {
+					boolean exists = new File(dialogResult).exists();
+					if (exists) {
+						MessageBox mBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
+						mBox.setText("Duplicate detected");
+						mBox.setMessage("A file with that name already exists. Would you like to replace it?");
+						int returnCode = mBox.open();
+						if (returnCode == 256) {
+							LOGGER.info("User chose not to replace the existing file");
+						} else {
+							LOGGER.info("User chose to replace the existing file");
+						}
+					} else {
+						Util.saveFile(dialogResult);
+					}
+				}
 			}
 		});
 		btnSaveOrdreMission.setBounds(26, 152, 158, 28);
