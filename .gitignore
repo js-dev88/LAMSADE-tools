@@ -1,3 +1,7 @@
+# User File #
+#############
+missions/
+
 # Compiled source #
 ###################
 *.com
@@ -79,3 +83,4 @@ local.properties
 
 # Testing files
 *.pdf
+
