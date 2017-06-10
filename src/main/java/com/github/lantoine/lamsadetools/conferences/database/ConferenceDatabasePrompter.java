@@ -227,7 +227,7 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "City", conf.getTitle());
 		}
 
-		if (!conf.getAddress().isEmpty()) {
+		if (!conf.getCountry().isEmpty()) {
 			set_statement = ConferenceDatabase.constructSetStatement(set_statement, "Country", conf.getTitle());
 		}
 		set_statement = "UPDATE conferences " + set_statement + where_statement + ";";

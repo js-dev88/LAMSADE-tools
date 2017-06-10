@@ -1,6 +1,9 @@
 package com.github.lantoine.lamsadetools.utils;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -15,6 +18,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +37,7 @@ public class Util {
 	private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
 	public static void main(String[] args) throws IllegalStateException {
-		sendEmail("edoreld@gmail.com");
+		// sendEmail("edoreld@gmail.com");
 	}
 
 	/**
@@ -151,7 +155,7 @@ public class Util {
 	/**
 	 * Overloading sendEmail to be able to call it with a default empty filename
 	 * for testing purposes **only**. This sends a **test** email to the address
-	 * passed by parameter.
+	 * passed by parameter. Use for debugging.
 	 *
 	 * @param to_address
 	 *            The address to send the email to
@@ -159,5 +163,35 @@ public class Util {
 	 */
 	static int sendEmail(String to_address) throws IllegalStateException {
 		return sendEmail(to_address, "");
+	}
+
+	/**
+	 *
+	 * @param filename
+	 *            the path of the file to save
+	 * @return 0 if it worked
+	 */
+	public static int saveFile(String pathToFile) {
+
+		// Get path to the missions folder in the Java project
+		Path path = FileSystems.getDefault().getPath("");
+		File pathToProject = new File(path.toAbsolutePath() + "/missions");
+
+		logger.info("The File will be saved in: " + pathToProject.toString());
+
+		// Get the path to the filename to save in the project
+		File fileName = new File(pathToFile);
+
+		logger.info("FileName" + fileName);
+
+		// Copy the file to the missions directory
+		try {
+			FileUtils.copyFileToDirectory(fileName, pathToProject);
+		} catch (IOException e) {
+			logger.error("Something went wrong trying to copy the file to the project");
+			throw new IllegalStateException(e);
+		}
+
+		return 0;
 	}
 }
