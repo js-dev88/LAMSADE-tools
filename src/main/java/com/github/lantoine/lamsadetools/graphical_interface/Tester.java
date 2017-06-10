@@ -320,9 +320,9 @@ public class Tester {
 			}
 		});
 
-		Label label = new Label(grpUserDetails, SWT.NONE);
-		label.setBounds(21, 190, 59, 14);
-		label.setText("New Label");
+		Label lblPlaceholder = new Label(grpUserDetails, SWT.NONE);
+		lblPlaceholder.setBounds(21, 190, 829, 14);
+		lblPlaceholder.setText("");
 		new Label(shell, SWT.NONE);
 
 		btnGeneratePapierEn.setBounds(25, 118, 159, 28);
@@ -343,8 +343,8 @@ public class Tester {
 					// Check if there exists a file with the same name in our
 					// missions directory
 					Path path = FileSystems.getDefault().getPath("");
-					File pathToProject = new File(
-							path.toAbsolutePath() + "/missions/" + new File(dialogResult).getName());
+					String pathToTargetFile = path.toAbsolutePath() + "/missions/" + new File(dialogResult).getName();
+					File pathToProject = new File(pathToTargetFile);
 
 					boolean exists = pathToProject.exists();
 					if (exists == true) {
@@ -358,11 +358,14 @@ public class Tester {
 						} else {
 							LOGGER.info("User chose to replace the existing file");
 							Util.saveFile(dialogResult);
-							label.setText("PENIS");
+							lblPlaceholder.setText("The file has successfully been saved to " + pathToTargetFile);
+
 						}
 					} else {
+						LOGGER.info("Calling saveFile(String) to save the file to disk");
 						Util.saveFile(dialogResult);
-						label.setText("PENIS");
+						lblPlaceholder.setText("The file has successfully been saved to " + pathToTargetFile);
+
 					}
 				}
 			}
