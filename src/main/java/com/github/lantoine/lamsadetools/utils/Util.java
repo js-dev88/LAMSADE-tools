@@ -171,11 +171,11 @@ public class Util {
 	 *            the path of the file to save
 	 * @return 0 if it worked
 	 */
-	static int saveFile(String pathToFile) {
+	public static int saveFile(String pathToFile) {
 
 		// Get path to the missions folder in the Java project
 		Path path = FileSystems.getDefault().getPath("");
-		File pathToProject = new File(path.toAbsolutePath() + "missions");
+		File pathToProject = new File(path.toAbsolutePath() + "/missions");
 
 		logger.info("The File will be saved in: " + pathToProject.toString());
 
