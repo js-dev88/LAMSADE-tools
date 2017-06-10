@@ -183,7 +183,7 @@ public class Tester {
 		Group grpUserDetails = new Group(shell, SWT.NONE);
 		GridData gd_grpUserDetails = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_grpUserDetails.widthHint = 860;
-		gd_grpUserDetails.heightHint = 155;
+		gd_grpUserDetails.heightHint = 214;
 		grpUserDetails.setLayoutData(gd_grpUserDetails);
 		grpUserDetails.setText("User Details");
 
@@ -316,8 +316,19 @@ public class Tester {
 				}
 			}
 		});
-		btnGeneratePapierEn.setBounds(26, 118, 159, 28);
+		btnGeneratePapierEn.setBounds(25, 118, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
+
+		Button btnSaveOrdreMission = new Button(grpUserDetails, SWT.NONE);
+		btnSaveOrdreMission.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+				Util.saveFile(dialog.open());
+			}
+		});
+		btnSaveOrdreMission.setBounds(26, 152, 158, 28);
+		btnSaveOrdreMission.setText("Save Ordre Mission");
 		new Label(shell, SWT.NONE);
 
 		// Group Conferences informations
@@ -494,7 +505,7 @@ public class Tester {
 		grp_map.setText("Visualize your travel");
 		GridData gd_map = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
 		gd_map.heightHint = 85;
-		gd_map.widthHint = 860;
+		gd_map.widthHint = 412;
 		grp_map.setLayoutData(gd_map);
 		Text departure = new Text(grp_map, SWT.BORDER);
 		departure.setLocation(101, 22);
@@ -504,7 +515,7 @@ public class Tester {
 		arrival.setSize(196, 21);
 
 		Button btnItinerary = new Button(grp_map, SWT.NONE);
-		btnItinerary.setText("Validate");
+		btnItinerary.setText("Search");
 		btnItinerary.setBounds(303, 49, 95, 25);
 
 		Label lblDeparture = new Label(grp_map, SWT.NONE);
