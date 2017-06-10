@@ -15,7 +15,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -171,7 +170,7 @@ public class Tester {
 
 		final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
-		shell.setSize(new Point(888, 800));
+		shell.setSize(new Point(888, 661));
 
 		/*
 		 * Initialize Group conferencesInfos which will include : -The Grid data
@@ -232,7 +231,7 @@ public class Tester {
 				}
 			}
 		});
-		btn_searchInfo.setBounds(43, 87, 141, 25);
+		btn_searchInfo.setBounds(26, 87, 158, 25);
 		btn_searchInfo.setText("Search My Info");
 
 		Label lbl_function = new Label(grpUserDetails, SWT.NONE);
@@ -290,6 +289,35 @@ public class Tester {
 
 		txt_country_ud = new Text(grpUserDetails, SWT.BORDER);
 		txt_country_ud.setBounds(596, 121, 219, 21);
+
+		Button btnGeneratePapierEn = new Button(grpUserDetails, SWT.NONE);
+		btnGeneratePapierEn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				LOGGER.debug("Button clicked : Paper with header");
+				UserDetails user = getUserDetails();
+				if (user != null) {
+					try {
+						MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+						mb.setText("Success");
+						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user));
+						LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
+						mb.open();
+					} catch (Exception e2) {
+						throw new IllegalStateException(e2);
+					}
+
+				} else {
+					LOGGER.error("Could not run SetCoordinates.fillPapierEnTete");
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("Error");
+					mb.setMessage("Could not fill the paper with header");
+					mb.open();
+				}
+			}
+		});
+		btnGeneratePapierEn.setBounds(26, 118, 159, 28);
+		btnGeneratePapierEn.setText("Generate Papier");
 		new Label(shell, SWT.NONE);
 
 		// Group Conferences informations
@@ -381,7 +409,7 @@ public class Tester {
 				TableItem[] ti = table.getSelection();
 
 				if (ti.length == 0) {
-					// Put somewhere that an event should be selected
+					// TODO: Put somewhere that an event should be selected
 				} else {
 					Conference conf = new Conference(ti[0].getText(0), ti[0].getText(1),
 							LocalDate.parse(ti[0].getText(2), formatter), LocalDate.parse(ti[0].getText(3), formatter),
@@ -488,43 +516,6 @@ public class Tester {
 		lblArrival.setAlignment(SWT.RIGHT);
 		lblArrival.setBounds(10, 54, 73, 15);
 		lblArrival.setText("Arrival");
-
-		// Fill paper group
-		Group grpFillPapers = new Group(shell, SWT.NONE);
-		grpFillPapers.setText("Fill papers");
-		grpFillPapers.setLayout(new FillLayout(SWT.HORIZONTAL));
-		GridData fill_papers_layout_data = new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1);
-		fill_papers_layout_data.heightHint = 85;
-		fill_papers_layout_data.widthHint = 860;
-		grpFillPapers.setLayoutData(fill_papers_layout_data);
-
-		Button btn_paper_with_header = new Button(grpFillPapers, SWT.NONE);
-		btn_paper_with_header.setText("Paper with header");
-		btn_paper_with_header.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				LOGGER.debug("Button clicked : Paper with header");
-				UserDetails user = getUserDetails();
-				if (user != null) {
-					try {
-						MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
-						mb.setText("Success");
-						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user));
-						LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
-						mb.open();
-					} catch (Exception e) {
-						throw new IllegalStateException(e);
-					}
-
-				} else {
-					LOGGER.error("Could not run SetCoordinates.fillPapierEnTete");
-					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					mb.setText("Error");
-					mb.setMessage("Could not fill the paper with header");
-					mb.open();
-				}
-			}
-		});
 
 		/*
 		 * Behavior of the btnItinerary : Takes the addresses entered in
