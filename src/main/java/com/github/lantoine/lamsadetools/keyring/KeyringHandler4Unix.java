@@ -12,7 +12,10 @@ import io.bunting.keyring.DefaultKeyring;
 import io.bunting.keyring.Keyring;
 
 public class KeyringHandler4Unix {
-	
+	private static Keyring keyring  = new DefaultKeyring("myApp");
+	private static String user = "user";
+	private static String service = "serv";
+
 
 	 
 	 public static void main(String[] args){
@@ -20,17 +23,32 @@ public class KeyringHandler4Unix {
 			
 		 String service ="serv";
 		 String user ="user";
-		 String stringPassword= "test";
+		 String stringPassword= "Abdel";
 		 
 		 char[] password = stringPassword.toCharArray();
-		 keyring.setPassword(service,user,password);
+		 //keyring.setPassword(service,user,password);
 		 
 		 char[] password2 = keyring.getPassword(service, user);
-		 
+		 System.out.println(password2);
 		
 		 
     }
-
+	 
+	 
+	 /**
+	  * This method will use the OS mechanism 
+	 * @param password
+	 */
+	public void encryptPasswordUnix(String password){
+		 
+		 char[] charPassword = password.toCharArray();
+		 keyring.setPassword(service,user,charPassword);
+	 }
+	 
+	 public char[] decryptPasswordUnix(){
+		 char[] password;
+		 return password = keyring.getPassword(service, user);
+	 }
 
 	
 }
