@@ -30,8 +30,9 @@ public class ConferenceDatabase {
 	/**
 	 * Create the table conference and return a message asking to execute delete
 	 * the database if there was a problem
+	 * @throws SQLException 
 	 */
-	static void createTable() {
+	static void createTable(){
 		Connection conn;
 		try {
 			conn = ConferenceDatabase.getConnectionDataBase().getConnection();
@@ -139,7 +140,7 @@ public class ConferenceDatabase {
 				System.out.println("####################");
 				System.out.println("Conference: " + i.getTitle() + " (" + i.getUrl() + ")");
 				System.out.println("From the " + i.getStart_date() + " to the " + i.getEnd_date());
-				System.out.println("in " + i.getCity() + " to this country " + i.getCountry());
+				System.out.println("in " + i.getCity() + " to this address " + i.getAddress());
 				System.out.println("Fee: " + i.getEntry_fee());
 			}
 
@@ -160,7 +161,7 @@ public class ConferenceDatabase {
 	 */
 	public static void insertInDatabase(Conference conf) throws SQLException {
 
-		String insertQuery = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee, City, Country)   VALUES (?, ?, ?, ?, ?, ?, ?);";
+		String insertQuery = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee, city, country)   VALUES (?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement preparedStatement = null;
 
 		Connection con = ConferenceDatabase.getConnectionDataBase().getConnection();
@@ -175,7 +176,7 @@ public class ConferenceDatabase {
 		preparedStatement.setDate(4, java.sql.Date.valueOf(conf.getEnd_date()));
 		preparedStatement.setDouble(5, conf.getEntry_fee());
 		preparedStatement.setString(6, conf.getCity());
-		preparedStatement.setString(7, conf.getCountry());
+		preparedStatement.setString(7, conf.getAddress());
 
 		try {
 			preparedStatement.executeUpdate();
@@ -236,9 +237,9 @@ public class ConferenceDatabase {
 					LocalDate _end_date = LocalDate.parse(result.getString(5));
 					double _entry_fee = result.getDouble(6);
 					String city = result.getString(7);
-					String address = result.getString(8);
+					String country = result.getString(8);
 					conferencesArray
-							.add(new Conference(_id, _url, _title, _start_date, _end_date, _entry_fee, city, address));
+							.add(new Conference(_id, _url, _title, _start_date, _end_date, _entry_fee, city, country));
 				}
 
 				result.close();
