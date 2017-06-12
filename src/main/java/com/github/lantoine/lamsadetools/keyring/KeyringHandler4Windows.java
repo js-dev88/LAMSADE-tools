@@ -56,10 +56,8 @@ public class KeyringHandler4Windows {
 
 	/**
 	 * factorization of the process to call the API directly from other classes
-	 * 
 	 * @param pswdToEncrypt
 	 *            may not be null
-	 * @return the encrypted password
 	 * @throws Exception
 	 * @throws InitializationFailedException
 	 * @throws WinAPICallFailedException
@@ -81,10 +79,9 @@ public class KeyringHandler4Windows {
 
 	/**
 	 * factorization of the process to call the API directly from other classes
-	 * 
-	 * @param pswdToEncrypt
+	 * @param pswdEncrypted
 	 *            may not be null
-	 * @return the decrypted password
+	 * @return the decrypted password in String format
 	 * @throws Exception
 	 * @throws InitializationFailedException
 	 * @throws WinAPICallFailedException
@@ -102,21 +99,6 @@ public class KeyringHandler4Windows {
 		winDPAPI = WinDPAPI.newInstance(CryptProtectFlag.CRYPTPROTECT_UI_FORBIDDEN);
 		pswdDecrypted = decrypt(pswdEncrypted);
 		return pswdDecrypted;
-	}
-
-	public static void main(String[] args) throws NullPointerException, Exception, InitializationFailedException,
-			WinAPICallFailedException, SQLException {
-
-		EmailPassword test = new EmailPassword("test", "test", "");
-
-		EmailPassword toStore = test.encryptPassword();
-        LOGGER.debug(toStore.toString());
-		EmailPasswordDatabase.createTable();
-		EmailPasswordDatabase.insertInDatabase(toStore);
-		EmailPassword tested = EmailPasswordDatabase.getEmailPassword("test");
-		LOGGER.debug(tested.toString());
-		EmailPasswordDatabase.removeConferenceFromDatabase("test");
-		EmailPasswordDatabase.clearDataBase();
 	}
 
 }
