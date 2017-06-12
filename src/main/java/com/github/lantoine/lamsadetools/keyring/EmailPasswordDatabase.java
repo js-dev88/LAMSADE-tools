@@ -106,7 +106,7 @@ public class EmailPasswordDatabase {
 	 * @throws SQLException
 	 */
 
-	public static void removeConferenceFromDatabase(String email) throws SQLException {
+	public static void removePasswordFromDatabase(String email) throws SQLException {
 
 		try (Connection conn = EmailPasswordDatabase.getConnectionDataBase().getConnection();) {
 

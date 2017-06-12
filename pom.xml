@@ -126,9 +126,19 @@
 		    <groupId>io.bunting.keyring</groupId>
 		    <artifactId>keyring-tool</artifactId>
 		    <version>0.2.0</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>org.slf4j</groupId>
+		    		<artifactId>slf4j-simple</artifactId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
-		
 	    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api used for logging  -->
+	    <dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>1.7.25</version>
+		</dependency>
 	    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic used for logging-->
 		<dependency>
 		    <groupId>ch.qos.logback</groupId>
