@@ -5,16 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.lantoine.lamsadetools.conferences.Conference;
-import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabasePrompter;
 import com.github.lantoine.lamsadetools.conferences.database.ConnectionDataBase;
 import com.sun.star.lang.NullPointerException;
 
@@ -26,7 +20,8 @@ public class EmailPasswordDatabase {
 	private static final String DROPSTATEMENT = "DROP table EMAILPASSWORD;";
 
 	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS EMAILPASSWORD ("
-			+ "emailPasswordID	SERIAL, " + "email varchar(255) NOT NULL, " + "encryptedPassword varchar(500) NOT NULL, "
+			+ "emailPasswordID	SERIAL, " + "email varchar(255) NOT NULL, "
+			+ "encryptedPassword varchar(500) NOT NULL, "
 			+ "CONSTRAINT emailPasswordID PRIMARY KEY (emailPasswordID)); ";
 
 	private static final String INSERTQUERY = "INSERT INTO EMAILPASSWORD (email, encryptedPassword) VALUES (?, ?);";
@@ -40,12 +35,12 @@ public class EmailPasswordDatabase {
 	}
 
 	public void setConnectionDataBase(ConnectionDataBase connectionDataBase) {
-		this.connectionDataBase = connectionDataBase;
+		EmailPasswordDatabase.connectionDataBase = connectionDataBase;
 	}
 
 	/**
 	 * Create table EmailPassword
-	 * 
+	 *
 	 * @throws SQLException
 	 */
 	static void createTable() throws SQLException {
@@ -121,10 +116,11 @@ public class EmailPasswordDatabase {
 
 	/**
 	 * Select the only EmailPassword nuplet
-	 * 
+	 *
 	 * @param email
 	 *            may not be null
-	 * @throws NullPointerException if no data is retrieved
+	 * @throws NullPointerException
+	 *             if no data is retrieved
 	 */
 	public static EmailPassword getEmailPassword(String email) throws SQLException, NullPointerException {
 
@@ -153,6 +149,5 @@ public class EmailPasswordDatabase {
 			}
 		}
 	}
-  
 
 }
