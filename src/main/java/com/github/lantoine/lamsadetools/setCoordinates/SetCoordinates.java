@@ -44,13 +44,12 @@ public class SetCoordinates {
 
 	/**
 	 * fill the paper with header
-	 * 
+	 *
 	 * @param user
 	 * @return path where the file is saved
 	 * @throws Exception
 	 */
-	public static String fillPapierEnTete(UserDetails user) throws Exception {
-		Path path = FileSystems.getDefault().getPath("");
+	public static String fillPapierEnTete(UserDetails user, Path path) throws Exception {
 		System.out.println("The File will be saved in: " + path.toAbsolutePath());
 
 		// define source and target
@@ -116,6 +115,18 @@ public class SetCoordinates {
 	}
 
 	/**
+	 * fill the paper with header
+	 *
+	 * @param user
+	 * @return path where the file is saved
+	 * @throws Exception
+	 */
+	public static String fillPapierEnTete(UserDetails user) throws Exception {
+		Path path = FileSystems.getDefault().getPath("");
+		return fillPapierEnTete(user, path);
+	}
+
+	/**
 	 * prompt the user for its names, phone, ...
 	 *
 	 * @return return a user with all the asked informations
@@ -126,7 +137,7 @@ public class SetCoordinates {
 		IO io = new IO();
 		io.scanner = new Scanner(System.in);
 		UserDetails user = new UserDetails();
-		for (int i = 0; i <= (tableauQuestion.length - 1); i++) {
+		for (int i = 0; i <= tableauQuestion.length - 1; i++) {
 
 			System.out.println(tableauQuestion[i]);
 
@@ -183,7 +194,7 @@ public class SetCoordinates {
 					for (XWPFRun r : runs) {
 						String text = r.getText(0);
 
-						if ((text != null) && text.contains("Prenom")) {
+						if (text != null && text.contains("Prenom")) {
 							System.out.println("contains prenom");
 							text = text.replace("Prenom", user.getFirstName());
 
@@ -191,28 +202,28 @@ public class SetCoordinates {
 
 						}
 
-						else if ((text != null) && text.contains("Nom")) {
+						else if (text != null && text.contains("Nom")) {
 							text = text.replace("Nom", user.getName());
 
 							r.setText(text, 0);
 
 						}
 
-						else if ((text != null) && text.contains("e-mail")) {
+						else if (text != null && text.contains("e-mail")) {
 							text = text.replace("e-mail", user.getEmail());
 
 							r.setText(text, 0);
 
 						}
 
-						else if ((text != null) && text.contains("tel.")) {
+						else if (text != null && text.contains("tel.")) {
 							text = text.replace("tel.", user.getNumber());
 
 							r.setText(text, 0);
 
 						}
 
-						else if ((text != null) && text.contains("Fonction")) {
+						else if (text != null && text.contains("Fonction")) {
 							text = text.replace("Fonction", user.getFunction());
 
 							r.setText(text, 0);
