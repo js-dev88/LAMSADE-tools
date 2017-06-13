@@ -12,7 +12,7 @@ import com.github.lantoine.lamsadetools.conferences.Conference;
 public class TestConferenceDataBases {
 
 	@Test
-	public void createTable() {
+	public void createTable() throws SQLException {
 
 		ConferenceDatabase.createTable();
 
