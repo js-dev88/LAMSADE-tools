@@ -433,7 +433,6 @@ public class Tester {
 				else{
 					//TODO add the "generateOM" behavior for normal searcher
 					
-					
 					try {
 						generateMissionOrder gMissionOrder = new generateMissionOrder (user.getFirstName(), user.getName());
 						gMissionOrder.generateSpreadsheetDocument();
