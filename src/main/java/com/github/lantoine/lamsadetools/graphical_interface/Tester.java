@@ -25,6 +25,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -176,6 +178,10 @@ public class Tester {
 
 		shell.setSize(new Point(888, 661));
 
+		Menu menu = new Menu(shell, SWT.BAR);
+		MenuItem fileItem = new MenuItem(menu, SWT.CASCADE);
+		fileItem.setText("File");
+
 		/*
 		 * Initialize Group conferencesInfos which will include : -The Grid data
 		 * which will display conferences
@@ -324,10 +330,10 @@ public class Tester {
 		Label lblPlaceholder = new Label(grpUserDetails, SWT.NONE);
 		lblPlaceholder.setBounds(26, 217, 829, 14);
 		lblPlaceholder.setText("");
-		
-		//Is the following line useful at some point ????
+
+		// Is the following line useful at some point ????
 		new Label(shell, SWT.NONE);
-		
+
 		btnGeneratePapierEn.setBounds(25, 118, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
 
@@ -375,9 +381,6 @@ public class Tester {
 		});
 		btnSaveOrdreMission.setBounds(26, 152, 158, 28);
 		btnSaveOrdreMission.setText("Save Ordre Mission");
-		
-		
-		
 
 		// Group Conferences informations
 		Group grp_conferencesInfos = new Group(shell, SWT.NONE);
@@ -391,51 +394,55 @@ public class Tester {
 		table.setBounds(165, 16, 502, 134);
 		table.setHeaderVisible(true);
 		fillConferenceTable(table);
-		
+
 		Button btnYoungSearcher = new Button(grpUserDetails, SWT.CHECK);
 		btnYoungSearcher.setBounds(222, 189, 103, 16);
 		btnYoungSearcher.setText("Young searcher");
-		
-		//Handle here the GenerateOrderMission button because it needs the table to be set
-		//This button handles order mission generations for both searcher and young sercher,
+
+		// Handle here the GenerateOrderMission button because it needs the
+		// table to be set
+		// This button handles order mission generations for both searcher and
+		// young sercher,
 		// depending on the checkbox "btnYoungSearcher" status
 		Button btnGenerateOM = new Button(grpUserDetails, SWT.NONE);
 		btnGenerateOM.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				UserDetails user = getUserDetails();
-				if(btnYoungSearcher.getSelection()){
-					if (user != null && table.getSelection().length!=0) {
-						String string ="";
-						TableItem[] items = table.getSelection();				
+				if (btnYoungSearcher.getSelection()) {
+					if (user != null && table.getSelection().length != 0) {
+						String string = "";
+						TableItem[] items = table.getSelection();
 						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/M/yyyy");
-						
-						Conference conf = new Conference(items[0].getText(0),items[0].getText(1), LocalDate.parse(items[0].getText(2),formatter),
-								LocalDate.parse(items[0].getText(3),formatter), Double.valueOf(items[0].getText(4)),items[0].getText(5), items[0].getText(6));
-						System.out.println(items[0].getText(5) + " " +  items[0].getText(6));
+
+						Conference conf = new Conference(items[0].getText(0), items[0].getText(1),
+								LocalDate.parse(items[0].getText(2), formatter),
+								LocalDate.parse(items[0].getText(3), formatter), Double.valueOf(items[0].getText(4)),
+								items[0].getText(5), items[0].getText(6));
+						System.out.println(items[0].getText(5) + " " + items[0].getText(6));
 						try {
 							GenerateMissionOrderYS.fillYSOrderMission(user, conf);
-							lblPlaceholder.setText("The file has successfully been saved to " + GenerateMissionOrderYS.getTarget());
-						} catch (IllegalArgumentException | IOException | SAXException | ParserConfigurationException e1) {
+							lblPlaceholder.setText(
+									"The file has successfully been saved to " + GenerateMissionOrderYS.getTarget());
+						} catch (IllegalArgumentException | IOException | SAXException
+								| ParserConfigurationException e1) {
 							LOGGER.error("Error : ", e1);
 							throw new IllegalStateException(e1);
 						}
-						
-					}
-					else {
+
+					} else {
 						MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 						mb.setText("Infromation missing");
 						mb.setMessage("Please fill user information and select a conference");
 						mb.open();
 					}
-				}	
-				else{
-					//TODO add the "generateOM" behavior for normal searcher
-				}		
+				} else {
+					// TODO add the "generateOM" behavior for normal searcher
+				}
 			}
 		});
 		btnGenerateOM.setText("Generate Order Mission");
-		btnGenerateOM.setBounds(26, 183, 158, 28);	
+		btnGenerateOM.setBounds(26, 183, 158, 28);
 
 		Button btn_addNewConf = new Button(grp_conferencesInfos, SWT.NONE);
 		btn_addNewConf.setBounds(165, 156, 149, 25);
