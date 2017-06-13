@@ -40,6 +40,7 @@ import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.map.AddressInfos;
 import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
 import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrderYS;
+import com.github.lantoine.lamsadetools.missionOrder.generateMissionOrder;
 import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.github.lantoine.lamsadetools.utils.Util;
@@ -431,6 +432,15 @@ public class Tester {
 				}	
 				else{
 					//TODO add the "generateOM" behavior for normal searcher
+					
+					
+					try {
+						generateMissionOrder gMissionOrder = new generateMissionOrder (user.getFirstName(), user.getName());
+						gMissionOrder.generateSpreadsheetDocument();
+					} catch (Exception e1) {
+						throw new IllegalStateException(e.text);
+					}
+					
 				}		
 			}
 		});
