@@ -39,6 +39,7 @@ import com.github.lantoine.lamsadetools.conferences.Conference;
 import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.map.AddressInfos;
 import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
+import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrderYS;
 import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.github.lantoine.lamsadetools.utils.Util;
@@ -88,7 +89,7 @@ public class Tester {
 	 * @throws SQLException
 	 */
 	private static void fillConferenceTable(Table table) throws SQLException {
-		String[] titles = { "Title", "URL", "Start Date", "End Date", "Fee", "City", "Address" };
+		String[] titles = { "Title", "URL", "Start Date", "End Date", "Fee", "City", "Country" };
 		ArrayList<Conference> confs = ConferenceDatabase.returnAllConferencesFromDatabase();
 
 		for (String title : titles) {
@@ -186,7 +187,7 @@ public class Tester {
 		Group grpUserDetails = new Group(shell, SWT.NONE);
 		GridData gd_grpUserDetails = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_grpUserDetails.widthHint = 860;
-		gd_grpUserDetails.heightHint = 214;
+		gd_grpUserDetails.heightHint = 229;
 		grpUserDetails.setLayoutData(gd_grpUserDetails);
 		grpUserDetails.setText("User Details");
 
@@ -321,10 +322,12 @@ public class Tester {
 		});
 
 		Label lblPlaceholder = new Label(grpUserDetails, SWT.NONE);
-		lblPlaceholder.setBounds(21, 190, 829, 14);
+		lblPlaceholder.setBounds(26, 217, 829, 14);
 		lblPlaceholder.setText("");
+		
+		//Is the following line useful at some point ????
 		new Label(shell, SWT.NONE);
-
+		
 		btnGeneratePapierEn.setBounds(25, 118, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
 
@@ -372,6 +375,9 @@ public class Tester {
 		});
 		btnSaveOrdreMission.setBounds(26, 152, 158, 28);
 		btnSaveOrdreMission.setText("Save Ordre Mission");
+		
+		
+		
 
 		// Group Conferences informations
 		Group grp_conferencesInfos = new Group(shell, SWT.NONE);
@@ -381,10 +387,55 @@ public class Tester {
 		grp_conferencesInfos.setLayoutData(gd_conferencesInfos);
 		grp_conferencesInfos.setText("Conferences");
 
-		Table table = new Table(grp_conferencesInfos, SWT.V_SCROLL);
+		Table table = new Table(grp_conferencesInfos, SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
 		table.setBounds(165, 16, 502, 134);
 		table.setHeaderVisible(true);
 		fillConferenceTable(table);
+		
+		Button btnYoungSearcher = new Button(grpUserDetails, SWT.CHECK);
+		btnYoungSearcher.setBounds(222, 189, 103, 16);
+		btnYoungSearcher.setText("Young searcher");
+		
+		//Handle here the GenerateOrderMission button because it needs the table to be set
+		//This button handles order mission generations for both searcher and young sercher,
+		// depending on the checkbox "btnYoungSearcher" status
+		Button btnGenerateOM = new Button(grpUserDetails, SWT.NONE);
+		btnGenerateOM.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				UserDetails user = getUserDetails();
+				if(btnYoungSearcher.getSelection()){
+					if (user != null && table.getSelection().length!=0) {
+						String string ="";
+						TableItem[] items = table.getSelection();				
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/M/yyyy");
+						
+						Conference conf = new Conference(items[0].getText(0),items[0].getText(1), LocalDate.parse(items[0].getText(2),formatter),
+								LocalDate.parse(items[0].getText(3),formatter), Double.valueOf(items[0].getText(4)),items[0].getText(5), items[0].getText(6));
+						System.out.println(items[0].getText(5) + " " +  items[0].getText(6));
+						try {
+							GenerateMissionOrderYS.fillYSOrderMission(user, conf);
+							lblPlaceholder.setText("The file has successfully been saved to " + GenerateMissionOrderYS.getTarget());
+						} catch (IllegalArgumentException | IOException | SAXException | ParserConfigurationException e1) {
+							LOGGER.error("Error : ", e1);
+							throw new IllegalStateException(e1);
+						}
+						
+					}
+					else {
+						MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+						mb.setText("Infromation missing");
+						mb.setMessage("Please fill user information and select a conference");
+						mb.open();
+					}
+				}	
+				else{
+					//TODO add the "generateOM" behavior for normal searcher
+				}		
+			}
+		});
+		btnGenerateOM.setText("Generate Order Mission");
+		btnGenerateOM.setBounds(26, 183, 158, 28);	
 
 		Button btn_addNewConf = new Button(grp_conferencesInfos, SWT.NONE);
 		btn_addNewConf.setBounds(165, 156, 149, 25);
@@ -441,10 +492,10 @@ public class Tester {
 		Text txt_city = new Text(grp_conferencesInfos, SWT.BORDER);
 		txt_city.setBounds(81, 150, 78, 21);
 
-		Label lbladdress = new Label(grp_conferencesInfos, SWT.NONE);
-		lbladdress.setAlignment(SWT.RIGHT);
-		lbladdress.setBounds(25, 180, 50, 15);
-		lbladdress.setText("Address");
+		Label lblCountry = new Label(grp_conferencesInfos, SWT.NONE);
+		lblCountry.setAlignment(SWT.RIGHT);
+		lblCountry.setBounds(25, 180, 50, 15);
+		lblCountry.setText("Country");
 		Text txt_address = new Text(grp_conferencesInfos, SWT.BORDER);
 		txt_address.setBounds(81, 177, 78, 21);
 

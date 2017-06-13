@@ -160,7 +160,7 @@ public class ConferenceDatabase {
 	 */
 	public static void insertInDatabase(Conference conf) throws SQLException {
 
-		String insertQuery = "INSERT INTO conference (Title, URL, end_date, start_date, entry_fee, City, Country)   VALUES (?, ?, ?, ?, ?, ?, ?);";
+		String insertQuery = "INSERT INTO conference (Title, URL, start_date, end_date, entry_fee, City, Country)   VALUES (?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement preparedStatement = null;
 
 		Connection con = ConferenceDatabase.getConnectionDataBase().getConnection();

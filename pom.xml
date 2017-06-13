@@ -121,8 +121,20 @@
 		    <artifactId>windpapi4j</artifactId>
 		    <version>1.0</version>
 		</dependency>
-	    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api used for logging  -->
+		<!-- https://mvnrepository.com/artifact/io.bunting.keyring/keyring-tool API for keyring on Unix and Mac -->
 		<dependency>
+		    <groupId>io.bunting.keyring</groupId>
+		    <artifactId>keyring-tool</artifactId>
+		    <version>0.2.0</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>org.slf4j</groupId>
+		    		<artifactId>slf4j-simple</artifactId>
+		    	</exclusion>
+		    </exclusions>
+		</dependency>
+	    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api used for logging  -->
+	    <dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-api</artifactId>
 		    <version>1.7.25</version>
@@ -132,6 +144,12 @@
 		    <groupId>ch.qos.logback</groupId>
 		    <artifactId>logback-classic</artifactId>
 		    <version>1.2.3</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>org.slf4j</groupId>
+		    		<artifactId>slf4j-api</artifactId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core used for logging-->
 		<dependency>
@@ -215,6 +233,10 @@
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -236,6 +258,12 @@
 			<groupId>com.artofsolving</groupId>
 			<artifactId>jodconverter</artifactId>
 			<version>2.2.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
