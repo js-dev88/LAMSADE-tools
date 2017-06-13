@@ -18,7 +18,7 @@ import com.github.lantoine.lamsadetools.conferences.Conference;
 public class ConferenceDatabase {
 
 	private static final Logger logger = LoggerFactory.getLogger(ConferenceDatabase.class);
-	private static ConnectionDataBase connectionDataBase;
+	private static ConnectionDataBase connectionDataBase = new ConnectionDataBase();
 	private static final String CREATETABLE = "CREATE TABLE IF NOT EXISTS conference (" + "conferenceID     SERIAL, "
 			+ "Title            varchar(255) NOT NULL, " + "URL              varchar(255) NOT NULL, "
 			+ "start_date       date NOT NULL, " + "end_date         date NOT NULL, " + "entry_fee        double, "
@@ -233,33 +233,36 @@ public class ConferenceDatabase {
 	public static ArrayList<Conference> returnAllConferencesFromDatabase() throws SQLException {
 
 		ArrayList<Conference> conferencesArray = new ArrayList<>();
-		Connection conn = ConferenceDatabase.getConnectionDataBase().getConnection();
-		createTable();
+		ConnectionDataBase connectionDataBase2 = ConferenceDatabase.getConnectionDataBase();
+		assert connectionDataBase2 != null;
+		try (Connection conn = connectionDataBase2.getConnection()) {
+			createTable();
 
-		try (Statement state = conn.createStatement()) {
+			try (Statement state = conn.createStatement()) {
 
-			try (ResultSet result = state.executeQuery("SELECT * FROM conference")) {
-				DateFormat format = new SimpleDateFormat(Conference.DATE_FORMAT);
-				format.setLenient(false);
+				try (ResultSet result = state.executeQuery("SELECT * FROM conference")) {
+					DateFormat format = new SimpleDateFormat(Conference.DATE_FORMAT);
+					format.setLenient(false);
 
-				while (result.next()) {
+					while (result.next()) {
 
-					int _id = result.getInt(1);
-					String _url = result.getString(2);
-					String _title = result.getString(3);
-					LocalDate _start_date = LocalDate.parse(result.getString(4));
-					LocalDate _end_date = LocalDate.parse(result.getString(5));
-					double _entry_fee = result.getDouble(6);
-					String city = result.getString(7);
-					String address = result.getString(8);
-					conferencesArray
-							.add(new Conference(_id, _url, _title, _start_date, _end_date, _entry_fee, city, address));
+						int _id = result.getInt(1);
+						String _url = result.getString(2);
+						String _title = result.getString(3);
+						LocalDate _start_date = LocalDate.parse(result.getString(4));
+						LocalDate _end_date = LocalDate.parse(result.getString(5));
+						double _entry_fee = result.getDouble(6);
+						String city = result.getString(7);
+						String address = result.getString(8);
+						conferencesArray.add(
+								new Conference(_id, _url, _title, _start_date, _end_date, _entry_fee, city, address));
+					}
+
+					result.close();
 				}
 
-				result.close();
+				return conferencesArray;
 			}
-			state.close();
-			return conferencesArray;
 		}
 	}
 
