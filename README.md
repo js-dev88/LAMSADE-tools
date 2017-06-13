@@ -33,7 +33,7 @@ Le LAMSADE est une unité de recherche de Paris-Dauphine. Ce projet a pour but d
 
  - [ ] Génération d’une demande de mission jeune chercheur (JC) (voir link:LAMSADE/demande_de_mission_jeune_chercheur.odt[canevas] JC).
 
- - [ ] L’utilisateur peut entrer une demande scannée (après l’avoir signé à la main), le logiciel la conserve.
+ - [x] L’utilisateur peut entrer une demande scannée (après l’avoir signé à la main), le logiciel la conserve.
 
  - [ ] Génération et stockage de la demande d’ordre de mission (OM) ou de la demande JC. Si déjà une, elle passe dans l’historique.
 
