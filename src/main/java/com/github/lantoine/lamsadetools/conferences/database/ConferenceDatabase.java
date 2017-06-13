@@ -97,8 +97,6 @@ public class ConferenceDatabase {
 		createTable();
 
 		// Prepared statement to avoid SQL injection
-		PreparedStatement preparedStatement = null;
-		PreparedStatement preparedStatement1 = null;
 
 		String fieldName = type;
 		String selectAllSQL = "SELECT * from conference;";
@@ -109,42 +107,68 @@ public class ConferenceDatabase {
 		DateFormat format = new SimpleDateFormat(Conference.DATE_FORMAT);
 		format.setLenient(false);
 		try (Statement state = conn.createStatement()) {
-			ResultSet result;
 			if (fieldName == "") {
 
-				preparedStatement = conn.prepareStatement(selectAllSQL);
-				result = preparedStatement.executeQuery();
+				try (PreparedStatement preparedStatement = conn.prepareStatement(selectAllSQL)) {
+					try (ResultSet result = preparedStatement.executeQuery()) {
+						ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
+
+						while (result.next()) {
+
+							int id = result.getInt(1);
+							String url = result.getString(2);
+							String title = result.getString(3);
+							LocalDate start_date = LocalDate.parse(result.getString(4));
+							LocalDate end_date = LocalDate.parse(result.getString(5));
+							double entry_fee = result.getDouble(6);
+							String city = result.getString(7);
+							String country = result.getString(8);
+							conferencesArray.add(
+									new Conference(id, url, title, start_date, end_date, entry_fee, city, country));
+						}
+
+						for (Conference i : conferencesArray) {
+							System.out.println("####################");
+							System.out.println("Conference: " + i.getTitle() + " (" + i.getUrl() + ")");
+							System.out.println("From the " + i.getStart_date() + " to the " + i.getEnd_date());
+							System.out.println("in " + i.getCity() + " to this country " + i.getCountry());
+							System.out.println("Fee: " + i.getEntry_fee());
+						}
+					}
+				}
+
 			} else {
 
-				preparedStatement1 = conn.prepareStatement(selectSQL);
-				preparedStatement1.setString(1, value);
-				result = preparedStatement1.executeQuery();
+				try (PreparedStatement preparedStatement = conn.prepareStatement(selectSQL)) {
+					preparedStatement.setString(1, value);
+
+					try (ResultSet result = preparedStatement.executeQuery()) {
+						ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
+
+						while (result.next()) {
+
+							int id = result.getInt(1);
+							String url = result.getString(2);
+							String title = result.getString(3);
+							LocalDate start_date = LocalDate.parse(result.getString(4));
+							LocalDate end_date = LocalDate.parse(result.getString(5));
+							double entry_fee = result.getDouble(6);
+							String city = result.getString(7);
+							String country = result.getString(8);
+							conferencesArray.add(
+									new Conference(id, url, title, start_date, end_date, entry_fee, city, country));
+						}
+
+						for (Conference i : conferencesArray) {
+							System.out.println("####################");
+							System.out.println("Conference: " + i.getTitle() + " (" + i.getUrl() + ")");
+							System.out.println("From the " + i.getStart_date() + " to the " + i.getEnd_date());
+							System.out.println("in " + i.getCity() + " to this country " + i.getCountry());
+							System.out.println("Fee: " + i.getEntry_fee());
+						}
+					}
+				}
 			}
-			ArrayList<Conference> conferencesArray = new ArrayList<Conference>();
-
-			while (result.next()) {
-
-				int id = result.getInt(1);
-				String url = result.getString(2);
-				String title = result.getString(3);
-				LocalDate start_date = LocalDate.parse(result.getString(4));
-				LocalDate end_date = LocalDate.parse(result.getString(5));
-				double entry_fee = result.getDouble(6);
-				String city = result.getString(7);
-				String country = result.getString(8);
-				conferencesArray.add(new Conference(id, url, title, start_date, end_date, entry_fee, city, country));
-			}
-
-			for (Conference i : conferencesArray) {
-				System.out.println("####################");
-				System.out.println("Conference: " + i.getTitle() + " (" + i.getUrl() + ")");
-				System.out.println("From the " + i.getStart_date() + " to the " + i.getEnd_date());
-				System.out.println("in " + i.getCity() + " to this country " + i.getCountry());
-				System.out.println("Fee: " + i.getEntry_fee());
-			}
-
-			result.close();
-			state.close();
 		}
 	}
 
@@ -163,32 +187,32 @@ public class ConferenceDatabase {
 		String insertQuery = "INSERT INTO conference (Title, URL, start_date, end_date, entry_fee, City, Country)   VALUES (?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement preparedStatement = null;
 
-		Connection con = ConferenceDatabase.getConnectionDataBase().getConnection();
+		try (Connection con = ConferenceDatabase.getConnectionDataBase().getConnection()) {
 
-		createTable();
+			createTable();
 
-		preparedStatement = con.prepareStatement(insertQuery);
+			preparedStatement = con.prepareStatement(insertQuery);
 
-		preparedStatement.setString(1, conf.getTitle());
-		preparedStatement.setString(2, conf.getUrl());
-		preparedStatement.setDate(3, java.sql.Date.valueOf(conf.getStart_date()));
-		preparedStatement.setDate(4, java.sql.Date.valueOf(conf.getEnd_date()));
-		preparedStatement.setDouble(5, conf.getEntry_fee());
-		preparedStatement.setString(6, conf.getCity());
-		preparedStatement.setString(7, conf.getCountry());
+			preparedStatement.setString(1, conf.getTitle());
+			preparedStatement.setString(2, conf.getUrl());
+			preparedStatement.setDate(3, java.sql.Date.valueOf(conf.getStart_date()));
+			preparedStatement.setDate(4, java.sql.Date.valueOf(conf.getEnd_date()));
+			preparedStatement.setDouble(5, conf.getEntry_fee());
+			preparedStatement.setString(6, conf.getCity());
+			preparedStatement.setString(7, conf.getCountry());
 
-		try {
-			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println(
-					"The database could not be created or upgraded, there must be an old version on your computer, please execute the function Detete database");
-			logger.debug(
-					"The database could not be created or upgraded, there must be an old version on your computer");
+			try {
+				preparedStatement.executeUpdate();
+			} catch (SQLException e) {
+				System.out.println(
+						"The database could not be created or upgraded, there must be an old version on your computer, please execute the function Detete database");
+				logger.debug(
+						"The database could not be created or upgraded, there must be an old version on your computer");
 
+			}
+
+			ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
 		}
-
-		ConferenceDatabase.getConnectionDataBase().closeAndDisposeConnection();
-		con.close();
 	}
 
 	/**
@@ -249,7 +273,7 @@ public class ConferenceDatabase {
 	}
 
 	public void setConnectionDataBase(ConnectionDataBase connectionDataBase) {
-		this.connectionDataBase = connectionDataBase;
+		ConferenceDatabase.connectionDataBase = connectionDataBase;
 	}
 
 }
