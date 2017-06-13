@@ -57,6 +57,7 @@ import net.fortuna.ical4j.model.ValidationException;
  * itinerary on openStreetMap
  */
 public class Tester {
+	private static Display display;
 	private static final Logger LOGGER = LoggerFactory.getLogger(Tester.class);
 	private static Shell shell;
 	private static Text txt_city_ud;
@@ -160,7 +161,7 @@ public class Tester {
 	public static void main(String[] args) throws SQLException {
 
 		System.setProperty("SWT_GTK3", "0");
-		Display display = new Display();
+		display = new Display();
 		shell = new Shell(display);
 
 		shell.setText("Conference List");
@@ -185,8 +186,8 @@ public class Tester {
 		Menu submenu = new Menu(shell, SWT.DROP_DOWN);
 		fileItem.setMenu(submenu);
 		MenuItem item = new MenuItem(submenu, SWT.PUSH);
-		item.addListener(SWT.Selection, e -> System.out.println("Preference clicked"));
-		item.setText("PreferencesA");
+		item.addListener(SWT.Selection, e -> preferenceWindow());
+		item.setText("Preferences");
 
 		/*
 		 * Initialize Group conferencesInfos which will include : -The Grid data
@@ -690,5 +691,10 @@ public class Tester {
 			}
 		}
 		display.dispose();
+	}
+
+	private static void preferenceWindow() {
+		Shell shellPreference = new Shell(display);
+		shellPreference.open();
 	}
 }
