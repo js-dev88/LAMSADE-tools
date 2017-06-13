@@ -178,9 +178,15 @@ public class Tester {
 
 		shell.setSize(new Point(888, 661));
 
-		Menu menu = new Menu(shell, SWT.BAR);
-		MenuItem fileItem = new MenuItem(menu, SWT.CASCADE);
-		fileItem.setText("File");
+		Menu bar = new Menu(shell, SWT.BAR);
+		shell.setMenuBar(bar);
+		MenuItem fileItem = new MenuItem(bar, SWT.CASCADE);
+		fileItem.setText("&File");
+		Menu submenu = new Menu(shell, SWT.DROP_DOWN);
+		fileItem.setMenu(submenu);
+		MenuItem item = new MenuItem(submenu, SWT.PUSH);
+		item.addListener(SWT.Selection, e -> System.out.println("Preference clicked"));
+		item.setText("PreferencesA");
 
 		/*
 		 * Initialize Group conferencesInfos which will include : -The Grid data
