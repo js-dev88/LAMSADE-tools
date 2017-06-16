@@ -186,7 +186,7 @@ public class Tester {
 		Menu submenu = new Menu(shell, SWT.DROP_DOWN);
 		fileItem.setMenu(submenu);
 		MenuItem item = new MenuItem(submenu, SWT.PUSH);
-		item.addListener(SWT.Selection, e -> preferenceWindow());
+		item.addListener(SWT.Selection, e -> PreferencesWindow.open(display));
 		item.setText("Preferences");
 
 		/*
@@ -693,8 +693,4 @@ public class Tester {
 		display.dispose();
 	}
 
-	private static void preferenceWindow() {
-		Shell shellPreference = new Shell(display);
-		shellPreference.open();
-	}
 }
