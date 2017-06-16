@@ -18,6 +18,13 @@ public class AddressInfos {
 	private String formatted_address;
 	private String longitude;
 	private String latitude;
+	private String city;
+
+	public static void main(String[] args)
+			throws IllegalArgumentException, IOException, SAXException, ParserConfigurationException {
+		AddressInfos ai = new AddressInfos("22 Boulevard de la Libération Chaville");
+		ai.retrieveGeocodeResponse();
+	}
 
 	/**
 	 * Enter an address to set the rawAddress attribute. the latitude and the
@@ -35,6 +42,7 @@ public class AddressInfos {
 		formatted_address = "";
 		longitude = "0";
 		latitude = "0";
+		city = "";
 	}
 
 	/**
@@ -74,6 +82,16 @@ public class AddressInfos {
 					}
 				}
 			}
+
+			// Get the city name from raw address
+			NodeList address_components = htmlDoc.getElementsByTagName("address_component").item(2).getChildNodes();
+			int length = address_components.getLength();
+			System.out.println(length);
+
+			String city_name = address_components.item(1).getTextContent();
+			city = city_name;
+			//
+
 			@SuppressWarnings("hiding")
 			NodeList formatted_address = htmlDoc.getElementsByTagName("formatted_address");
 			if (formatted_address.getLength() != 0) {
@@ -87,6 +105,7 @@ public class AddressInfos {
 				latitude = lat.item(0).getTextContent();
 				NodeList lng = htmlDoc.getElementsByTagName("lng");
 				longitude = lng.item(0).getTextContent();
+
 			}
 		}
 	}
@@ -113,5 +132,13 @@ public class AddressInfos {
 
 	public String getLongitude() {
 		return longitude;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
 	}
 }
