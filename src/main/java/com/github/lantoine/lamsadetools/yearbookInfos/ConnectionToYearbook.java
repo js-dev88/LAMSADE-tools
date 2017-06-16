@@ -30,6 +30,7 @@ public class ConnectionToYearbook {
 	private InputStream htmlPage;
 	private String firstname;
 	private String surname;
+	private String login;
 
 	/**
 	 * ConnectionToYearbook's Constructor
@@ -49,6 +50,13 @@ public class ConnectionToYearbook {
 		this.firstname = firstname;
 		this.surname = surname;
 
+	}
+	
+	public ConnectionToYearbook(String login) throws IllegalArgumentException {
+		if(login ==null){
+			throw new IllegalArgumentException("login is null");
+		}
+		this.login = login;
 	}
 
 	/**
