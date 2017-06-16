@@ -21,27 +21,14 @@ import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.lantoine.lamsadetools.conferences.IO;
 
 public class SetCoordinates {
 
-	/**
-	 * Duplicate a file
-	 *
-	 * @param source
-	 * @param target
-	 * @throws IOException
-	 */
-	public static void copy(File source, File target) throws IOException {
-		// try with resources
-		try (FileInputStream FIS = new FileInputStream(source); FileOutputStream FOS = new FileOutputStream(target);) {
-			try (FileChannel sourceChannel = FIS.getChannel(); FileChannel targetChannel = FOS.getChannel();) {
-				targetChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
-			}
-		}
-	}
-
+	private static final Logger logger = LoggerFactory.getLogger(SetCoordinates.class);
 	/**
 	 * fill the paper with header
 	 *
@@ -50,7 +37,7 @@ public class SetCoordinates {
 	 * @throws Exception
 	 */
 	public static String fillPapierEnTete(UserDetails user, Path path) throws Exception {
-		System.out.println("The File will be saved in: " + path.toAbsolutePath());
+		logger.info("The File will be saved in: " + path.toAbsolutePath());
 
 		// define source and target
 		ClassLoader classLoader = SetCoordinates.class.getClassLoader();
@@ -104,7 +91,7 @@ public class SetCoordinates {
 				}
 			}
 		}
-		System.out.println("PapierEnTete generated");
+		logger.info("PapierEnTete generated");
 		return path.toAbsolutePath().toString();
 	}
 
@@ -164,83 +151,5 @@ public class SetCoordinates {
 		}
 		return user;
 	}
-
-	/**
-	 * Add the user details to the source file and return the result in the
-	 * destination file
-	 *
-	 * @param source
-	 * @param destinationFile
-	 * @param user
-	 * @throws IOException
-	 * @throws InvalidFormatException
-	 */
-	public static void setDetails(UserDetails user) throws IOException, InvalidFormatException {
-		String source = "com/github/lamsadetools/setCoordinates/papier_en_tete.docx";
-		String destination = "com/github/lamsadetools/setCoordinates/papier_en_tete_CloneTest.docx";
-
-		ClassLoader classLoader = SetCoordinates.class.getClassLoader();
-
-		File sourceFile = new File(classLoader.getResource(source).getFile());
-		File destinationFile = new File(classLoader.getResource(destination).getFile());
-		copy(sourceFile, destinationFile);
-
-		try (XWPFDocument doc = new XWPFDocument(OPCPackage.open(sourceFile))) {
-			XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
-
-			for (XWPFParagraph p : policy.getFirstPageHeader().getParagraphs()) {
-				List<XWPFRun> runs = p.getRuns();
-				if (runs != null) {
-					for (XWPFRun r : runs) {
-						String text = r.getText(0);
-
-						if (text != null && text.contains("Prenom")) {
-							System.out.println("contains prenom");
-							text = text.replace("Prenom", user.getFirstName());
-
-							r.setText(text, 0);
-
-						}
-
-						else if (text != null && text.contains("Nom")) {
-							text = text.replace("Nom", user.getName());
-
-							r.setText(text, 0);
-
-						}
-
-						else if (text != null && text.contains("e-mail")) {
-							text = text.replace("e-mail", user.getEmail());
-
-							r.setText(text, 0);
-
-						}
-
-						else if (text != null && text.contains("tel.")) {
-							text = text.replace("tel.", user.getNumber());
-
-							r.setText(text, 0);
-
-						}
-
-						else if (text != null && text.contains("Fonction")) {
-							text = text.replace("Fonction", user.getFunction());
-
-							r.setText(text, 0);
-
-						}
-
-					}
-				}
-			}
-			try (FileOutputStream fos = new FileOutputStream(destinationFile)) {
-				doc.write(fos);
-			}
-		}
-
-		long start = System.currentTimeMillis();
-
-		System.err.println("Generate papier_en_tete.html with " + (System.currentTimeMillis() - start) + "ms");
-	}
-
+	
 }
