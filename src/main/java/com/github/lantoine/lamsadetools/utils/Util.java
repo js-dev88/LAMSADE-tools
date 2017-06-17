@@ -204,7 +204,7 @@ public class Util {
 	 * @param url
 	 *            the URL to open
 	 */
-	public static void openMapUrl(String url) {
+	public static void openURL(String url) {
 		if (Desktop.isDesktopSupported()) {
 			try {
 				Desktop.getDesktop().browse(new URI(url));

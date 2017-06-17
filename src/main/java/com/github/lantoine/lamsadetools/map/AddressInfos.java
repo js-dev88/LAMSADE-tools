@@ -105,15 +105,14 @@ public class AddressInfos {
 			factory = DocumentBuilderFactory.newInstance();
 			builder = factory.newDocumentBuilder();
 			htmlDoc = builder.parse(new InputSource(htmlText));
-			// close the stream
-			htmlText.close();
-			NodeList status = htmlDoc.getElementsByTagName("status");
-			// Checks if the request has a positive result
-			if (status.getLength() != 0) {
-				for (int i = 0; i < status.getLength(); i++) {
-					if (!status.item(i).getTextContent().contains("OK")) {
-						throw new IllegalArgumentException("the address typed doesn't exist: " + rawAddress);
-					}
+		}
+			
+		NodeList status = htmlDoc.getElementsByTagName("status");
+		// Checks if the request has a positive result
+		if (status.getLength() != 0) {
+			for (int i = 0; i < status.getLength(); i++) {
+				if (!status.item(i).getTextContent().contains("OK")) {
+					throw new IllegalArgumentException("the address typed doesn't exist: " + rawAddress);
 				}
 			}
 

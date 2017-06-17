@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -25,6 +26,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -40,6 +43,7 @@ import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.map.AddressInfos;
 import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
 import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrderYS;
+import com.github.lantoine.lamsadetools.missionOrder.generateMissionOrder;
 import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.github.lantoine.lamsadetools.utils.Util;
@@ -54,6 +58,7 @@ import net.fortuna.ical4j.model.ValidationException;
  * the user : -to see all the existing conferences, -to add new ones -to see the
  * itinerary on openStreetMap
  */
+
 public class MainProgram {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainProgram.class);
 	private static Shell shell;
@@ -65,6 +70,7 @@ public class MainProgram {
 	private static Text txt_function;
 	private static Text txt_group;
 	private static Text txt_lastname;
+	private static Text txt_login;
 	private static Text txt_number;
 	private static Text txt_office;
 
@@ -156,6 +162,7 @@ public class MainProgram {
 	}
 
 	public static void main(String[] args) throws SQLException {
+		Preferences prefs = Preferences.userRoot().node("graphical_prefs :");
 
 		System.setProperty("SWT_GTK3", "0");
 		Display display = new Display();
@@ -175,6 +182,32 @@ public class MainProgram {
 		final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
 		shell.setSize(new Point(888, 661));
+
+		Menu bar = new Menu(shell, SWT.BAR);
+		shell.setMenuBar(bar);
+
+		// File menu
+		MenuItem fileItem = new MenuItem(bar, SWT.CASCADE);
+		fileItem.setText("&File");
+		Menu submenu = new Menu(shell, SWT.DROP_DOWN);
+		fileItem.setMenu(submenu);
+		MenuItem item = new MenuItem(submenu, SWT.PUSH);
+		item.addListener(SWT.Selection, e -> PreferencesWindow.open(display));
+		item.setText("Preferences");
+
+		// Help menu
+		MenuItem helpItem = new MenuItem(bar, SWT.CASCADE);
+		helpItem.setText("&Help");
+		Menu submenu2 = new Menu(shell, SWT.DROP_DOWN);
+		helpItem.setMenu(submenu2);
+
+		MenuItem help = new MenuItem(submenu2, SWT.PUSH);
+		help.addListener(SWT.Selection, e -> Util.openURL("https://github.com/LAntoine/LAMSADE-tools"));
+		help.setText("Help");
+
+		MenuItem about = new MenuItem(submenu2, SWT.PUSH);
+		about.addListener(SWT.Selection, e -> AboutWindow.open(display));
+		about.setText("About");
 
 		/*
 		 * Initialize Group conferencesInfos which will include : -The Grid data
@@ -199,11 +232,45 @@ public class MainProgram {
 		lblNewLabel_1.setBounds(10, 53, 70, 15);
 		lblNewLabel_1.setText("Last Name");
 
+		Label lblLogin = new Label(grpUserDetails, SWT.NONE);
+		lblLogin.setText("Login");
+		lblLogin.setBounds(9, 85, 70, 15);
+
 		txt_firstname = new Text(grpUserDetails, SWT.BORDER);
 		txt_firstname.setBounds(86, 23, 98, 21);
+		txt_firstname.setText(Prefs.getSurname());
+		txt_firstname.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Prefs.setSurname(txt_firstname.getText());
+			}
+
+		});
 
 		txt_lastname = new Text(grpUserDetails, SWT.BORDER);
 		txt_lastname.setBounds(86, 50, 98, 21);
+		txt_lastname.setText(Prefs.getName());
+		txt_lastname.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Prefs.setName(txt_lastname.getText());
+			}
+
+		});
+
+		txt_login = new Text(grpUserDetails, SWT.BORDER);
+		txt_login.setBounds(85, 82, 98, 21);
+		txt_login.setText(Prefs.getLogin());
+		txt_login.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Prefs.setLogin(txt_login.getText());
+			}
+
+		});
 
 		/*
 		 * Handle the User Info's Search Throws exception if firstname or
@@ -235,7 +302,7 @@ public class MainProgram {
 				}
 			}
 		});
-		btn_searchInfo.setBounds(26, 87, 158, 25);
+		btn_searchInfo.setBounds(26, 111, 158, 25);
 		btn_searchInfo.setText("Search My Info");
 
 		Label lbl_function = new Label(grpUserDetails, SWT.NONE);
@@ -304,7 +371,8 @@ public class MainProgram {
 					try {
 						MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 						mb.setText("Success");
-						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user));
+						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user,
+								FileSystems.getDefault().getPath(Prefs.getSaveDir())));
 						LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
 						mb.open();
 					} catch (Exception e2) {
@@ -322,13 +390,10 @@ public class MainProgram {
 		});
 
 		Label lblPlaceholder = new Label(grpUserDetails, SWT.NONE);
-		lblPlaceholder.setBounds(26, 217, 829, 14);
+		lblPlaceholder.setBounds(197, 217, 658, 14);
 		lblPlaceholder.setText("");
 
-		// Is the following line useful at some point ????
-		new Label(shell, SWT.NONE);
-
-		btnGeneratePapierEn.setBounds(25, 118, 159, 28);
+		btnGeneratePapierEn.setBounds(25, 142, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
 
 		Button btnSaveOrdreMission = new Button(grpUserDetails, SWT.NONE);
@@ -373,7 +438,7 @@ public class MainProgram {
 				}
 			}
 		});
-		btnSaveOrdreMission.setBounds(26, 152, 158, 28);
+		btnSaveOrdreMission.setBounds(26, 176, 158, 28);
 		btnSaveOrdreMission.setText("Save Ordre Mission");
 
 		// Group Conferences informations
@@ -403,40 +468,56 @@ public class MainProgram {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				UserDetails user = getUserDetails();
-				if (btnYoungSearcher.getSelection()) {
-					if (user != null && table.getSelection().length != 0) {
-						String string = "";
-						TableItem[] items = table.getSelection();
-						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/M/yyyy");
 
-						Conference conf = new Conference(items[0].getText(0), items[0].getText(1),
-								LocalDate.parse(items[0].getText(2), formatter),
-								LocalDate.parse(items[0].getText(3), formatter), Double.valueOf(items[0].getText(4)),
-								items[0].getText(5), items[0].getText(6));
-						System.out.println(items[0].getText(5) + " " + items[0].getText(6));
+				if (user != null && table.getSelection().length != 0) {
+					String string = "";
+					TableItem[] items = table.getSelection();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/M/yyyy");
+
+					Conference conf = new Conference(items[0].getText(0), items[0].getText(1),
+							LocalDate.parse(items[0].getText(2), formatter),
+							LocalDate.parse(items[0].getText(3), formatter), Double.valueOf(items[0].getText(4)),
+							items[0].getText(5), items[0].getText(6));
+					System.out.println(items[0].getText(5) + " " + items[0].getText(6));
+
+					if (btnYoungSearcher.getSelection()) {
+
 						try {
 							GenerateMissionOrderYS.fillYSOrderMission(user, conf,"");
 							lblPlaceholder.setText(
 									"The file has successfully been saved to " + GenerateMissionOrderYS.getTarget());
 						} catch (IllegalArgumentException | IOException | SAXException
 								| ParserConfigurationException e1) {
+
 							LOGGER.error("Error : ", e1);
 							throw new IllegalStateException(e1);
 						}
 
 					} else {
-						MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-						mb.setText("Infromation missing");
-						mb.setMessage("Please fill user information and select a conference");
-						mb.open();
+
+						try {
+							generateMissionOrder gMissionOrder = new generateMissionOrder();
+							gMissionOrder.generateSpreadsheetDocument(user, conf);
+
+							lblPlaceholder
+									.setText("The file has successfully been saved to " + gMissionOrder.getTarget());
+
+						} catch (Exception e1) {
+							LOGGER.error("Error : ", e1);
+							throw new IllegalStateException(e1);
+						}
 					}
 				} else {
-					// TODO add the "generateOM" behavior for normal searcher
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("Infromation missing");
+					mb.setMessage("Please fill user information and select a conference");
+					mb.open();
 				}
+
 			}
 		});
 		btnGenerateOM.setText("Generate Order Mission");
-		btnGenerateOM.setBounds(26, 183, 158, 28);
+		btnGenerateOM.setBounds(26, 207, 158, 28);
 
 		Button btn_addNewConf = new Button(grp_conferencesInfos, SWT.NONE);
 		btn_addNewConf.setBounds(165, 156, 149, 25);
@@ -640,7 +721,7 @@ public class MainProgram {
 						String url = "https://www.google.fr/flights/flights-from-" + dep.getCity() + "-to-"
 								+ arr.getCity() + ".html";
 						// LOGGER.info(url);
-						Util.openMapUrl(url);
+						Util.openURL(url);
 					} catch (IllegalArgumentException e2) {
 						LOGGER.error("Error : ", e2);
 					} catch (Exception e1) {
@@ -736,4 +817,5 @@ public class MainProgram {
 		}
 		display.dispose();
 	}
+
 }

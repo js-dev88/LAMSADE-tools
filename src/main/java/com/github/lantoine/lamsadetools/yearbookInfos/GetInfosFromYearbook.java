@@ -136,7 +136,7 @@ public class GetInfosFromYearbook {
 
 		}
 
-		if (informations.size() > 7) {
+		if (informations.size() > 8) {
 			throw new YearbookDataException("Too many rows in Hashmap");
 		} else if (informations.size() < 7) {
 			throw new YearbookDataException("Some yearbook's informations are missing");
@@ -225,9 +225,11 @@ public class GetInfosFromYearbook {
 
 	public static void main(String[] args) throws IllegalArgumentException, IOException, YearbookDataException,
 			SAXException, ParserConfigurationException {
-		String prenom = "Olivier";
-		String nom = "CAILLOUX";
+		String prenom = "Maude";
+		String nom = "ARRU";
 		UserDetails user = GetInfosFromYearbook.getUserDetails(nom,prenom);
+		System.out.println(user.getName());
+		System.out.println(user.getFirstName());
 		//GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
 		//profJava.retrieveYearbookData();
 		//logger.info("info profjava:" + profJava.getBureau());
