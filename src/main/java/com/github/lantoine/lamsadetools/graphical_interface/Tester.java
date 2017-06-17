@@ -320,8 +320,7 @@ public class Tester {
 						MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 						mb.setText("Success");
 						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user,
-								FileSystems.getDefault().getPath(prefs.get("working_dir",
-										FileSystems.getDefault().getPath("").toAbsolutePath().toString()))));
+								FileSystems.getDefault().getPath(Prefs.getSaveDir())));
 						LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
 						mb.open();
 					} catch (Exception e2) {
