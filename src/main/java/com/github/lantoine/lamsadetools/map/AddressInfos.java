@@ -27,8 +27,6 @@ public class AddressInfos {
 	private String longitude;
 	private String latitude;
 	private String city;
-	public static void main(String[] args)
-
 	private String apiKey = "AIzaSyCEfh_xRxP-9OvzTu2PvlQKG5fpwSt5rpU";
 
 	public static void main(String[] args) throws Exception {
@@ -61,7 +59,7 @@ public class AddressInfos {
 	/**
 	 * Converts this object's latitude and langitude into a city name by using
 	 * Google's Geocoding API
-	 * 
+	 *
 	 * @return the city name
 	 * @throws NumberFormatException
 	 * @throws Exception
