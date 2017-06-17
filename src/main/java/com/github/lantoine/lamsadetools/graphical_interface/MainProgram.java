@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -159,6 +160,7 @@ public class MainProgram {
 	}
 
 	public static void main(String[] args) throws SQLException {
+		Preferences prefs = Preferences.userRoot().node("graphical_prefs :");
 
 		System.setProperty("SWT_GTK3", "0");
 		Display display = new Display();
@@ -214,9 +216,27 @@ public class MainProgram {
 
 		txt_firstname = new Text(grpUserDetails, SWT.BORDER);
 		txt_firstname.setBounds(86, 23, 98, 21);
+		txt_firstname.setText(Prefs.getSurname());
+		txt_firstname.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Prefs.setSurname(txt_firstname.getText());
+			}
+
+		});
 
 		txt_lastname = new Text(grpUserDetails, SWT.BORDER);
 		txt_lastname.setBounds(86, 50, 98, 21);
+		txt_lastname.setText(Prefs.getName());
+		txt_lastname.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Prefs.setName(txt_lastname.getText());
+			}
+
+		});
 
 		/*
 		 * Handle the User Info's Search Throws exception if firstname or
@@ -317,7 +337,8 @@ public class MainProgram {
 					try {
 						MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 						mb.setText("Success");
-						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user));
+						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user,
+								FileSystems.getDefault().getPath(Prefs.getSaveDir())));
 						LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
 						mb.open();
 					} catch (Exception e2) {
@@ -337,9 +358,6 @@ public class MainProgram {
 		Label lblPlaceholder = new Label(grpUserDetails, SWT.NONE);
 		lblPlaceholder.setBounds(26, 217, 829, 14);
 		lblPlaceholder.setText("");
-
-		// Is the following line useful at some point ????
-		new Label(shell, SWT.NONE);
 
 		btnGeneratePapierEn.setBounds(25, 118, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
