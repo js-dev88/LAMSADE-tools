@@ -90,12 +90,6 @@ public class GenerateMissionOrder {
 
 			saveOrderMissionToHistory(target, conference.getCity(), 
 					conference.getCountry(), conference.getStart_date().toString());
-			File filesource = new File(target);	
-			String filename = new String("historique_OM/OM_"+ conference.getCity() + "-" + conference.getCountry() + 
-					"_" + conference.getStart_date().toString() +".ods");
-			File targetfile = new File(filename);
-			FileUtils.copyFile(filesource, targetfile);
-
 		}
 	}
 
