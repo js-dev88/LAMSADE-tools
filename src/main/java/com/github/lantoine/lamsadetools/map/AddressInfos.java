@@ -12,12 +12,28 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.AddressComponent;
+import com.google.maps.model.AddressComponentType;
+import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
+
 public class AddressInfos {
 
+	GeoApiContext geoApiContext;
 	private String rawAddress;
 	private String formatted_address;
 	private String longitude;
 	private String latitude;
+	private String city;
+	private String apiKey = "AIzaSyCEfh_xRxP-9OvzTu2PvlQKG5fpwSt5rpU";
+
+	public static void main(String[] args) throws Exception {
+		AddressInfos ai = new AddressInfos("22 Boulevard de la Libération Chaville");
+		ai.retrieveGeocodeResponse();
+		ai.getCityFromLatLang();
+	}
 
 	/**
 	 * Enter an address to set the rawAddress attribute. the latitude and the
@@ -25,9 +41,9 @@ public class AddressInfos {
 	 * retrieveGeocodeResponse() method to set those attributes.
 	 *
 	 * @param rawAdress
-	 * @throws IllegalArgumentException
+	 * @throws Exception
 	 */
-	public AddressInfos(String rawAdress) throws IllegalArgumentException {
+	public AddressInfos(String rawAdress) throws Exception {
 		if (rawAdress == null) {
 			throw new IllegalArgumentException("The rawAdress cannot be null");
 		}
@@ -35,6 +51,32 @@ public class AddressInfos {
 		formatted_address = "";
 		longitude = "0";
 		latitude = "0";
+		geoApiContext = new GeoApiContext();
+		// city = getCityFromLatLang();
+
+	}
+
+	/**
+	 * Converts this object's latitude and langitude into a city name by using
+	 * Google's Geocoding API
+	 *
+	 * @return the city name
+	 * @throws NumberFormatException
+	 * @throws Exception
+	 */
+	public String getCityFromLatLang() throws NumberFormatException, Exception {
+		GeocodingResult[] results = GeocodingApi.newRequest(geoApiContext)
+				.latlng(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude))).language("en").await();
+
+		for (AddressComponent addressComponent : results[0].addressComponents) {
+			for (AddressComponentType acType : addressComponent.types) {
+				if (acType == AddressComponentType.LOCALITY) {
+					return addressComponent.longName;
+				}
+			}
+		}
+
+		return "";
 	}
 
 	/**
@@ -74,6 +116,7 @@ public class AddressInfos {
 					}
 				}
 			}
+
 			@SuppressWarnings("hiding")
 			NodeList formatted_address = htmlDoc.getElementsByTagName("formatted_address");
 			if (formatted_address.getLength() != 0) {
@@ -81,12 +124,14 @@ public class AddressInfos {
 					this.formatted_address = formatted_address.item(i).getTextContent();
 				}
 			}
+
 			NodeList location = htmlDoc.getElementsByTagName("location");
 			for (int i = 0; i < location.getLength(); i++) {
 				NodeList lat = htmlDoc.getElementsByTagName("lat");
 				latitude = lat.item(0).getTextContent();
 				NodeList lng = htmlDoc.getElementsByTagName("lng");
 				longitude = lng.item(0).getTextContent();
+
 			}
 		}
 	}
@@ -113,5 +158,13 @@ public class AddressInfos {
 
 	public String getLongitude() {
 		return longitude;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
 	}
 }
