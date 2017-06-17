@@ -216,9 +216,27 @@ public class Tester {
 
 		txt_firstname = new Text(grpUserDetails, SWT.BORDER);
 		txt_firstname.setBounds(86, 23, 98, 21);
+		txt_firstname.setText(Prefs.getSurname());
+		txt_firstname.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Prefs.setSurname(txt_firstname.getText());
+			}
+
+		});
 
 		txt_lastname = new Text(grpUserDetails, SWT.BORDER);
 		txt_lastname.setBounds(86, 50, 98, 21);
+		txt_lastname.setText(Prefs.getName());
+		txt_lastname.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Prefs.setName(txt_lastname.getText());
+			}
+
+		});
 
 		/*
 		 * Handle the User Info's Search Throws exception if firstname or
