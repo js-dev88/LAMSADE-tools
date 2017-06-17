@@ -374,7 +374,7 @@ public class MainProgram {
 		});
 
 		Label lblPlaceholder = new Label(grpUserDetails, SWT.NONE);
-		lblPlaceholder.setBounds(26, 217, 829, 14);
+		lblPlaceholder.setBounds(197, 217, 658, 14);
 		lblPlaceholder.setText("");
 
 		btnGeneratePapierEn.setBounds(25, 142, 159, 28);
