@@ -71,6 +71,7 @@ public class MainProgram {
 	private static Text txt_lastname;
 	private static Text txt_number;
 	private static Text txt_office;
+	private static Text txt_login;
 
 	/**
 	 * Converts a LocalDate passed by parameter into a string
@@ -213,6 +214,10 @@ public class MainProgram {
 		Label lblNewLabel_1 = new Label(grpUserDetails, SWT.NONE);
 		lblNewLabel_1.setBounds(10, 53, 70, 15);
 		lblNewLabel_1.setText("Last Name");
+		
+		Label lblLogin = new Label(grpUserDetails, SWT.NONE);
+		lblLogin.setText("Login");
+		lblLogin.setBounds(9, 85, 70, 15);
 
 		txt_firstname = new Text(grpUserDetails, SWT.BORDER);
 		txt_firstname.setBounds(86, 23, 98, 21);
@@ -238,6 +243,19 @@ public class MainProgram {
 
 		});
 
+		txt_login = new Text(grpUserDetails, SWT.BORDER);
+		txt_login.setBounds(85, 82, 98, 21);
+		txt_login.setText(Prefs.getLogin());
+		txt_login.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Prefs.setLogin(txt_login.getText());
+			}
+
+		});
+		
+		
 		/*
 		 * Handle the User Info's Search Throws exception if firstname or
 		 * lastname is wrong
@@ -268,7 +286,7 @@ public class MainProgram {
 				}
 			}
 		});
-		btn_searchInfo.setBounds(26, 87, 158, 25);
+		btn_searchInfo.setBounds(26, 111, 158, 25);
 		btn_searchInfo.setText("Search My Info");
 
 		Label lbl_function = new Label(grpUserDetails, SWT.NONE);
@@ -359,7 +377,7 @@ public class MainProgram {
 		lblPlaceholder.setBounds(26, 217, 829, 14);
 		lblPlaceholder.setText("");
 
-		btnGeneratePapierEn.setBounds(25, 118, 159, 28);
+		btnGeneratePapierEn.setBounds(25, 142, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
 
 		Button btnSaveOrdreMission = new Button(grpUserDetails, SWT.NONE);
@@ -404,7 +422,7 @@ public class MainProgram {
 				}
 			}
 		});
-		btnSaveOrdreMission.setBounds(26, 152, 158, 28);
+		btnSaveOrdreMission.setBounds(26, 176, 158, 28);
 		btnSaveOrdreMission.setText("Save Ordre Mission");
 
 		// Group Conferences informations
@@ -467,7 +485,7 @@ public class MainProgram {
 			}
 		});
 		btnGenerateOM.setText("Generate Order Mission");
-		btnGenerateOM.setBounds(26, 183, 158, 28);
+		btnGenerateOM.setBounds(26, 207, 158, 28);
 
 		Button btn_addNewConf = new Button(grp_conferencesInfos, SWT.NONE);
 		btn_addNewConf.setBounds(165, 156, 149, 25);
