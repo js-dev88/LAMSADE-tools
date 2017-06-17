@@ -17,10 +17,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PreferencesWindow {
+	private static Label lbl_directory;
 	private static final Logger LOGGER = LoggerFactory.getLogger(PreferencesWindow.class);
 	private static String str_working_dir;
 	private static Text text_working_dir;
-	private static Label lbl_directory;
+
+	/**
+	 * @wbp.parser.entryPoint
+	 */
+	public static void main() {
+		System.setProperty("SWT_GTK3", "0");
+		Display display = new Display();
+		open(display);
+	}
 
 	static void open(Display display) {
 		// This will define a node in which the preferences can be stored
@@ -45,29 +54,22 @@ public class PreferencesWindow {
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog fileDialog = new DirectoryDialog(shell, SWT.OPEN);
 				LOGGER.info("Opening the file dialog for user to choose where he wants to store his files");
-				String dialogResult = fileDialog.open();
-				LOGGER.info("Location chosen: " + dialogResult);
+				String str_working_dir = fileDialog.open();
+				LOGGER.info("Location chosen: " + str_working_dir);
 
-				if (dialogResult == null) {
+				if (str_working_dir == null) {
 					LOGGER.info("User closed the directory dialog");
 				} else {
-					prefs.put("working_dir", dialogResult);// store the absolute
-															// path
+					prefs.put("working_dir", str_working_dir);// store the
+																// absolute
+																// path
 					text_working_dir.setText(str_working_dir);
+					shell.pack(true);
 					LOGGER.debug("directory set to" + str_working_dir);
 				}
 			}
 		});
 		shell.pack();
 		shell.open();
-	}
-
-	/**
-	 * @wbp.parser.entryPoint
-	 */
-	public static void main() {
-		System.setProperty("SWT_GTK3", "0");
-		Display display = new Display();
-		open(display);
 	}
 }
