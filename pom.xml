@@ -42,18 +42,18 @@
 				</dependency>
 			</dependencies>
 		</profile>
-		  <profile>
+		<profile>
 			<id>Windows64</id>
 			<activation>
 				<os>
-				 	<family>windows</family>
+					<family>windows</family>
 					<arch>x86_64</arch>
 				</os>
 			</activation>
 			<dependencies>
 			<!--  SWT Support for Windows 32 Bits x86_64  -->
 				<!-- https://mvnrepository.com/artifact/org.eclipse.swt/org.eclipse.swt.win32.win32.x86_64 -->
-			  	<dependency>
+				<dependency>
     				<groupId>org.eclipse.swt</groupId>
     				<artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
    					<version>4.3</version>	
@@ -66,7 +66,7 @@
 				</dependency>
 			</dependencies>
 		</profile>
-		  <profile>
+		<profile>
 			<id>Windows32</id>
 			<activation>
 				<os>
@@ -74,9 +74,9 @@
 					<arch>x86</arch>
 				</os>
 			</activation>
-		  	<dependencies>	
+			<dependencies>	
 			<!--  SWT Support For Windows 32 x86 -->			
-			 	<dependency>
+				<dependency>
     				<groupId>org.eclipse.swt</groupId>
     				<artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
     				<version>4.3</version>
@@ -115,13 +115,24 @@
     <artifactId>mail</artifactId>
     <version>1.5.0-b01</version>
 </dependency>
+<!-- Useful to convert addresses to city names  -->
+<!-- https://mvnrepository.com/artifact/com.google.maps/google-maps-services -->
+<dependency>
+    <groupId>com.google.maps</groupId>
+    <artifactId>google-maps-services</artifactId>
+    <version>0.1.1</version>
+</dependency>
+
+
 		<!-- https://mvnrepository.com/artifact/com.github.peter-gergely-horvath/windpapi4j API for keyring on Windows-->
+								 
 		<dependency>
 		    <groupId>com.github.peter-gergely-horvath</groupId>
 		    <artifactId>windpapi4j</artifactId>
 		    <version>1.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/io.bunting.keyring/keyring-tool API for keyring on Unix and Mac -->
+									  
 		<dependency>
 		    <groupId>io.bunting.keyring</groupId>
 		    <artifactId>keyring-tool</artifactId>
@@ -140,6 +151,7 @@
 		    <version>1.7.25</version>
 		</dependency>
 	    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic used for logging-->
+					   
 		<dependency>
 		    <groupId>ch.qos.logback</groupId>
 		    <artifactId>logback-classic</artifactId>
@@ -152,6 +164,7 @@
 		    </exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core used for logging-->
+				  
 		<dependency>
 		    <groupId>ch.qos.logback</groupId>
 		    <artifactId>logback-core</artifactId>
@@ -204,18 +217,19 @@
 			<artifactId>tools</artifactId>
 			<version>1.5.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.artofsolving.jodconverter</groupId>
-			<artifactId>jodconverter-core</artifactId>
-			<version>3.0-NX10</version>
-		</dependency>
-		<!-- Is this usefull?-->
-		<dependency>
-			<groupId>org.odftoolkit</groupId>
-			<artifactId>odfdom-java</artifactId>
-			<version>0.8.7</version>
-		</dependency>
+			  
+												   
+											 
+							  
+			   
+						   
+			  
+									
+									   
+						   
+			   
 		<!-- https://mvnrepository.com/artifact/org.apache.odftoolkit/simple-odf used for missionOrder and setCoordinate package-->
+													  
 		<dependency>
 			<groupId>org.apache.odftoolkit</groupId>
 			<artifactId>simple-odf</artifactId>
@@ -271,6 +285,7 @@
 			<version>3.16-beta2</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/junit/junit used for Unitary Test dependance-->
+				 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
