@@ -43,7 +43,7 @@ import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.map.AddressInfos;
 import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
 import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrderYS;
-import com.github.lantoine.lamsadetools.missionOrder.generateMissionOrder;
+import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrder;
 import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.github.lantoine.lamsadetools.utils.Util;
@@ -220,7 +220,7 @@ public class MainProgram {
 		Group grpUserDetails = new Group(shell, SWT.NONE);
 		GridData gd_grpUserDetails = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_grpUserDetails.widthHint = 860;
-		gd_grpUserDetails.heightHint = 229;
+		gd_grpUserDetails.heightHint = 244;
 		grpUserDetails.setLayoutData(gd_grpUserDetails);
 		grpUserDetails.setText("User Details");
 
@@ -396,55 +396,10 @@ public class MainProgram {
 		btnGeneratePapierEn.setBounds(25, 142, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
 
-		Button btnSaveOrdreMission = new Button(grpUserDetails, SWT.NONE);
-		btnSaveOrdreMission.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-				LOGGER.info("Opening the file dialog for user to choose a file to save to the app");
-				String dialogResult = dialog.open();
-				LOGGER.info("File chosen: " + dialogResult);
-
-				if (dialogResult == null) {
-					LOGGER.info("User closed the file save dialog");
-				} else {
-					// Check if there exists a file with the same name in our
-					// missions directory
-					Path path = FileSystems.getDefault().getPath("");
-					String pathToTargetFile = path.toAbsolutePath() + "/missions/" + new File(dialogResult).getName();
-					File pathToProject = new File(pathToTargetFile);
-
-					boolean exists = pathToProject.exists();
-					if (exists == true) {
-						LOGGER.info("Duplicate Detected");
-						MessageBox mBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
-						mBox.setText("Duplicate detected");
-						mBox.setMessage("A file with that name already exists. Would you like to replace it?");
-						int returnCode = mBox.open();
-						if (returnCode == 256) {
-							LOGGER.info("User chose not to replace the existing file");
-						} else {
-							LOGGER.info("User chose to replace the existing file");
-							Util.saveFile(dialogResult);
-							lblPlaceholder.setText("The file has successfully been saved to " + pathToTargetFile);
-
-						}
-					} else {
-						LOGGER.info("Calling saveFile(String) to save the file to disk");
-						Util.saveFile(dialogResult);
-						lblPlaceholder.setText("The file has successfully been saved to " + pathToTargetFile);
-
-					}
-				}
-			}
-		});
-		btnSaveOrdreMission.setBounds(26, 176, 158, 28);
-		btnSaveOrdreMission.setText("Save Ordre Mission");
-
 		// Group Conferences informations
 		Group grp_conferencesInfos = new Group(shell, SWT.NONE);
 		GridData gd_conferencesInfos = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_conferencesInfos.heightHint = 237;
+		gd_conferencesInfos.heightHint = 214;
 		gd_conferencesInfos.widthHint = 860;
 		grp_conferencesInfos.setLayoutData(gd_conferencesInfos);
 		grp_conferencesInfos.setText("Conferences");
@@ -453,71 +408,6 @@ public class MainProgram {
 		table.setBounds(165, 16, 502, 134);
 		table.setHeaderVisible(true);
 		fillConferenceTable(table);
-
-		Button btnYoungSearcher = new Button(grpUserDetails, SWT.CHECK);
-		btnYoungSearcher.setBounds(222, 189, 103, 16);
-		btnYoungSearcher.setText("Young searcher");
-
-		// Handle here the GenerateOrderMission button because it needs the
-		// table to be set
-		// This button handles order mission generations for both searcher and
-		// young sercher,
-		// depending on the checkbox "btnYoungSearcher" status
-		Button btnGenerateOM = new Button(grpUserDetails, SWT.NONE);
-		btnGenerateOM.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				UserDetails user = getUserDetails();
-
-				if (user != null && table.getSelection().length != 0) {
-					String string = "";
-					TableItem[] items = table.getSelection();
-					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/M/yyyy");
-
-					Conference conf = new Conference(items[0].getText(0), items[0].getText(1),
-							LocalDate.parse(items[0].getText(2), formatter),
-							LocalDate.parse(items[0].getText(3), formatter), Double.valueOf(items[0].getText(4)),
-							items[0].getText(5), items[0].getText(6));
-					System.out.println(items[0].getText(5) + " " + items[0].getText(6));
-
-					if (btnYoungSearcher.getSelection()) {
-
-						try {
-							GenerateMissionOrderYS.fillYSOrderMission(user, conf);
-							lblPlaceholder.setText(
-									"The file has successfully been saved to " + GenerateMissionOrderYS.getTarget());
-						} catch (IllegalArgumentException | IOException | SAXException
-								| ParserConfigurationException e1) {
-
-							LOGGER.error("Error : ", e1);
-							throw new IllegalStateException(e1);
-						}
-
-					} else {
-
-						try {
-							generateMissionOrder gMissionOrder = new generateMissionOrder();
-							gMissionOrder.generateSpreadsheetDocument(user, conf);
-
-							lblPlaceholder
-									.setText("The file has successfully been saved to " + gMissionOrder.getTarget());
-
-						} catch (Exception e1) {
-							LOGGER.error("Error : ", e1);
-							throw new IllegalStateException(e1);
-						}
-					}
-				} else {
-					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					mb.setText("Infromation missing");
-					mb.setMessage("Please fill user information and select a conference");
-					mb.open();
-				}
-
-			}
-		});
-		btnGenerateOM.setText("Generate Order Mission");
-		btnGenerateOM.setBounds(26, 207, 158, 28);
 
 		Button btn_addNewConf = new Button(grp_conferencesInfos, SWT.NONE);
 		btn_addNewConf.setBounds(165, 156, 149, 25);
@@ -638,6 +528,154 @@ public class MainProgram {
 		btnExportEvent.setBounds(320, 154, 104, 28);
 		btnExportEvent.setText("Export Event");
 
+		Button btnSaveOrdreMission = new Button(grp_conferencesInfos, SWT.NONE);
+		btnSaveOrdreMission.setBounds(684, 32, 158, 28);
+		btnSaveOrdreMission.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+				LOGGER.info("Opening the file dialog for user to choose a file to save to the app");
+				String dialogResult = dialog.open();
+				LOGGER.info("File chosen: " + dialogResult);
+
+				if (dialogResult == null) {
+					LOGGER.info("User closed the file save dialog");
+				} else {
+					// Check if there exists a file with the same name in our
+					// missions directory
+					Path path = FileSystems.getDefault().getPath("");
+					String pathToTargetFile = path.toAbsolutePath() + "/missions/" + new File(dialogResult).getName();
+					File pathToProject = new File(pathToTargetFile);
+
+					boolean exists = pathToProject.exists();
+					if (exists == true) {
+						LOGGER.info("Duplicate Detected");
+						MessageBox mBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
+						mBox.setText("Duplicate detected");
+						mBox.setMessage("A file with that name already exists. Would you like to replace it?");
+						int returnCode = mBox.open();
+						if (returnCode == 256) {
+							LOGGER.info("User chose not to replace the existing file");
+						} else {
+							LOGGER.info("User chose to replace the existing file");
+							Util.saveFile(dialogResult);
+							lblPlaceholder.setText("The file has successfully been saved to " + pathToTargetFile);
+
+						}
+					} else {
+						LOGGER.info("Calling saveFile(String) to save the file to disk");
+						Util.saveFile(dialogResult);
+						lblPlaceholder.setText("The file has successfully been saved to " + pathToTargetFile);
+
+					}
+				}
+			}
+		});
+		
+		btnSaveOrdreMission.setText("Save Ordre Mission");
+		Button btnYoungSearcher = new Button(grp_conferencesInfos, SWT.CHECK);
+		btnYoungSearcher.setBounds(684, 114, 103, 16);
+		btnYoungSearcher.setText("Young searcher");
+		
+		// Handle here the GenerateOrderMission button because it needs the
+		// table to be set
+		// This button handles order mission generations for both searcher and
+		// young sercher,
+		// depending on the checkbox "btnYoungSearcher" status
+		Button btnGenerateOM = new Button(grp_conferencesInfos, SWT.NONE);
+		btnGenerateOM.setBounds(684, 72, 158, 28);
+		btnGenerateOM.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				UserDetails user = getUserDetails();
+
+				if (user != null && table.getSelection().length != 0) {
+					String string = "";
+					TableItem[] items = table.getSelection();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/M/yyyy");
+
+					Conference conf = new Conference(items[0].getText(0), items[0].getText(1),
+							LocalDate.parse(items[0].getText(2), formatter),
+							LocalDate.parse(items[0].getText(3), formatter), Double.valueOf(items[0].getText(4)),
+							items[0].getText(5), items[0].getText(6));
+					System.out.println(items[0].getText(5) + " " + items[0].getText(6));
+
+					if (btnYoungSearcher.getSelection()) {
+
+						try {
+							String fileName = Prefs.getSaveDir() + "/demande_de_mission_jeune_chercheur.fodt";
+							GenerateMissionOrderYS.fillYSOrderMission(user, conf, fileName);
+							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
+						} catch (IllegalArgumentException | IOException | SAXException
+								| ParserConfigurationException e1) {
+
+							LOGGER.error("Error : ", e1);
+							throw new IllegalStateException(e1);
+						}
+
+					} else {
+
+						try {
+							String fileName = Prefs.getSaveDir() + "/ordre_de_mission.ods";
+							GenerateMissionOrder.generateSpreadsheetDocument(user, conf, fileName);
+							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
+
+						} catch (Exception e1) {
+							LOGGER.error("Error : ", e1);
+							throw new IllegalStateException(e1);
+						}
+					}
+				} else {
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("Infromation missing");
+					mb.setMessage("Please fill user information and select a conference");
+					mb.open();
+				}
+
+			}
+		});
+		btnGenerateOM.setText("Generate Order Mission");
+
+		
+
+		Button btnItinerary = new Button(grp_conferencesInfos, SWT.NONE);
+		btnItinerary.setBounds(440, 156, 115, 25);
+		btnItinerary.setText("Itinerary");
+		btnItinerary.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				System.out.println("Appui sur le bouton");
+				if (table.getSelection().length != 0) {
+					try {
+						TableItem[] items = table.getSelection();
+						
+						//AddressInfos dep = new AddressInfos(departure.getText());
+						//AddressInfos arr = new AddressInfos(arrival.getText());
+						// ItineraryMap itinerary = new
+						// ItineraryMap(dep.getLongitude(),
+						// dep.getLatitude(),arr.getLongitude(),
+						// arr.getLatitude());
+
+						GoogleItineraryMap itinerary = new GoogleItineraryMap("Paris", items[0].getText(5));
+						String url = itinerary.setMapUrl();
+						LOGGER.debug(url);
+						itinerary.openMapUrl(url);
+
+					} catch (IllegalArgumentException e) {
+						LOGGER.error("Error : ", e);
+					} catch (Exception e) {
+						throw new IllegalStateException(e);
+					}
+				} else {
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("Information missing");
+					mb.setMessage("Please Choose a Conference");
+					mb.open();
+				}
+			}
+		});
+
 		/*
 		 * Behavior of a click on the add new conference button
 		 */
@@ -687,24 +725,20 @@ public class MainProgram {
 		gd_map.widthHint = 412;
 		grp_map.setLayoutData(gd_map);
 		Text departure = new Text(grp_map, SWT.BORDER);
-		departure.setLocation(101, 7);
+		departure.setLocation(101, 30);
 		departure.setSize(196, 21);
 		Text arrival = new Text(grp_map, SWT.BORDER);
-		arrival.setLocation(101, 34);
+		arrival.setLocation(101, 57);
 		arrival.setSize(196, 21);
-
-		Button btnItinerary = new Button(grp_map, SWT.NONE);
-		btnItinerary.setText("Itinerary");
-		btnItinerary.setBounds(303, 5, 95, 25);
 
 		Label lblDeparture = new Label(grp_map, SWT.NONE);
 		lblDeparture.setAlignment(SWT.RIGHT);
-		lblDeparture.setBounds(10, 10, 73, 15);
+		lblDeparture.setBounds(22, 33, 73, 15);
 		lblDeparture.setText("Departure");
 
 		Label lblArrival = new Label(grp_map, SWT.NONE);
 		lblArrival.setAlignment(SWT.RIGHT);
-		lblArrival.setBounds(10, 37, 73, 15);
+		lblArrival.setBounds(10, 60, 73, 15);
 		lblArrival.setText("Arrival");
 
 		Button btnNewButton = new Button(grp_map, SWT.NONE);
@@ -764,38 +798,6 @@ public class MainProgram {
 		 * departure and arrival Texts and call the ItineraryMap class to open
 		 * the itinerary into the browser
 		 */
-		btnItinerary.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				System.out.println("Appui sur le bouton");
-				if (!departure.getText().isEmpty() && !arrival.getText().isEmpty()) {
-					try {
-						AddressInfos dep = new AddressInfos(departure.getText());
-						AddressInfos arr = new AddressInfos(arrival.getText());
-						// ItineraryMap itinerary = new
-						// ItineraryMap(dep.getLongitude(),
-						// dep.getLatitude(),arr.getLongitude(),
-						// arr.getLatitude());
-
-						GoogleItineraryMap itinerary = new GoogleItineraryMap(departure.getText(), arrival.getText());
-						String url = itinerary.setMapUrl();
-						System.out.println(url);
-						itinerary.openMapUrl(url);
-
-					} catch (IllegalArgumentException e) {
-						LOGGER.error("Error : ", e);
-					} catch (Exception e) {
-						throw new IllegalStateException(e);
-					}
-				} else {
-					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					mb.setText("Infromation missing");
-					mb.setMessage("Please fill in the departure and arrival fields");
-					mb.open();
-				}
-			}
-		});
 		arrival.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {

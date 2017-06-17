@@ -13,7 +13,7 @@ import com.github.lantoine.lamsadetools.conferences.database.ConnectionDataBase;
 import com.sun.star.lang.NullPointerException;
 
 public class EmailPasswordDatabase {
-	@SuppressWarnings("unused")
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmailPasswordDatabase.class);
 	private static ConnectionDataBase connectionDataBase;
 
@@ -30,13 +30,6 @@ public class EmailPasswordDatabase {
 
 	private static final String SELECTQUERY = "SELECT * FROM EMAILPASSWORD WHERE email = ?;";
 
-	public static ConnectionDataBase getConnectionDataBase() {
-		return connectionDataBase;
-	}
-
-	public void setConnectionDataBase(ConnectionDataBase connectionDataBase) {
-		EmailPasswordDatabase.connectionDataBase = connectionDataBase;
-	}
 
 	/**
 	 * Create table EmailPassword
@@ -44,8 +37,8 @@ public class EmailPasswordDatabase {
 	 * @throws SQLException
 	 */
 	static void createTable() throws SQLException {
-
-		try (Connection conn = EmailPasswordDatabase.getConnectionDataBase().getConnection()) {
+		ConnectionDataBase db = new ConnectionDataBase();
+		try (Connection conn = db.getConnection()) {
 			conn.createStatement().execute(CREATETABLE);
 		}
 	}
@@ -56,11 +49,11 @@ public class EmailPasswordDatabase {
 	 * @throws SQLException
 	 */
 	public static void clearDataBase() throws SQLException {
-
-		EmailPasswordDatabase.getConnectionDataBase().getConnection();
-		EmailPasswordDatabase.getConnectionDataBase().sqlQuery(CREATETABLE);
-		EmailPasswordDatabase.getConnectionDataBase().sqlQuery(DROPSTATEMENT);
-		EmailPasswordDatabase.getConnectionDataBase().closeAndDisposeConnection();
+		ConnectionDataBase db = new ConnectionDataBase();
+		db.getConnection();
+		db.sqlQuery(CREATETABLE);
+		db.sqlQuery(DROPSTATEMENT);
+		db.closeAndDisposeConnection();
 	}
 
 	/**
@@ -71,8 +64,8 @@ public class EmailPasswordDatabase {
 	 * @throws SQLException
 	 */
 	public static void insertInDatabase(EmailPassword email) throws SQLException {
-
-		try (Connection conn = EmailPasswordDatabase.getConnectionDataBase().getConnection();) {
+		ConnectionDataBase db = new ConnectionDataBase();
+		try (Connection conn = db.getConnection();) {
 
 			createTable();
 
@@ -88,7 +81,7 @@ public class EmailPasswordDatabase {
 							+ "The database could not be created or upgraded, there must be an old version on your computer");
 				}
 
-				EmailPasswordDatabase.getConnectionDataBase().closeAndDisposeConnection();
+				db.closeAndDisposeConnection();
 			}
 		}
 	}
@@ -102,13 +95,13 @@ public class EmailPasswordDatabase {
 	 */
 
 	public static void removePasswordFromDatabase(String email) throws SQLException {
-
-		try (Connection conn = EmailPasswordDatabase.getConnectionDataBase().getConnection();) {
+		ConnectionDataBase db = new ConnectionDataBase();
+		try (Connection conn = db.getConnection();) {
 
 			try (PreparedStatement preparedStatement = conn.prepareStatement(DELETEQUERY);) {
 				preparedStatement.setString(1, email);
 				preparedStatement.executeUpdate();
-				EmailPasswordDatabase.getConnectionDataBase().closeAndDisposeConnection();
+				db.closeAndDisposeConnection();
 			}
 
 		}
@@ -123,8 +116,8 @@ public class EmailPasswordDatabase {
 	 *             if no data is retrieved
 	 */
 	public static EmailPassword getEmailPassword(String email) throws SQLException, NullPointerException {
-
-		try (Connection conn = EmailPasswordDatabase.getConnectionDataBase().getConnection();) {
+		ConnectionDataBase db = new ConnectionDataBase();
+		try (Connection conn = db.getConnection();) {
 			createTable();
 
 			try (Statement state = conn.createStatement()) {
