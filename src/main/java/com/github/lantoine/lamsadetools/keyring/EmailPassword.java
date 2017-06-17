@@ -5,12 +5,9 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.lantoine.lamsadetools.missionOrder.generateMissionOrder;
 import com.github.lantoine.lamsadetools.utils.Util;
 import com.github.windpapi4j.InitializationFailedException;
 import com.github.windpapi4j.WinAPICallFailedException;
-import com.github.windpapi4j.WinDPAPI;
-import com.github.windpapi4j.WinDPAPI.CryptProtectFlag;
 import com.sun.star.uno.Exception;
 
 /**
@@ -21,7 +18,6 @@ import com.sun.star.uno.Exception;
  *
  */
 public class EmailPassword {
-	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmailPassword.class);
 	private String email;
 	private String encryptedPassword;
