@@ -100,14 +100,11 @@ public class AddressInfos {
 		ConnectionToGoogleMapsApi connection = new ConnectionToGoogleMapsApi(rawAddress);
 		connection.buildConnection();
 		try (InputStream htmlText = connection.getHtmlPage()) {
-<<<<<<< HEAD
 
->>>>>>> 2a7fed96b7a3947a407d565a72b460f6b8975b01
 			// InputStream transformed in DOM Document
 			factory = DocumentBuilderFactory.newInstance();
 			builder = factory.newDocumentBuilder();
 			htmlDoc = builder.parse(new InputSource(htmlText));
-<<<<<<< HEAD
 		}
 			
 		NodeList status = htmlDoc.getElementsByTagName("status");
@@ -116,7 +113,6 @@ public class AddressInfos {
 			for (int i = 0; i < status.getLength(); i++) {
 				if (!status.item(i).getTextContent().contains("OK")) {
 					throw new IllegalArgumentException("the address typed doesn't exist: " + rawAddress);
->>>>>>> 2a7fed96b7a3947a407d565a72b460f6b8975b01
 				}
 			}
 

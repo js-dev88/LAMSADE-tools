@@ -56,10 +56,9 @@ import net.fortuna.ical4j.model.ValidationException;
  * the user : -to see all the existing conferences, -to add new ones -to see the
  * itinerary on openStreetMap
  */
-<<<<<<< HEAD:src/main/java/com/github/lantoine/lamsadetools/graphical_interface/Tester.java
+
 public class MainProgram {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainProgram.class);
->>>>>>> 2a7fed96b7a3947a407d565a72b460f6b8975b01:src/main/java/com/github/lantoine/lamsadetools/graphical_interface/MainProgram.java
 	private static Shell shell;
 	private static Text txt_city_ud;
 	private static Text txt_country_ud;
@@ -162,7 +161,7 @@ public class MainProgram {
 	public static void main(String[] args) throws SQLException {
 
 		System.setProperty("SWT_GTK3", "0");
-		display = new Display();
+		Display display = new Display();
 		shell = new Shell(display);
 
 		shell.setText("Conference List");
