@@ -53,9 +53,20 @@ import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.github.lantoine.lamsadetools.yearbookInfos.ConnectionToYearbook;
 import com.github.lantoine.lamsadetools.yearbookInfos.YearbookDataException;
 
+/**
+ * This class fills a young searcher Mission Order
+ * It can only be accessed in a static way
+ * 
+ *
+ */
 public class GenerateMissionOrderYS {
+	
+	/**
+	 * "target" attribut is the default saving path
+	 * 
+	 */
 	private static String target = FileSystems.getDefault().getPath("").toAbsolutePath()
-			+ "/demande_de_mission_jeune_chercheur_Clone.fodt";
+			+ "/demande_de_mission_jeune_chercheur.fodt";
 
 	public static String getTarget() {
 		return target;
@@ -138,7 +149,6 @@ public class GenerateMissionOrderYS {
 			if (span.item(i).getTextContent().contains("DUREE")) {
 				//Period period = Period.between(conf.getStart_date(), conf.getEnd_date());
 				Long period = ChronoUnit.DAYS.between(conf.getStart_date(), conf.getEnd_date());
-				System.out.println( conf.getStart_date() + " " + conf.getEnd_date() + period);
 				span.item(i).setTextContent(String.valueOf(period + " jour(s)"));
 			}
 
@@ -174,7 +184,6 @@ public class GenerateMissionOrderYS {
 		String filename = new String("historique_DJC/DJC_" + city + "-" + country + "_" + startDate + ".fodt");
 		File targetfile = new File(filename);
 		FileUtils.copyFile(filesource, targetfile);
-		System.out.println("targetFile = " + targetfile);
 	}
 
 	public static void main(String[] args) {

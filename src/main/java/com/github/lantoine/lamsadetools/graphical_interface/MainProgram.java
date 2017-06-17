@@ -486,7 +486,7 @@ public class MainProgram {
 							String fileName = Prefs.getSaveDir() + "/demande_de_mission_jeune_chercheur.fodt";
 							GenerateMissionOrderYS.fillYSOrderMission(user, conf, fileName);
 							lblPlaceholder.setText(
-									"The file has successfully been saved to " + GenerateMissionOrderYS.getTarget());
+									"The file has successfully been saved to " + fileName);
 						} catch (IllegalArgumentException | IOException | SAXException
 								| ParserConfigurationException e1) {
 
@@ -497,11 +497,10 @@ public class MainProgram {
 					} else {
 
 						try {
-							GenerateMissionOrder gMissionOrder = new GenerateMissionOrder();
-							gMissionOrder.generateSpreadsheetDocument(user, conf);
-
+							String fileName = Prefs.getSaveDir() + "/ordre_de_mission.ods";
+							GenerateMissionOrder.generateSpreadsheetDocument(user, conf, fileName);
 							lblPlaceholder
-									.setText("The file has successfully been saved to " + gMissionOrder.getTarget());
+									.setText("The file has successfully been saved to " + fileName);
 
 						} catch (Exception e1) {
 							LOGGER.error("Error : ", e1);
