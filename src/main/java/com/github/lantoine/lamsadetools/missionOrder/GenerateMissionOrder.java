@@ -1,6 +1,7 @@
 package com.github.lantoine.lamsadetools.missionOrder;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,29 +20,34 @@ import com.sun.star.lang.IllegalArgumentException;
 
 import ch.qos.logback.classic.Level;
 
+/**
+ * This class fills a searcher Mission Order
+ * It can only be accessed in a static way
+ *
+ */
 public class GenerateMissionOrder {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenerateMissionOrder.class);
 
+	/**
+	 * "target" attribute is the default saving path
+	 * 
+	 */
 	private static String target = FileSystems.getDefault().getPath("").toAbsolutePath() + "/ordre_de_mission_test.ods";
 
-	public String getTarget() {
+	public static String getTarget() {
 		return target;
 	}
 
-	
-	public GenerateMissionOrder(){
-
-	}
-
 	/**
-	 * @param userDetails 
+	 * @param userDetails
 	 * @param conference
-	 * Use the userDetails and conference to fill the Spreadsheet
+	 *            Use the userDetails and conference to fill the Spreadsheet
 	 * @throws Exception
 	 */
-	public void generateSpreadsheetDocument(UserDetails userDetails, Conference conference) throws Exception {
-
+	public static void generateSpreadsheetDocument(UserDetails userDetails, Conference conference, String fileDestination) throws Exception {
+		if (!fileDestination.isEmpty())
+			target = fileDestination;
 		try (InputStream inputStream = GenerateMissionOrder.class.getResourceAsStream("ordre_de_mission.ods");
 				SpreadsheetDocument spreadsheetDoc = SpreadsheetDocument.loadDocument(inputStream)) {
 			// Name
@@ -69,35 +75,37 @@ public class GenerateMissionOrder {
 
 			Cell cityCountryArrivalReturnTrip = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("T37");
 			cityCountryArrivalReturnTrip.setStringValue(userDetails.getCity() + " ," + userDetails.getCountry());
-			
+
 			// Date trip
-			
-			
+
 			// write the field mission about the date of mission
 
-				Cell dateDeparture = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("M25");
-				dateDeparture.setStringValue(conference.getStart_date().toString());
+			Cell dateDeparture = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("M25");
+			dateDeparture.setStringValue(conference.getStart_date().toString());
 
-				Cell dateArrival = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("Z25");
-				dateArrival.setStringValue(conference.getEnd_date().toString());
+			Cell dateArrival = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("Z25");
+			dateArrival.setStringValue(conference.getEnd_date().toString());
 
-			
+			spreadsheetDoc.save(target);
 
-			spreadsheetDoc.save("ordre_de_mission_test.ods");
-			inputStream.close();
-			
-			File filesource = new File("ordre_de_mission_test.ods");
-			
-			String filename = new SimpleDateFormat("'historique_OM/OM' yyyyMMddHHmm'.ods'").format(new Date());
+			saveOrderMissionToHistory(target, conference.getCity(), 
+					conference.getCountry(), conference.getStart_date().toString());
+			File filesource = new File(target);	
+			String filename = new String("historique_OM/OM_"+ conference.getCity() + "-" + conference.getCountry() + 
+					"_" + conference.getStart_date().toString() +".ods");
 			File targetfile = new File(filename);
-			
-			FileUtils.copyFile(filesource,targetfile);	
-			// spreadsheetDoc.close();
-
-
-		
+			FileUtils.copyFile(filesource, targetfile);
 
 		}
+	}
+
+	private static void saveOrderMissionToHistory(String fileToCopy, String city, String country, String startDate)
+			throws IOException {
+		File filesource = new File(fileToCopy);
+		String filename = new String("historique_OM/OM_"+ city + "-" + country + 
+				"_" + startDate +".ods");
+		File targetfile = new File(filename);
+		FileUtils.copyFile(filesource, targetfile);
 	}
 
 }
