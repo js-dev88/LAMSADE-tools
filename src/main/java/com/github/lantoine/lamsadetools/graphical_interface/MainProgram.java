@@ -404,7 +404,7 @@ public class MainProgram {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				UserDetails user = getUserDetails();
-<<<<<<< HEAD
+
 
 				if (user != null && table.getSelection().length != 0) {
 					String string = "";
@@ -416,27 +416,17 @@ public class MainProgram {
 							LocalDate.parse(items[0].getText(3), formatter), Double.valueOf(items[0].getText(4)),
 							items[0].getText(5), items[0].getText(6));
 					System.out.println(items[0].getText(5) + " " + items[0].getText(6));
-					if (btnYoungSearcher.getSelection()) {
-=======
-				if (btnYoungSearcher.getSelection()) {
-					if (user != null && table.getSelection().length != 0) {
-						String string = "";
-						TableItem[] items = table.getSelection();
-						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/M/yyyy");
+					
 
-						Conference conf = new Conference(items[0].getText(0), items[0].getText(1),
-								LocalDate.parse(items[0].getText(2), formatter),
-								LocalDate.parse(items[0].getText(3), formatter), Double.valueOf(items[0].getText(4)),
-								items[0].getText(5), items[0].getText(6));
-						System.out.println(items[0].getText(5) + " " + items[0].getText(6));
->>>>>>> 2a7fed96b7a3947a407d565a72b460f6b8975b01
+				if (btnYoungSearcher.getSelection()) {
+						
 						try {
 							GenerateMissionOrderYS.fillYSOrderMission(user, conf);
 							lblPlaceholder.setText(
 									"The file has successfully been saved to " + GenerateMissionOrderYS.getTarget());
 						} catch (IllegalArgumentException | IOException | SAXException
 								| ParserConfigurationException e1) {
-<<<<<<< HEAD
+
 							LOGGER.error("Error : ", e1);
 							throw new IllegalStateException(e1);
 						}
@@ -455,26 +445,13 @@ public class MainProgram {
 							throw new IllegalStateException(e1);
 						}
 					}
-				} else {
-					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					mb.setText("Infromation missing");
-					mb.setMessage("Please fill user information and select a conference");
-					mb.open();
-=======
-							LOGGER.error("Error : ", e1);
-							throw new IllegalStateException(e1);
-						}
-
-					} else {
+				}else {
 						MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 						mb.setText("Infromation missing");
 						mb.setMessage("Please fill user information and select a conference");
 						mb.open();
 					}
-				} else {
-					// TODO add the "generateOM" behavior for normal searcher
->>>>>>> 2a7fed96b7a3947a407d565a72b460f6b8975b01
-				}
+				
 			}
 		});
 		btnGenerateOM.setText("Generate Order Mission");

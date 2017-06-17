@@ -25,20 +25,11 @@ public class generateMissionOrder {
 		return target;
 	}
 
-	/**
-	 * Mission Order Constructor
-	 * 
-	 * @param firstname
-	 *            may not be null
-	 * @param lastname
-	 *            may not be null
-	 * @throws IllegalArgumentException
-	 */
-	public generateMissionOrder() throws IllegalArgumentException {
+	
+	public generateMissionOrder(){
 
 	}
 
-	
 	/**
 	 * @param userDetails 
 	 * @param conference
