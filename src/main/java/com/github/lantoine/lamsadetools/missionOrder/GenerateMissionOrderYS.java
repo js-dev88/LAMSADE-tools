@@ -13,11 +13,13 @@ import java.io.PrintStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +33,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.Units;
@@ -135,9 +138,14 @@ public class GenerateMissionOrderYS {
 				Period period = Period.between ( conf.getStart_date() , conf.getEnd_date());		
 				span.item(i).setTextContent(String.valueOf(period.get(ChronoUnit.DAYS)) + " jour(s)");
 			}
-			
+		
 			saveYSOrderMission(doc);
+			File filesource = new File(target);
 			
+			String filename = new SimpleDateFormat("'historique_DJC/DJC' yyyyMMddHHmm'.fodt'").format(new Date());
+			File targetfile = new File(filename);
+			
+			FileUtils.copyFile(filesource,targetfile);			
 		}		
 	}
 	
@@ -179,6 +187,9 @@ public class GenerateMissionOrderYS {
 		} catch (ParserConfigurationException e) {
 			throw new IllegalStateException(e);
 		}
+		       
 	}
+	
+
 
 }

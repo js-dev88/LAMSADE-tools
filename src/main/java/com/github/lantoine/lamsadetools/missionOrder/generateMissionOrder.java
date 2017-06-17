@@ -1,7 +1,11 @@
 package com.github.lantoine.lamsadetools.missionOrder;
 
+import java.io.File;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import org.apache.commons.io.FileUtils;
 import org.odftoolkit.simple.SpreadsheetDocument;
 import org.odftoolkit.simple.table.Cell;
 import org.slf4j.Logger;
@@ -71,6 +75,13 @@ public class generateMissionOrder {
 			
 			spreadsheetDoc.save("ordre_de_mission_test.ods");
 			inputStream.close();
+			
+			File filesource = new File("ordre_de_mission_test.ods");
+			
+			String filename = new SimpleDateFormat("'historique_OM/OM' yyyyMMddHHmm'.ods'").format(new Date());
+			File targetfile = new File(filename);
+			
+			FileUtils.copyFile(filesource,targetfile);	
 			// spreadsheetDoc.close();
 
 		}
