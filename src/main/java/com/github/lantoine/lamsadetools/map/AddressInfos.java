@@ -70,14 +70,13 @@ public class AddressInfos {
 		//Connection to the google maps api 
 		ConnectionToGoogleMapsApi connection = new ConnectionToGoogleMapsApi(this.rawAddress);
 		connection.buildConnection();
-		InputStream htmlText = connection.getHtmlPage();
-		
-		// InputStream transformed in DOM Document
-		factory = DocumentBuilderFactory.newInstance();
-		builder = factory.newDocumentBuilder();
-		htmlDoc = builder.parse(new InputSource(htmlText));
-		// close the stream
-		htmlText.close();
+		try (InputStream htmlText = connection.getHtmlPage()) {
+			// InputStream transformed in DOM Document
+			factory = DocumentBuilderFactory.newInstance();
+			builder = factory.newDocumentBuilder();
+			htmlDoc = builder.parse(new InputSource(htmlText));
+		}
+			
 		NodeList status = htmlDoc.getElementsByTagName("status");
 		// Checks if the request has a positive result
 		if (status.getLength() != 0) {
