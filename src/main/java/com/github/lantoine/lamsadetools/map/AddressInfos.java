@@ -51,8 +51,8 @@ public class AddressInfos {
 		formatted_address = "";
 		longitude = "0";
 		latitude = "0";
-		geoApiContext = new GeoApiContext().setApiKey(apiKey);
-		city = getCityFromLatLang();
+		geoApiContext = new GeoApiContext();
+		// city = getCityFromLatLang();
 
 	}
 
@@ -114,6 +114,14 @@ public class AddressInfos {
 					if (!status.item(i).getTextContent().contains("OK")) {
 						throw new IllegalArgumentException("the address typed doesn't exist: " + rawAddress);
 					}
+				}
+			}
+
+			@SuppressWarnings("hiding")
+			NodeList formatted_address = htmlDoc.getElementsByTagName("formatted_address");
+			if (formatted_address.getLength() != 0) {
+				for (int i = 0; i < formatted_address.getLength(); i++) {
+					this.formatted_address = formatted_address.item(i).getTextContent();
 				}
 			}
 
