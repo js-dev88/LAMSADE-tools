@@ -75,7 +75,7 @@ public class ItineraryMap {
 	 *            (must be a String)
 	 */
 	public void openMapUrl(String url) {
-		Util.openMapUrl(url);
+		Util.openURL(url);
 	}
 
 	public String getLongitudeA() {
