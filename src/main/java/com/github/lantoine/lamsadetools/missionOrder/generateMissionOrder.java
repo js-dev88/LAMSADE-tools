@@ -77,15 +77,8 @@ public class generateMissionOrder {
 			
 			// Date trip
 			
-			// if the departure date is equals of the arrival date then we must write the fields about the date trip 
-			if (conference.getStart_date().toString().equals(conference.getEnd_date().toString())) {
-				Cell dateDeparture = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("M22");
-				dateDeparture.setStringValue(conference.getStart_date().toString());
-
-				Cell dateArrival = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("Z22");
-				dateArrival.setStringValue(conference.getEnd_date().toString());
-
-			} else { // else the departure date is different of the arrival we must write the field mission about the date of mission
+			
+			// write the field mission about the date of mission
 
 				Cell dateDeparture = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("M25");
 				dateDeparture.setStringValue(conference.getStart_date().toString());
@@ -93,7 +86,7 @@ public class generateMissionOrder {
 				Cell dateArrival = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("Z25");
 				dateArrival.setStringValue(conference.getEnd_date().toString());
 
-			}
+			
 
 			spreadsheetDoc.save("ordre_de_mission_test.ods");
 			inputStream.close();
