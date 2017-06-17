@@ -49,8 +49,7 @@ Le LAMSADE est une unité de recherche de Paris-Dauphine. Ce projet a pour but d
 
 #####
 
-Partie de Javier
-
+What Javier has worked on:
  - Created the initial .gitignore file.
  - Started work with Apache's PDFBox library to generate a PDF and created a function to add images to it.
  - Created the Conference class as well as the initial main menu.
