@@ -43,7 +43,7 @@ import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.map.AddressInfos;
 import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
 import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrderYS;
-import com.github.lantoine.lamsadetools.missionOrder.generateMissionOrder;
+import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrder;
 import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.github.lantoine.lamsadetools.utils.Util;
@@ -483,7 +483,8 @@ public class MainProgram {
 					if (btnYoungSearcher.getSelection()) {
 
 						try {
-							GenerateMissionOrderYS.fillYSOrderMission(user, conf,"");
+							String fileName = Prefs.getSaveDir() + "/demande_de_mission_jeune_chercheur.fodt";
+							GenerateMissionOrderYS.fillYSOrderMission(user, conf, fileName);
 							lblPlaceholder.setText(
 									"The file has successfully been saved to " + GenerateMissionOrderYS.getTarget());
 						} catch (IllegalArgumentException | IOException | SAXException
@@ -496,7 +497,7 @@ public class MainProgram {
 					} else {
 
 						try {
-							generateMissionOrder gMissionOrder = new generateMissionOrder();
+							GenerateMissionOrder gMissionOrder = new GenerateMissionOrder();
 							gMissionOrder.generateSpreadsheetDocument(user, conf);
 
 							lblPlaceholder

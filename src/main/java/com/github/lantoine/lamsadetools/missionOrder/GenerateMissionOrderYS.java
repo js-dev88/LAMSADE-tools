@@ -136,8 +136,10 @@ public class GenerateMissionOrderYS {
 			}
 
 			if (span.item(i).getTextContent().contains("DUREE")) {
-				Period period = Period.between(conf.getStart_date(), conf.getEnd_date());
-				span.item(i).setTextContent(String.valueOf(period.get(ChronoUnit.DAYS)) + " jour(s)");
+				//Period period = Period.between(conf.getStart_date(), conf.getEnd_date());
+				Long period = ChronoUnit.DAYS.between(conf.getStart_date(), conf.getEnd_date());
+				System.out.println( conf.getStart_date() + " " + conf.getEnd_date() + period);
+				span.item(i).setTextContent(String.valueOf(period + " jour(s)"));
 			}
 
 			saveYSOrderMission(doc);
@@ -169,9 +171,10 @@ public class GenerateMissionOrderYS {
 	private static void saveYSOrderMissionToHistory(String fileToCopy, String city, String country, String startDate)
 			throws IOException {
 		File filesource = new File(fileToCopy);
-		String filename = new String("target/DJC_" + city + " - " + country + "_" + startDate + ".fodt");
+		String filename = new String("historique_DJC/DJC_" + city + "-" + country + "_" + startDate + ".fodt");
 		File targetfile = new File(filename);
 		FileUtils.copyFile(filesource, targetfile);
+		System.out.println("targetFile = " + targetfile);
 	}
 
 	public static void main(String[] args) {

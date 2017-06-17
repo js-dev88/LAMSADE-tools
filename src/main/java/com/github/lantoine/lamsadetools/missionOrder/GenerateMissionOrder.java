@@ -19,9 +19,9 @@ import com.sun.star.lang.IllegalArgumentException;
 
 import ch.qos.logback.classic.Level;
 
-public class generateMissionOrder {
+public class GenerateMissionOrder {
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(generateMissionOrder.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GenerateMissionOrder.class);
 
 	private static String target = FileSystems.getDefault().getPath("").toAbsolutePath() + "/ordre_de_mission_test.ods";
 
@@ -30,7 +30,7 @@ public class generateMissionOrder {
 	}
 
 	
-	public generateMissionOrder(){
+	public GenerateMissionOrder(){
 
 	}
 
@@ -42,7 +42,7 @@ public class generateMissionOrder {
 	 */
 	public void generateSpreadsheetDocument(UserDetails userDetails, Conference conference) throws Exception {
 
-		try (InputStream inputStream = generateMissionOrder.class.getResourceAsStream("ordre_de_mission.ods");
+		try (InputStream inputStream = GenerateMissionOrder.class.getResourceAsStream("ordre_de_mission.ods");
 				SpreadsheetDocument spreadsheetDoc = SpreadsheetDocument.loadDocument(inputStream)) {
 			// Name
 			Cell nameCell = spreadsheetDoc.getSheetByName("Feuil1").getCellByPosition("F8");
