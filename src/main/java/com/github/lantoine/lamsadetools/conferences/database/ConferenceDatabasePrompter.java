@@ -23,12 +23,13 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 		System.out.println("Conference to delete :");
 		System.out.println("ID :");
 
-		Scanner sc = new Scanner(System.in);
+		try (Scanner sc = new Scanner(System.in);) {
+			int id = sc.nextInt();
 
-		int id = sc.nextInt();
+			ConferenceDatabase.removeConferenceFromDatabase(id);
+			ConferenceDatabasePrompter.menu();
+		}
 
-		ConferenceDatabase.removeConferenceFromDatabase(id);
-		ConferenceDatabasePrompter.menu();
 	}
 
 	/**
@@ -37,31 +38,33 @@ public class ConferenceDatabasePrompter extends ConferencePrompter {
 	 * @throws SQLException
 	 */
 	public static void editConference() throws SQLException {
-		Scanner sc = new Scanner(System.in);
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Conference.DATE_FORMAT);
-		dtf.withLocale(Locale.FRANCE);
-		System.out.println("conférenceID : ");
-		int id = sc.nextInt();
-		System.out.println("New title (optional): ");
-		String title = sc.nextLine();
-		System.out.println("New URL (optional): ");
-		String url = sc.nextLine();
-		System.out.println("New start date (" + Conference.DATE_FORMAT + ") (optional): ");
-		LocalDate start_date = LocalDate.parse(sc.nextLine(), dtf);
-		System.out.println("New end date (" + Conference.DATE_FORMAT + ") (optional): ");
-		LocalDate end_date = LocalDate.parse(sc.nextLine(), dtf);
-		System.out.println("New title (optional): ");
-		double entry_fee = sc.nextDouble();
-		System.out.println("New city: ");
-		String city = sc.nextLine();
-		System.out.println("New country: ");
-		String country = sc.nextLine();
-		Conference conf = new Conference(id, title, url, start_date, end_date, entry_fee, city, country);
-		if (ConferenceDatabasePrompter.editConferenceInDatabase(conf)) {
-			System.out.println("Edit Successful");
-		} else {
-			System.out.println("Edit failed");
+		try (Scanner sc = new Scanner(System.in);) {
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Conference.DATE_FORMAT);
+			dtf.withLocale(Locale.FRANCE);
+			System.out.println("conférenceID : ");
+			int id = sc.nextInt();
+			System.out.println("New title (optional): ");
+			String title = sc.nextLine();
+			System.out.println("New URL (optional): ");
+			String url = sc.nextLine();
+			System.out.println("New start date (" + Conference.DATE_FORMAT + ") (optional): ");
+			LocalDate start_date = LocalDate.parse(sc.nextLine(), dtf);
+			System.out.println("New end date (" + Conference.DATE_FORMAT + ") (optional): ");
+			LocalDate end_date = LocalDate.parse(sc.nextLine(), dtf);
+			System.out.println("New title (optional): ");
+			double entry_fee = sc.nextDouble();
+			System.out.println("New city: ");
+			String city = sc.nextLine();
+			System.out.println("New country: ");
+			String country = sc.nextLine();
+			Conference conf = new Conference(id, title, url, start_date, end_date, entry_fee, city, country);
+			if (ConferenceDatabasePrompter.editConferenceInDatabase(conf)) {
+				System.out.println("Edit Successful");
+			} else {
+				System.out.println("Edit failed");
+			}
 		}
+
 	}
 
 	/**
