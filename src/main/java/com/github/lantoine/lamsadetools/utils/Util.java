@@ -1,7 +1,10 @@
 package com.github.lantoine.lamsadetools.utils;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -193,5 +196,21 @@ public class Util {
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Method to open an url on the user's default browser if supported
+	 * 
+	 * @param url
+	 *            the URL to open
+	 */
+	public static void openMapUrl(String url) {
+		if (Desktop.isDesktopSupported()) {
+			try {
+				Desktop.getDesktop().browse(new URI(url));
+			} catch (IOException | URISyntaxException e) {
+				throw new IllegalStateException(e);
+			}
+		}
 	}
 }

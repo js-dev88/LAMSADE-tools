@@ -56,9 +56,10 @@ import net.fortuna.ical4j.model.ValidationException;
  * the user : -to see all the existing conferences, -to add new ones -to see the
  * itinerary on openStreetMap
  */
-public class Tester {
-	private static Display display;
-	private static final Logger LOGGER = LoggerFactory.getLogger(Tester.class);
+<<<<<<< HEAD:src/main/java/com/github/lantoine/lamsadetools/graphical_interface/Tester.java
+public class MainProgram {
+	private static final Logger LOGGER = LoggerFactory.getLogger(MainProgram.class);
+>>>>>>> 2a7fed96b7a3947a407d565a72b460f6b8975b01:src/main/java/com/github/lantoine/lamsadetools/graphical_interface/MainProgram.java
 	private static Shell shell;
 	private static Text txt_city_ud;
 	private static Text txt_country_ud;
@@ -555,9 +556,13 @@ public class Tester {
 						}
 
 						dialog.setFileName("conference.ics");
-						conf.generateCalendarFile(dialog.open());
-					} catch (IOException | ValidationException | ParserException e2) {
+
+						String path = dialog.open();
+						conf.generateCalendarFile(path);
+					} catch (ValidationException | ParserException e2) {
 						e2.printStackTrace();
+					} catch (Exception e1) {
+						throw new IllegalStateException(e1);
 					}
 				}
 
@@ -615,25 +620,77 @@ public class Tester {
 		gd_map.widthHint = 412;
 		grp_map.setLayoutData(gd_map);
 		Text departure = new Text(grp_map, SWT.BORDER);
-		departure.setLocation(101, 22);
+		departure.setLocation(101, 7);
 		departure.setSize(196, 21);
 		Text arrival = new Text(grp_map, SWT.BORDER);
-		arrival.setLocation(101, 51);
+		arrival.setLocation(101, 34);
 		arrival.setSize(196, 21);
 
 		Button btnItinerary = new Button(grp_map, SWT.NONE);
-		btnItinerary.setText("Search");
-		btnItinerary.setBounds(303, 49, 95, 25);
+		btnItinerary.setText("Itinerary");
+		btnItinerary.setBounds(303, 5, 95, 25);
 
 		Label lblDeparture = new Label(grp_map, SWT.NONE);
 		lblDeparture.setAlignment(SWT.RIGHT);
-		lblDeparture.setBounds(10, 25, 73, 15);
+		lblDeparture.setBounds(10, 10, 73, 15);
 		lblDeparture.setText("Departure");
 
 		Label lblArrival = new Label(grp_map, SWT.NONE);
 		lblArrival.setAlignment(SWT.RIGHT);
-		lblArrival.setBounds(10, 54, 73, 15);
+		lblArrival.setBounds(10, 37, 73, 15);
 		lblArrival.setText("Arrival");
+
+		Button btnNewButton = new Button(grp_map, SWT.NONE);
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// !departure.getText().isEmpty()
+				if (!departure.getText().isEmpty() && !arrival.getText().isEmpty()) {
+					try {
+						AddressInfos arr = new AddressInfos(arrival.getText());
+
+						AddressInfos dep = new AddressInfos(departure.getText());
+
+						String url = "https://www.google.fr/flights/flights-from-" + dep.getCity() + "-to-"
+								+ arr.getCity() + ".html";
+						// LOGGER.info(url);
+						Util.openMapUrl(url);
+					} catch (IllegalArgumentException e2) {
+						LOGGER.error("Error : ", e2);
+					} catch (Exception e1) {
+						throw new IllegalStateException(e1);
+					}
+				} else if (!arrival.getText().isEmpty() && departure.getText().isEmpty()) {
+					try {
+						// AddressInfos dep = new
+						// AddressInfos(departure.getText());
+						AddressInfos arr = new AddressInfos(arrival.getText());
+						arr.retrieveGeocodeResponse();
+						// ItineraryMap itinerary = new
+						// ItineraryMap(dep.getLongitude(),
+						// dep.getLatitude(),arr.getLongitude(),
+						// arr.getLatitude());
+
+						String url = "https://www.google.fr/flights/flights-from-paris-to-" + arr.getCity() + ".html";
+						LOGGER.info("arrival: " + arr.getCity());
+						LOGGER.info(url);
+						// Util.openMapUrl(url);
+
+					} catch (IllegalArgumentException | IOException | SAXException | ParserConfigurationException e3) {
+						throw new IllegalStateException(e3);
+					} catch (Exception e1) {
+						throw new IllegalStateException(e1);
+					}
+				} else {
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("Infromation missing");
+					mb.setMessage("Please fill in at least the arrival field");
+					mb.open();
+				}
+			}
+		});
+		btnNewButton.setBounds(303, 30, 94, 28);
+		btnNewButton.setText("Flights");
 
 		/*
 		 * Behavior of the btnItinerary : Takes the addresses entered in
@@ -661,6 +718,8 @@ public class Tester {
 
 					} catch (IllegalArgumentException e) {
 						LOGGER.error("Error : ", e);
+					} catch (Exception e) {
+						throw new IllegalStateException(e);
 					}
 				} else {
 					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
@@ -668,7 +727,6 @@ public class Tester {
 					mb.setMessage("Please fill in the departure and arrival fields");
 					mb.open();
 				}
-
 			}
 		});
 		arrival.addModifyListener(new ModifyListener() {

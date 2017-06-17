@@ -115,6 +115,14 @@
     <artifactId>mail</artifactId>
     <version>1.5.0-b01</version>
 </dependency>
+<!-- Useful to convert addresses to city names  -->
+<!-- https://mvnrepository.com/artifact/com.google.maps/google-maps-services -->
+<dependency>
+    <groupId>com.google.maps</groupId>
+    <artifactId>google-maps-services</artifactId>
+    <version>0.1.1</version>
+</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.github.peter-gergely-horvath/windpapi4j API for keyring on Windows-->
 		<dependency>
 		    <groupId>com.github.peter-gergely-horvath</groupId>
@@ -203,17 +211,6 @@
 			<groupId>com.sun</groupId>
 			<artifactId>tools</artifactId>
 			<version>1.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.artofsolving.jodconverter</groupId>
-			<artifactId>jodconverter-core</artifactId>
-			<version>3.0-NX10</version>
-		</dependency>
-		<!-- Is this usefull?-->
-		<dependency>
-			<groupId>org.odftoolkit</groupId>
-			<artifactId>odfdom-java</artifactId>
-			<version>0.8.7</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.odftoolkit/simple-odf used for missionOrder and setCoordinate package-->
 		<dependency>
