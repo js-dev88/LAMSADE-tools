@@ -415,7 +415,7 @@ public class MainProgram {
 								items[0].getText(5), items[0].getText(6));
 						System.out.println(items[0].getText(5) + " " + items[0].getText(6));
 						try {
-							GenerateMissionOrderYS.fillYSOrderMission(user, conf);
+							GenerateMissionOrderYS.fillYSOrderMission(user, conf,"");
 							lblPlaceholder.setText(
 									"The file has successfully been saved to " + GenerateMissionOrderYS.getTarget());
 						} catch (IllegalArgumentException | IOException | SAXException
