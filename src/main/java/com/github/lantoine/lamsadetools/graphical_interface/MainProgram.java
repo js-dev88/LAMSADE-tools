@@ -70,9 +70,9 @@ public class MainProgram {
 	private static Text txt_function;
 	private static Text txt_group;
 	private static Text txt_lastname;
+	private static Text txt_login;
 	private static Text txt_number;
 	private static Text txt_office;
-	private static Text txt_login;
 
 	/**
 	 * Converts a LocalDate passed by parameter into a string
@@ -185,6 +185,8 @@ public class MainProgram {
 
 		Menu bar = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(bar);
+
+		// File menu
 		MenuItem fileItem = new MenuItem(bar, SWT.CASCADE);
 		fileItem.setText("&File");
 		Menu submenu = new Menu(shell, SWT.DROP_DOWN);
@@ -192,6 +194,20 @@ public class MainProgram {
 		MenuItem item = new MenuItem(submenu, SWT.PUSH);
 		item.addListener(SWT.Selection, e -> PreferencesWindow.open(display));
 		item.setText("Preferences");
+
+		// Help menu
+		MenuItem helpItem = new MenuItem(bar, SWT.CASCADE);
+		helpItem.setText("&Help");
+		Menu submenu2 = new Menu(shell, SWT.DROP_DOWN);
+		helpItem.setMenu(submenu2);
+
+		MenuItem help = new MenuItem(submenu2, SWT.PUSH);
+		help.addListener(SWT.Selection, e -> Util.openURL("https://github.com/LAntoine/LAMSADE-tools"));
+		help.setText("Help");
+
+		MenuItem about = new MenuItem(submenu2, SWT.PUSH);
+		about.addListener(SWT.Selection, e -> AboutWindow.open(display));
+		about.setText("About");
 
 		/*
 		 * Initialize Group conferencesInfos which will include : -The Grid data
@@ -215,7 +231,7 @@ public class MainProgram {
 		Label lblNewLabel_1 = new Label(grpUserDetails, SWT.NONE);
 		lblNewLabel_1.setBounds(10, 53, 70, 15);
 		lblNewLabel_1.setText("Last Name");
-		
+
 		Label lblLogin = new Label(grpUserDetails, SWT.NONE);
 		lblLogin.setText("Login");
 		lblLogin.setBounds(9, 85, 70, 15);
@@ -255,8 +271,7 @@ public class MainProgram {
 			}
 
 		});
-		
-		
+
 		/*
 		 * Handle the User Info's Search Throws exception if firstname or
 		 * lastname is wrong
@@ -454,7 +469,6 @@ public class MainProgram {
 			public void widgetSelected(SelectionEvent e) {
 				UserDetails user = getUserDetails();
 
-
 				if (user != null && table.getSelection().length != 0) {
 					String string = "";
 					TableItem[] items = table.getSelection();
@@ -465,10 +479,9 @@ public class MainProgram {
 							LocalDate.parse(items[0].getText(3), formatter), Double.valueOf(items[0].getText(4)),
 							items[0].getText(5), items[0].getText(6));
 					System.out.println(items[0].getText(5) + " " + items[0].getText(6));
-					
 
-				if (btnYoungSearcher.getSelection()) {
-						
+					if (btnYoungSearcher.getSelection()) {
+
 						try {
 							GenerateMissionOrderYS.fillYSOrderMission(user, conf);
 							lblPlaceholder.setText(
@@ -483,24 +496,24 @@ public class MainProgram {
 					} else {
 
 						try {
-							generateMissionOrder gMissionOrder = new generateMissionOrder() ;
+							generateMissionOrder gMissionOrder = new generateMissionOrder();
 							gMissionOrder.generateSpreadsheetDocument(user, conf);
-							
-							lblPlaceholder.setText(
-									"The file has successfully been saved to " + gMissionOrder.getTarget());
-							
+
+							lblPlaceholder
+									.setText("The file has successfully been saved to " + gMissionOrder.getTarget());
+
 						} catch (Exception e1) {
 							LOGGER.error("Error : ", e1);
 							throw new IllegalStateException(e1);
 						}
 					}
-				}else {
-						MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-						mb.setText("Infromation missing");
-						mb.setMessage("Please fill user information and select a conference");
-						mb.open();
-					}
-				
+				} else {
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("Infromation missing");
+					mb.setMessage("Please fill user information and select a conference");
+					mb.open();
+				}
+
 			}
 		});
 		btnGenerateOM.setText("Generate Order Mission");
@@ -708,7 +721,7 @@ public class MainProgram {
 						String url = "https://www.google.fr/flights/flights-from-" + dep.getCity() + "-to-"
 								+ arr.getCity() + ".html";
 						// LOGGER.info(url);
-						Util.openMapUrl(url);
+						Util.openURL(url);
 					} catch (IllegalArgumentException e2) {
 						LOGGER.error("Error : ", e2);
 					} catch (Exception e1) {
