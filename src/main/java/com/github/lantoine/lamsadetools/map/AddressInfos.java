@@ -27,6 +27,7 @@ public class AddressInfos {
 	private String longitude;
 	private String latitude;
 	private String city;
+	public static void main(String[] args)
 
 	private String apiKey = "AIzaSyCEfh_xRxP-9OvzTu2PvlQKG5fpwSt5rpU";
 
