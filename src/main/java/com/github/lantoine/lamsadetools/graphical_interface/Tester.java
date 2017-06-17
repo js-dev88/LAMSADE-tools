@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -159,6 +160,7 @@ public class Tester {
 	}
 
 	public static void main(String[] args) throws SQLException {
+		Preferences prefs = Preferences.userRoot().node("graphical_prefs :");
 
 		System.setProperty("SWT_GTK3", "0");
 		display = new Display();
@@ -317,7 +319,9 @@ public class Tester {
 					try {
 						MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 						mb.setText("Success");
-						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user));
+						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user,
+								FileSystems.getDefault().getPath(prefs.get("working_dir",
+										FileSystems.getDefault().getPath("").toAbsolutePath().toString()))));
 						LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
 						mb.open();
 					} catch (Exception e2) {
@@ -337,9 +341,6 @@ public class Tester {
 		Label lblPlaceholder = new Label(grpUserDetails, SWT.NONE);
 		lblPlaceholder.setBounds(26, 217, 829, 14);
 		lblPlaceholder.setText("");
-
-		// Is the following line useful at some point ????
-		new Label(shell, SWT.NONE);
 
 		btnGeneratePapierEn.setBounds(25, 118, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
