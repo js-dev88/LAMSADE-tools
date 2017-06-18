@@ -15,8 +15,8 @@ import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabaseP
 public class MainConference {
 
 	public static void main(String[] args) throws SQLException {
-		
-		//ConferenceDatabase.clearDataBase();
+
+		// ConferenceDatabase.clearDataBase();
 		ConferenceDatabasePrompter.menu();
 
 	}

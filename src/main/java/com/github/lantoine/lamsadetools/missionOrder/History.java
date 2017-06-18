@@ -31,12 +31,15 @@ public class History {
 
 		return ysHistory;
 	}
-    /**
-     * Open a file with Desktop API
-     * @param name 
-     * @param isYc is Young Searcher
-     * @throws IOException
-     */
+
+	/**
+	 * Open a file with Desktop API
+	 * 
+	 * @param name
+	 * @param isYc
+	 *            is Young Searcher
+	 * @throws IOException
+	 */
 	public static void openFile(String name, Boolean isYc) throws IOException {
 		String folder;
 		if (isYc) {
@@ -86,8 +89,8 @@ public class History {
 		});
 		return history;
 	}
-	
-	public static String getFilePath(String nameOfFile, Boolean isYc){
+
+	public static String getFilePath(String nameOfFile, Boolean isYc) {
 		String pathOfFile;
 		String folder;
 		if (isYc) {
@@ -96,7 +99,7 @@ public class History {
 			folder = "/historique_OM/";
 		}
 		pathOfFile = FileSystems.getDefault().getPath("").toAbsolutePath() + folder + nameOfFile;
-		
+
 		return pathOfFile.replace("\\", "/");
 	}
 

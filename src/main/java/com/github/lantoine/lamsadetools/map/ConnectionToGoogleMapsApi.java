@@ -12,11 +12,9 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * This class let the application connect to maps.googleapis
- * By entering an address you'll be able query maps.googleapis
- * and the hmtl page of your query.
+ * This class let the application connect to maps.googleapis By entering an
+ * address you'll be able query maps.googleapis and the hmtl page of your query.
  *
  * @author Julien Saussier
  *
@@ -29,7 +27,7 @@ public class ConnectionToGoogleMapsApi {
 	private File htmlPageFile;
 	private InputStream htmlPage;
 	private String rawAddress;
-	
+
 	/**
 	 * ConnectionToGoogleMapsApi's Constructor
 	 * 

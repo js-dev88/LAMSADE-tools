@@ -1,14 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<!-- Used to adapt SWT to every OS we have-->
+	<!-- Used to adapt SWT to every OS we have -->
 	<profiles>
 		<profile>
 			<id>Mac</id>
 			<activation>
-				<os><family>mac</family></os>
+				<os>
+					<family>mac</family>
+				</os>
 			</activation>
 			<dependencies>
-			<!--  SWT support for Mac -->	
+				<!-- SWT support for Mac -->
 				<dependency>
 					<groupId>org.eclipse.platform</groupId>
 					<artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
@@ -25,10 +27,12 @@
 		<profile>
 			<id>Linux</id>
 			<activation>
-				<os><family>unix</family></os>
+				<os>
+					<family>unix</family>
+				</os>
 			</activation>
 			<dependencies>
-			<!--  SWT support for Windos 64 Bit -->
+				<!-- SWT support for Windos 64 Bit -->
 				<dependency>
 					<groupId>org.eclipse.platform</groupId>
 					<artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
@@ -51,18 +55,18 @@
 				</os>
 			</activation>
 			<dependencies>
-			<!--  SWT Support for Windows 32 Bits x86_64  -->
+				<!-- SWT Support for Windows 32 Bits x86_64 -->
 				<!-- https://mvnrepository.com/artifact/org.eclipse.swt/org.eclipse.swt.win32.win32.x86_64 -->
 				<dependency>
-    				<groupId>org.eclipse.swt</groupId>
-    				<artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-   					<version>4.3</version>	
-   					<exclusions>
+					<groupId>org.eclipse.swt</groupId>
+					<artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+					<version>4.3</version>
+					<exclusions>
 						<exclusion>
 							<groupId>org.eclipse.platform</groupId>
 							<artifactId>org.eclipse.swt</artifactId>
 						</exclusion>
-					</exclusions>		
+					</exclusions>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -74,12 +78,12 @@
 					<arch>x86</arch>
 				</os>
 			</activation>
-			<dependencies>	
-			<!--  SWT Support For Windows 32 x86 -->			
+			<dependencies>
+				<!-- SWT Support For Windows 32 x86 -->
 				<dependency>
-    				<groupId>org.eclipse.swt</groupId>
-    				<artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
-    				<version>4.3</version>
+					<groupId>org.eclipse.swt</groupId>
+					<artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
+					<version>4.3</version>
 					<exclusions>
 						<exclusion>
 							<groupId>org.eclipse.platform</groupId>
@@ -108,85 +112,89 @@
 		</repository>
 	</repositories>
 	<dependencies>
-	<!-- Send Emails -->
-	<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
-<dependency>
-    <groupId>javax.mail</groupId>
-    <artifactId>mail</artifactId>
-    <version>1.5.0-b01</version>
-</dependency>
-<!-- Useful to convert addresses to city names  -->
-<!-- https://mvnrepository.com/artifact/com.google.maps/google-maps-services -->
-<dependency>
-    <groupId>com.google.maps</groupId>
-    <artifactId>google-maps-services</artifactId>
-    <version>0.1.1</version>
-</dependency>
+		<!-- Send Emails -->
+		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.5.0-b01</version>
+		</dependency>
+		<!-- Useful to convert addresses to city names -->
+		<!-- https://mvnrepository.com/artifact/com.google.maps/google-maps-services -->
+		<dependency>
+			<groupId>com.google.maps</groupId>
+			<artifactId>google-maps-services</artifactId>
+			<version>0.1.1</version>
+		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.github.peter-gergely-horvath/windpapi4j API for keyring on Windows-->
-								 
+		<!-- https://mvnrepository.com/artifact/com.github.peter-gergely-horvath/windpapi4j 
+			API for keyring on Windows -->
+
 		<dependency>
-		    <groupId>com.github.peter-gergely-horvath</groupId>
-		    <artifactId>windpapi4j</artifactId>
-		    <version>1.0</version>
+			<groupId>com.github.peter-gergely-horvath</groupId>
+			<artifactId>windpapi4j</artifactId>
+			<version>1.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/io.bunting.keyring/keyring-tool API for keyring on Unix and Mac -->
-									  
+		<!-- https://mvnrepository.com/artifact/io.bunting.keyring/keyring-tool 
+			API for keyring on Unix and Mac -->
+
 		<dependency>
-		    <groupId>io.bunting.keyring</groupId>
-		    <artifactId>keyring-tool</artifactId>
-		    <version>0.2.0</version>
-		    <exclusions>
-		    	<exclusion>
-		    		<groupId>org.slf4j</groupId>
-		    		<artifactId>slf4j-simple</artifactId>
-		    	</exclusion>
-		    </exclusions>
+			<groupId>io.bunting.keyring</groupId>
+			<artifactId>keyring-tool</artifactId>
+			<version>0.2.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-simple</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-	    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api used for logging  -->
-	    <dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-		    <version>1.7.25</version>
-		</dependency>
-	    <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic used for logging-->
-					   
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api used for logging -->
 		<dependency>
-		    <groupId>ch.qos.logback</groupId>
-		    <artifactId>logback-classic</artifactId>
-		    <version>1.2.3</version>
-		    <exclusions>
-		    	<exclusion>
-		    		<groupId>org.slf4j</groupId>
-		    		<artifactId>slf4j-api</artifactId>
-		    	</exclusion>
-		    </exclusions>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core used for logging-->
-				  
+		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic 
+			used for logging -->
+
 		<dependency>
-		    <groupId>ch.qos.logback</groupId>
-		    <artifactId>logback-core</artifactId>
-		    <version>1.2.3</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core used 
+			for logging -->
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.2.3</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.w3c/dom -->
 		<dependency>
-		    <groupId>org.w3c</groupId>
-		    <artifactId>dom</artifactId>
-		    <version>2.3.0-jaxb-1.0.6</version>
+			<groupId>org.w3c</groupId>
+			<artifactId>dom</artifactId>
+			<version>2.3.0-jaxb-1.0.6</version>
 		</dependency>
 		<!-- Package to work with iCal format -->
 		<dependency>
-   	   	 <groupId>ical4j</groupId>
-   		 <artifactId>ical4j</artifactId>
-    	<version>0.9.20</version>
-    	<exclusions>
-    		<!-- no need for log4j framework  -->
-    		<exclusion>
-    			<groupId>log4j</groupId>
-    			<artifactId>log4j</artifactId>
-    		</exclusion>
-    	</exclusions>
+			<groupId>ical4j</groupId>
+			<artifactId>ical4j</artifactId>
+			<version>0.9.20</version>
+			<exclusions>
+				<!-- no need for log4j framework -->
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- Jax RS => REST API for yearBookInfo and map package -->
 		<dependency>
@@ -199,12 +207,12 @@
 			<artifactId>resteasy-client</artifactId>
 			<version>3.0.2.Final</version>
 			<exclusions>
-			    <!-- slf4j double  -->
+				<!-- slf4j double -->
 				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-simple</artifactId>
 				</exclusion>
-				<!-- slf4j dependance's double removed  -->
+				<!-- slf4j dependance's double removed -->
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
@@ -217,8 +225,9 @@
 			<version>1.5.0</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.odftoolkit/simple-odf used for missionOrder and setCoordinate package-->
-													  
+		<!-- https://mvnrepository.com/artifact/org.apache.odftoolkit/simple-odf 
+			used for missionOrder and setCoordinate package -->
+
 		<dependency>
 			<groupId>org.apache.odftoolkit</groupId>
 			<artifactId>simple-odf</artifactId>
@@ -273,8 +282,9 @@
 			<artifactId>poi</artifactId>
 			<version>3.16-beta2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/junit/junit used for Unitary Test dependance-->
-				 
+		<!-- https://mvnrepository.com/artifact/junit/junit used for Unitary Test 
+			dependance -->
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -318,7 +328,7 @@
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding> 
+		<project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>

@@ -28,13 +28,13 @@ import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 
 /**
- * This class fills a young searcher Mission Order
- * It can only be accessed in a static way
+ * This class fills a young searcher Mission Order It can only be accessed in a
+ * static way
  * 
  *
  */
 public class GenerateMissionOrderYS {
-	
+
 	/**
 	 * "target" attribut is the default saving path
 	 * 

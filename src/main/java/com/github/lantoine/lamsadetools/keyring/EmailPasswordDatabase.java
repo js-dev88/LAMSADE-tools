@@ -29,7 +29,6 @@ public class EmailPasswordDatabase {
 
 	private static final String SELECTQUERY = "SELECT * FROM EMAILPASSWORD WHERE email = ?;";
 
-
 	/**
 	 * Create table EmailPassword
 	 *

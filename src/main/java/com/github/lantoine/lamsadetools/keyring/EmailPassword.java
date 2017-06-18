@@ -144,19 +144,19 @@ public class EmailPassword {
 
 	public static void main(String[] args) throws NullPointerException, Exception, InitializationFailedException,
 			WinAPICallFailedException, SQLException {
-		
+
 		switch (Util.getOS()) {
 		case WINDOWS:
 			EmailPassword toStore = new EmailPassword("adresse@test", "testMdpEnClair", "");
 			toStore.encryptPassword();
 			LOGGER.debug(toStore.toString());
-			
+
 			EmailPasswordDatabase.createTable();
 			EmailPasswordDatabase.insertInDatabase(toStore);
 			EmailPassword tested = EmailPasswordDatabase.getEmailPassword("adresse@test");
-			
+
 			LOGGER.debug(tested.toString());
-			
+
 			EmailPasswordDatabase.removePasswordFromDatabase("adresse@test");
 			EmailPasswordDatabase.clearDataBase();
 			break;

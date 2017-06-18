@@ -42,8 +42,9 @@ public class Util {
 	private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
 	public static void main(String[] args) throws IllegalStateException {
-		//String path = History.getFilePath("DJC_Lyon-France_2018-04-10.fodt", true);
-		//sendEmail("lamsadetoolsuser@gmail.com", path);
+		// String path = History.getFilePath("DJC_Lyon-France_2018-04-10.fodt",
+		// true);
+		// sendEmail("lamsadetoolsuser@gmail.com", path);
 	}
 
 	/**

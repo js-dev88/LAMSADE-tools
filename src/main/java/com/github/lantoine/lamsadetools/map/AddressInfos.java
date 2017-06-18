@@ -106,7 +106,7 @@ public class AddressInfos {
 			builder = factory.newDocumentBuilder();
 			htmlDoc = builder.parse(new InputSource(htmlText));
 		}
-			
+
 		NodeList status = htmlDoc.getElementsByTagName("status");
 		// Checks if the request has a positive result
 		if (status.getLength() != 0) {

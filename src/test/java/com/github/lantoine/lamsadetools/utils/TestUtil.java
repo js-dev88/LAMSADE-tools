@@ -3,12 +3,12 @@ package com.github.lantoine.lamsadetools.utils;
 import org.junit.Test;
 
 public class TestUtil {
-	
-	@Test(expected=IllegalStateException.class)
+
+	@Test(expected = IllegalStateException.class)
 	public void testSendEmailStringString() {
-		
-		Util.sendEmail("1234567890abcdefghijklmnopqrstuvwxy@mailinator.com","test");
-		
+
+		Util.sendEmail("1234567890abcdefghijklmnopqrstuvwxy@mailinator.com", "test");
+
 	}
 
 	// @Test

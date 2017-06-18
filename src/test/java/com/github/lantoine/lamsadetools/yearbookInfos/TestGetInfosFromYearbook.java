@@ -10,11 +10,12 @@ import org.xml.sax.SAXException;
 import com.github.lantoine.lamsadetools.yearbookInfos.GetInfosFromYearbook;
 import com.github.lantoine.lamsadetools.yearbookInfos.YearbookDataException;
 import com.sun.star.lang.IllegalArgumentException;
+
 public class TestGetInfosFromYearbook {
 
-	
 	@Test
-	public void testGetInfosFromYearbookWorks() throws IllegalArgumentException, IOException, YearbookDataException, SAXException, ParserConfigurationException{
+	public void testGetInfosFromYearbookWorks() throws IllegalArgumentException, IOException, YearbookDataException,
+			SAXException, ParserConfigurationException {
 		String firstname = "Olivier";
 		String surname = "CAILLOUX";
 		GetInfosFromYearbook prof = new GetInfosFromYearbook(firstname, surname);
@@ -24,10 +25,7 @@ public class TestGetInfosFromYearbook {
 		Assert.assertEquals("+33 1 44 05 46 53", prof.getTelephone());
 		Assert.assertEquals("MIDO - LAMSADE", prof.getGroupes());
 		Assert.assertEquals("non renseigné", prof.getFax());
-		Assert.assertEquals("P405 ter", prof.getBureau());							
+		Assert.assertEquals("P405 ter", prof.getBureau());
 	}
-	  
-	
-    
-    
+
 }

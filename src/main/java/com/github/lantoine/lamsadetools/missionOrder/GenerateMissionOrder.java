@@ -21,8 +21,8 @@ import com.sun.star.lang.IllegalArgumentException;
 import ch.qos.logback.classic.Level;
 
 /**
- * This class fills a searcher Mission Order
- * It can only be accessed in a static way
+ * This class fills a searcher Mission Order It can only be accessed in a static
+ * way
  *
  */
 public class GenerateMissionOrder {
@@ -45,7 +45,8 @@ public class GenerateMissionOrder {
 	 *            Use the userDetails and conference to fill the Spreadsheet
 	 * @throws Exception
 	 */
-	public static void generateSpreadsheetDocument(UserDetails userDetails, Conference conference, String fileDestination) throws Exception {
+	public static void generateSpreadsheetDocument(UserDetails userDetails, Conference conference,
+			String fileDestination) throws Exception {
 		if (!fileDestination.isEmpty())
 			target = fileDestination;
 		try (InputStream inputStream = GenerateMissionOrder.class.getResourceAsStream("ordre_de_mission.ods");
@@ -88,16 +89,15 @@ public class GenerateMissionOrder {
 
 			spreadsheetDoc.save(target);
 
-			saveOrderMissionToHistory(target, conference.getCity(), 
-					conference.getCountry(), conference.getStart_date().toString());
+			saveOrderMissionToHistory(target, conference.getCity(), conference.getCountry(),
+					conference.getStart_date().toString());
 		}
 	}
 
 	private static void saveOrderMissionToHistory(String fileToCopy, String city, String country, String startDate)
 			throws IOException {
 		File filesource = new File(fileToCopy);
-		String filename = new String("historique_OM/OM_"+ city + "-" + country + 
-				"_" + startDate +".ods");
+		String filename = new String("historique_OM/OM_" + city + "-" + country + "_" + startDate + ".ods");
 		File targetfile = new File(filename);
 		FileUtils.copyFile(filesource, targetfile);
 	}
