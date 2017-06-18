@@ -49,8 +49,9 @@ Le LAMSADE est une unité de recherche de Paris-Dauphine. Ce projet a pour but d
 
 #####
 
-Francisco Javier Martínez Lago
-What Javier has worked on:
+Francisco Javier Martínez Lago  
+
+What Javier has worked on:  
  - Created the initial .gitignore file.
  - Started work with Apache's PDFBox library to generate a PDF and created a function to add images to it.
  - Created function to determine the dimensions of an image
