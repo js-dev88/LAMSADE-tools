@@ -69,6 +69,34 @@ What Javier has worked on:
  
  What files has Javier contributed to :
 https://gist.github.com/edoreld/430b72b342a7911f6e4820ad8292a71b
+
+
+**Julien has worked on:**
+
+Refactoring of previous fonctional Classes made by Antoine and Abdel
+**- Package YearBook Info :**
+	-Class ConnectionToYearbook => JAXRS
+	-Class GetInfosFromYearbook => JDOM then JSOUP and finally DOM
+	-YearbookDataException
+	-Unit Tests
+- Set up of logging with log4j then slfj4j 
+- GUI contact yearbook with name and firstname and fields to display informations
+**- Package MissionOrder :** 
+	- Generate MissionOrder (User part)
+	- History functions open / delete and getPath for GUI
+**- Keyring All the package's classes with other members**
+	- keyring for Windows Mac and Unix Windjpapi & jkeyring
+	- fail to contact Outlook Exchange Serveur with my own adress from University with IMAP / IMAPS + Javaxmail
+	- Table creation in database and functions
+	- password encryption in database and session
+**- GUI Main Programm :**
+	- move buttons to the Mission Order part
+	- Historic of MO (only GUI part)
+	- delete a file from historic
+	- Open a file in historic
+	- Send an MO to an adress mail (only GUI) 
+	- refactor Existing Itinerary Button to use Conference data
+- Javadoc, test and import Maven librairies, small refactorings
   
  
 
