@@ -22,6 +22,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -41,11 +43,10 @@ import org.xml.sax.SAXException;
 
 import com.github.lantoine.lamsadetools.conferences.Conference;
 import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
-import com.github.lantoine.lamsadetools.map.AddressInfos;
 import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
+import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrder;
 import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrderYS;
 import com.github.lantoine.lamsadetools.missionOrder.History;
-import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrder;
 import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
 import com.github.lantoine.lamsadetools.utils.Util;
@@ -54,8 +55,6 @@ import com.github.lantoine.lamsadetools.yearbookInfos.YearbookDataException;
 
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.ValidationException;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.layout.RowData;
 
 /**
  * The Tester class is the interface of the LAMSADE-Tools application It allows
@@ -181,8 +180,11 @@ public class MainProgram {
 			try {
 				LOGGER.debug("Launching GetInfosFromYearbook.getUserDetails with : " + txt_lastname.getText() + " and "
 						+ txt_firstname.getText());
-				if (!txt_login.getText().isEmpty()) user = GetInfosFromYearbook.getUserDetails(txt_login.getText());
-				else user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(), txt_firstname.getText());
+				if (!txt_login.getText().isEmpty()) {
+					user = GetInfosFromYearbook.getUserDetails(txt_login.getText());
+				} else {
+					user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(), txt_firstname.getText());
+				}
 			} catch (com.sun.star.lang.IllegalArgumentException | IOException | YearbookDataException | SAXException
 					| ParserConfigurationException e) {
 				LOGGER.error("getUserDetails: an error occurend while getting the informations");
@@ -222,8 +224,11 @@ public class MainProgram {
 
 		shell.setSize(new Point(888, 799));
 
-		Menu bar = new Menu(shell, SWT.BAR);
-		shell.setMenuBar(bar);
+		Menu bar = display.getMenuBar();
+		if (bar == null) {
+			bar = new Menu(shell, SWT.BAR);
+			shell.setMenuBar(bar);
+		}
 
 		// File menu
 		MenuItem fileItem = new MenuItem(bar, SWT.CASCADE);
@@ -328,9 +333,10 @@ public class MainProgram {
 						user = GetInfosFromYearbook.getUserDetails(txt_login.getText());
 						txt_firstname.setText(user.getFirstName());
 						txt_lastname.setText(user.getName());
+					} else {
+						user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(), txt_firstname.getText());
 					}
-					else user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(), txt_firstname.getText());
-					
+
 					txt_function.setText(user.getFunction());
 					txt_number.setText(user.getNumber());
 					txt_email.setText(user.getEmail());
@@ -685,7 +691,7 @@ public class MainProgram {
 					}
 				} else {
 					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					mb.setText("Infromation missing");
+					mb.setText("Information missing");
 					mb.setMessage("Please fill user information and select a conference");
 					mb.open();
 				}
@@ -697,6 +703,44 @@ public class MainProgram {
 		Button btnItinerary = new Button(grp_conferencesInfos, SWT.NONE);
 		btnItinerary.setBounds(440, 156, 115, 25);
 		btnItinerary.setText("Itinerary");
+
+		Button btnNewButton = new Button(grp_conferencesInfos, SWT.NONE);
+		btnNewButton.setBounds(561, 156, 84, 25);
+		btnNewButton.setText("Flights");
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// !departure.getText().isEmpty()
+				// TODO
+				if (table.getSelection().length != 0) {
+					try {
+						TableItem[] items = table.getSelection();
+						String city = items[0].getText(5);
+
+						String url = "https://www.google.fr/flights/flights-from-paris-to-" + city + ".html";
+						// LOGGER.info(url);
+						try {
+							Util.openURL(url);
+						} catch (IllegalStateException e4) {
+							LOGGER.error("The city name is not valid");
+							MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+							mb.setText("Validation Error");
+							mb.setMessage("The city name is not valid");
+							mb.open();
+						}
+					} catch (IllegalArgumentException e2) {
+						LOGGER.error("Error : ", e2);
+					} catch (Exception e1) {
+						throw new IllegalStateException(e1);
+					}
+				} else {
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("Information missing");
+					mb.setMessage("Please choose a conference");
+					mb.open();
+				}
+			}
+		});
 		btnItinerary.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -783,33 +827,6 @@ public class MainProgram {
 		gd_grp_bottom.widthHint = 857;
 		grp_bottom.setLayoutData(gd_grp_bottom);
 
-		Group grpVisualizeYourTravel = new Group(grp_bottom, SWT.NONE);
-		grpVisualizeYourTravel.setText("Visualize your travel");
-		grpVisualizeYourTravel.setLayoutData(new RowData(383, 188));
-
-		Label lblDeparture = new Label(grpVisualizeYourTravel, SWT.NONE);
-		lblDeparture.setLocation(25, 51);
-		lblDeparture.setSize(52, 15);
-		lblDeparture.setAlignment(SWT.RIGHT);
-		lblDeparture.setText("Departure");
-		Text departure = new Text(grpVisualizeYourTravel, SWT.BORDER);
-		departure.setLocation(93, 47);
-		departure.setSize(121, 21);
-
-		Button btnNewButton = new Button(grpVisualizeYourTravel, SWT.NONE);
-		btnNewButton.setLocation(249, 65);
-		btnNewButton.setSize(84, 30);
-		btnNewButton.setText("Flights");
-		Text arrival = new Text(grpVisualizeYourTravel, SWT.BORDER);
-		arrival.setLocation(94, 97);
-		arrival.setSize(119, 21);
-
-		Label lblArrival = new Label(grpVisualizeYourTravel, SWT.NONE);
-		lblArrival.setLocation(43, 103);
-		lblArrival.setSize(34, 15);
-		lblArrival.setAlignment(SWT.RIGHT);
-		lblArrival.setText("Arrival");
-
 		Group grpHistoric = new Group(grp_bottom, SWT.NONE);
 		grpHistoric.setLayoutData(new RowData(455, 183));
 		grpHistoric.setText("Historic");
@@ -879,14 +896,19 @@ public class MainProgram {
 		});
 		btnOpen.setText("Open");
 		btnOpen.setBounds(276, 38, 103, 32);
-        /**
-         * Send Email Be careful modification for presentation
-         */
+		/**
+		 * Send Email Be careful modification for presentation
+		 */
 		Button btnSendTo = new Button(grpHistoric, SWT.NONE);
 		btnSendTo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (tabHisto.getSelection().length != 0 /*|| txt_email.getText() == "" || txt_email.getText() == null*/) {
+				if (tabHisto
+						.getSelection().length != 0 /*
+													 * || txt_email.getText() ==
+													 * "" || txt_email.getText()
+													 * == null
+													 */) {
 					Boolean isYC;
 					if (btnYoungSearcher.getSelection()) {
 						isYC = true;
@@ -913,72 +935,6 @@ public class MainProgram {
 		});
 		btnSendTo.setText("Send To");
 		btnSendTo.setBounds(276, 142, 103, 32);
-		arrival.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				System.out.println("nouvelle valeur = " + ((Text) e.widget).getText());
-			}
-		});
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// !departure.getText().isEmpty()
-				if (!departure.getText().isEmpty() && !arrival.getText().isEmpty()) {
-					try {
-						AddressInfos arr = new AddressInfos(arrival.getText());
-
-						AddressInfos dep = new AddressInfos(departure.getText());
-
-						String url = "https://www.google.fr/flights/flights-from-" + dep.getCity() + "-to-"
-								+ arr.getCity() + ".html";
-						// LOGGER.info(url);
-						Util.openURL(url);
-					} catch (IllegalArgumentException e2) {
-						LOGGER.error("Error : ", e2);
-					} catch (Exception e1) {
-						throw new IllegalStateException(e1);
-					}
-				} else if (!arrival.getText().isEmpty() && departure.getText().isEmpty()) {
-					try {
-						// AddressInfos dep = new
-						// AddressInfos(departure.getText());
-						AddressInfos arr = new AddressInfos(arrival.getText());
-						arr.retrieveGeocodeResponse();
-						// ItineraryMap itinerary = new
-						// ItineraryMap(dep.getLongitude(),
-						// dep.getLatitude(),arr.getLongitude(),
-						// arr.getLatitude());
-
-						String url = "https://www.google.fr/flights/flights-from-paris-to-" + arr.getCity() + ".html";
-						LOGGER.info("arrival: " + arr.getCity());
-						LOGGER.info(url);
-						// Util.openMapUrl(url);
-
-					} catch (IllegalArgumentException | IOException | SAXException | ParserConfigurationException e3) {
-						throw new IllegalStateException(e3);
-					} catch (Exception e1) {
-						throw new IllegalStateException(e1);
-					}
-				} else {
-					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					mb.setText("Infromation missing");
-					mb.setMessage("Please fill in at least the arrival field");
-					mb.open();
-				}
-			}
-		});
-
-		/*
-		 * Behavior of the btnItinerary : Takes the addresses entered in
-		 * departure and arrival Texts and call the ItineraryMap class to open
-		 * the itinerary into the browser
-		 */
-		departure.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				System.out.println("nouvelle valeur = " + ((Text) e.widget).getText());
-			}
-		});
 
 		shell.open();
 		while (!shell.isDisposed()) {
