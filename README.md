@@ -49,9 +49,11 @@ Le LAMSADE est une unité de recherche de Paris-Dauphine. Ce projet a pour but d
 
 #####
 
+Francisco Javier Martínez Lago
 What Javier has worked on:
  - Created the initial .gitignore file.
  - Started work with Apache's PDFBox library to generate a PDF and created a function to add images to it.
+ - Created function to determine the dimensions of an image
  - Created the Conference class as well as the initial main menu.
  - Set up Maven integration.
  - Configured Maven to use non-standard repos and to support different profiles in order to account for the user's operating system.
@@ -61,6 +63,13 @@ What Javier has worked on:
  - Created Class to handle showing itineraries in Google Maps from GUI.
  - Added a function to save a file to the project's directory and to handle cancellations and duplicates.
  - Fixed all errors caused by stricter Eclipse preferences file.
+ - Implemented an external geocoding library to convert latitude and longitude to a city name
+ - Implemented flight search functionality with city name validation
+ 
+ What files has Javier contributed to :
+https://gist.github.com/edoreld/430b72b342a7911f6e4820ad8292a71b
+  
+ 
 
 
 
