@@ -1,7 +1,9 @@
 package com.github.lantoine.lamsadetools.missionOrder;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 
@@ -28,6 +30,19 @@ public class History {
 		});
 
 		return ysHistory;
+	}
+
+	public static void openFile(String name, Boolean isYc) throws IOException {
+		String folder;
+		if (isYc) {
+			folder = "/historique_DJC/";
+		} else {
+			folder = "/historique_OM/";
+		}
+		String path = FileSystems.getDefault().getPath("").toAbsolutePath() + folder + name;
+		File file = new File(path.replace("\\", "/"));
+		Desktop desktop = Desktop.getDesktop();
+		desktop.open(file);
 	}
 
 	/**
@@ -84,4 +99,5 @@ public class History {
 			}
 		}
 	}
+
 }
