@@ -57,9 +57,10 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.ValidationException;
 
 /**
- * The Tester class is the interface of the LAMSADE-Tools application It allows
+ * The MainProgram class is the graphical interface of the LAMSADE-Tools application It allows
  * the user : -to see all the existing conferences, -to add new ones -to see the
- * itinerary on openStreetMap
+ * itinerary of his trip, -to see flights for his trip, -to create Mission orders, -to export an event in calendar format, 
+ * - to search for his information in Dauphine's yearbook and finally -to generate a paper completed with his information
  */
 
 public class MainProgram {
@@ -166,10 +167,6 @@ public class MainProgram {
 	 */
 	public static UserDetails getUserDetails() {
 		if ((txt_firstname.getText().isEmpty() || txt_lastname.getText().isEmpty()) && txt_login.getText().isEmpty()) {
-			// MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-			// mb.setText("Information missing");
-			// mb.setMessage("Please fill name and first name");
-			// mb.open();
 			return null;
 		}
 
@@ -203,6 +200,13 @@ public class MainProgram {
 		return user;
 	}
 
+	/**
+	 * The main that display the whole LAMSADE-Tools application
+	 * The application needs at least that the user enters his login or his Firstname + Lastname
+	 * 
+	 * @param args
+	 * @throws SQLException
+	 */
 	public static void main(String[] args) throws SQLException {
 		Preferences prefs = Preferences.userRoot().node("graphical_prefs :");
 
@@ -254,11 +258,11 @@ public class MainProgram {
 		about.setText("About");
 
 		/*
-		 * Initialize Group conferencesInfos which will include : -The Grid data
-		 * which will display conferences
+		 * Initialize Group userDetails which will include : -The Grid data
+		 * which will display the information on the user
 		 *
-		 * -The fields that will allow the user to add a new conference in the
-		 * database
+		 * -The button that will allow the user to fill in his user information using Dauphine's yearbook 
+		 * -The button that will allow him to generate a document with his information
 		 */
 
 		Group grpUserDetails = new Group(shell, SWT.NONE);
@@ -447,6 +451,15 @@ public class MainProgram {
 		btnGeneratePapierEn.setBounds(25, 142, 159, 28);
 		btnGeneratePapierEn.setText("Generate Papier");
 
+		/*
+		 * Initialize Group conferencesInfos which will include : -The Grid data
+		 * which will display conferences
+		 *
+		 * -The buttons that will allow the user to add a new conference in the
+		 * database, [the following operations are available for a selected conference] to export an event as a calendar file, to display an itinerary from Paris to the conference City
+		 * And an other button to check the available flights
+		 */
+		
 		// Group Conferences informations
 		Group grp_conferencesInfos = new Group(shell, SWT.NONE);
 		GridData gd_conferencesInfos = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -500,13 +513,6 @@ public class MainProgram {
 
 		// add news fields
 
-		/*
-		 * Label lblCity= new Label(grp_conferencesInfos, SWT.NONE);
-		 * lblCity.setAlignment(SWT.RIGHT); lblCity.setBounds(25, 38, 50, 15);
-		 * lblCity.setText("City"); Text txt_city = new
-		 * Text(grp_conferencesInfos, SWT.BORDER); txt_city.setBounds(81, 35,
-		 * 78, 21);
-		 */
 
 		Label lblCity = new Label(grp_conferencesInfos, SWT.NONE);
 		lblCity.setAlignment(SWT.RIGHT);
@@ -522,10 +528,13 @@ public class MainProgram {
 		Text txt_address = new Text(grp_conferencesInfos, SWT.BORDER);
 		txt_address.setBounds(81, 177, 78, 21);
 
-		// Create new Conference object, assign it values from
-		// selection, then pass it function to export to desktop
-		// public Conference(int id, String title, String url, LocalDate
-		// start_date, LocalDate end_date, double entry_fee)
+		/**
+		 *  Create new Conference object, assign it values from
+		 *  selection, then pass it function to export to desktop
+		 *  public Conference(int id, String title, String url, LocalDate
+		 *  start_date, LocalDate end_date, double entry_fee)
+		 */
+
 		Button btnExportEvent = new Button(grp_conferencesInfos, SWT.NONE);
 		btnExportEvent.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -537,7 +546,8 @@ public class MainProgram {
 
 				if (ti.length == 0) {
 					// TODO: Put somewhere that an event should be selected
-				} else {
+				} 
+				else {
 					Conference conf = new Conference(ti[0].getText(0), ti[0].getText(1),
 							LocalDate.parse(ti[0].getText(2), formatter), LocalDate.parse(ti[0].getText(3), formatter),
 							Double.parseDouble(ti[0].getText(4)), ti[0].getText(5), ti[0].getText(6));
@@ -637,11 +647,14 @@ public class MainProgram {
 			}
 		});
 
-		// Handle here the GenerateOrderMission button because it needs the
-		// table to be set
-		// This button handles order mission generations for both searcher and
-		// young sercher,
-		// depending on the checkbox "btnYoungSearcher" status
+		/**
+		 * Handle here the GenerateOrderMission button because it needs the
+		 * table to be set 
+		 * This button handles order mission generations for both searcher and
+		 * young searcher,
+		 * depending on the checkbox "btnYoungSearcher" status
+		 */
+		
 		Button btnGenerateOM = new Button(grp_conferencesInfos, SWT.NONE);
 		btnGenerateOM.setBounds(684, 72, 158, 28);
 		btnGenerateOM.addSelectionListener(new SelectionAdapter() {
@@ -704,14 +717,16 @@ public class MainProgram {
 		btnItinerary.setBounds(440, 156, 115, 25);
 		btnItinerary.setText("Itinerary");
 
-		Button btnNewButton = new Button(grp_conferencesInfos, SWT.NONE);
-		btnNewButton.setBounds(561, 156, 84, 25);
-		btnNewButton.setText("Flights");
-		btnNewButton.addSelectionListener(new SelectionAdapter() {
+		/**
+		 * This button allow the user to check the available flights to get to his conference
+		 * The departure point is always set to Paris
+		 */
+		Button btnFlight = new Button(grp_conferencesInfos, SWT.NONE);
+		btnFlight.setBounds(561, 156, 84, 25);
+		btnFlight.setText("Flights");
+		btnFlight.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// !departure.getText().isEmpty()
-				// TODO
 				if (table.getSelection().length != 0) {
 					try {
 						TableItem[] items = table.getSelection();
@@ -741,24 +756,20 @@ public class MainProgram {
 				}
 			}
 		});
+		
+		/**
+		 * This Button allows the user to check his itinerary from the departure point (set to Paris) to the conference destination
+		 * Needs a conference to be selected
+		 * It will open Google maps on the browser with the itinerary set
+		 * 
+		 */
 		btnItinerary.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				System.out.println("Appui sur le bouton");
 				if (table.getSelection().length != 0) {
 					try {
 						TableItem[] items = table.getSelection();
-
-						// AddressInfos dep = new
-						// AddressInfos(departure.getText());
-						// AddressInfos arr = new
-						// AddressInfos(arrival.getText());
-						// ItineraryMap itinerary = new
-						// ItineraryMap(dep.getLongitude(),
-						// dep.getLatitude(),arr.getLongitude(),
-						// arr.getLatitude());
-
 						GoogleItineraryMap itinerary = new GoogleItineraryMap("Paris", items[0].getText(5));
 						String url = itinerary.setMapUrl();
 						LOGGER.debug(url);
@@ -778,7 +789,7 @@ public class MainProgram {
 			}
 		});
 
-		/*
+		/**
 		 * Behavior of a click on the add new conference button
 		 */
 		btn_addNewConf.addSelectionListener(new SelectionAdapter() {
@@ -820,6 +831,9 @@ public class MainProgram {
 			}
 		});
 
+		/**
+		 * This group handles all the Mission order history 
+		 */
 		Group grp_bottom = new Group(shell, SWT.NONE);
 		grp_bottom.setLayout(new RowLayout(SWT.HORIZONTAL));
 		GridData gd_grp_bottom = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
