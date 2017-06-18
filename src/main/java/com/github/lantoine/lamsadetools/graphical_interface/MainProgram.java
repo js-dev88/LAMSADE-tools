@@ -127,7 +127,7 @@ public class MainProgram {
 	 * @return user informations, returns null if failed to get the informations
 	 */
 	public static UserDetails getUserDetails() {
-		if (txt_firstname.getText().isEmpty() || txt_lastname.getText().isEmpty()) {
+		if ((txt_firstname.getText().isEmpty() || txt_lastname.getText().isEmpty()) && txt_login.getText().isEmpty()) {
 			// MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 			// mb.setText("Information missing");
 			// mb.setMessage("Please fill name and first name");
@@ -142,7 +142,8 @@ public class MainProgram {
 			try {
 				LOGGER.debug("Launching GetInfosFromYearbook.getUserDetails with : " + txt_lastname.getText() + " and "
 						+ txt_firstname.getText());
-				user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(), txt_firstname.getText());
+				if (!txt_login.getText().isEmpty()) user = GetInfosFromYearbook.getUserDetails(txt_login.getText());
+				else user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(), txt_firstname.getText());
 			} catch (com.sun.star.lang.IllegalArgumentException | IOException | YearbookDataException | SAXException
 					| ParserConfigurationException e) {
 				LOGGER.error("getUserDetails: an error occurend while getting the informations");
@@ -284,8 +285,14 @@ public class MainProgram {
 				try {
 					LOGGER.debug("Launching GetInfosFromYearbook.getUserDetails with : " + txt_lastname.getText()
 							+ " and " + txt_firstname.getText());
-					UserDetails user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(),
-							txt_firstname.getText());
+					UserDetails user = null;
+					if (!txt_login.getText().isEmpty()) {
+						user = GetInfosFromYearbook.getUserDetails(txt_login.getText());
+						txt_firstname.setText(user.getFirstName());
+						txt_lastname.setText(user.getName());
+					}
+					else user = GetInfosFromYearbook.getUserDetails(txt_lastname.getText(), txt_firstname.getText());
+					
 					txt_function.setText(user.getFunction());
 					txt_number.setText(user.getNumber());
 					txt_email.setText(user.getEmail());

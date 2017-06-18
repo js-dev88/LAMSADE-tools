@@ -154,7 +154,8 @@ public class GetInfosFromYearbook {
 			Node h4 = htmlDoc.getElementsByTagName("h4").item(0);
 			String nameSurnameRaw = h4.getTextContent();
 			String[] nameSurname = nameSurnameRaw.split(" ");
-			
+			surname = "";
+			firstname = "";
 			for (int i =0 ; i < nameSurname.length; ++i) {
 				if (nameSurname[i] == nameSurname[i].toUpperCase()){
 					surname += nameSurname[i] + " ";
@@ -163,7 +164,10 @@ public class GetInfosFromYearbook {
 					firstname += nameSurname[i] + " ";
 				}
 			}
+			surname = surname.trim();
+			firstname = firstname.trim();
 		}
+		
 		
 		
 		NodeList ulList = htmlDoc.getElementsByTagName("ul");
@@ -318,7 +322,7 @@ public class GetInfosFromYearbook {
 		//logger.info("info profjava:" + profJava.getBureau());
 		logger.info("Informations sur l'objet GIFYB :\n" + user2.toString());
 		
-		GetInfosFromYearbook prof1 = new GetInfosFromYearbook(login);
+		GetInfosFromYearbook prof1 = new GetInfosFromYearbook(prenom,nom);
 		prof1.retrieveYearbookData();
 		System.out.println(prof1.firstname + " " + prof1.surname + " " + prof1.login);
 		GetInfosFromYearbook prof2 = new GetInfosFromYearbook(login);
