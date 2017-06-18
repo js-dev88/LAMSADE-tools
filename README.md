@@ -114,3 +114,22 @@ N.B. As a beginner in Java programming, I knew that I wouldn't be able to do as 
 
 
 
+Kévin has worded on :
+- Started work with APACHE POI to set headed paper thanks to UserDetails class and created a clone of headed paper => Abandoned 
+- Add functions to search a conference by title, url and location
+- Add a function to clear Data Base if the table changes
+- Create a new class for data base connexion to avoid to reapeted code for each function which call the database. 
+- Add fields(city and address) in data base.
+- Resolve somes problems of conference’s class ( because it does not worked because of severals updates in database) 
+- Simplify the classe Conference in MVC(model,view,controller)
+- Prevent SQL injection with PreparedStatement function
+- Made tests for class’s in the conference package 
+- Generate MissionOrder(User part)
+- Add user details to SWT window and modified User details
+- Refactoring the field Address to Country 
+- Complete OM (retreive Conference and users infos from GUI and set the informations into spreadsheet)
+
+
+
+
+
