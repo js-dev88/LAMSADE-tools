@@ -294,7 +294,7 @@ public class MainProgram {
 					txt_office.setText(user.getOffice());
 					txt_city_ud.setText(user.getCity());
 					txt_country_ud.setText(user.getCountry());
-				} catch (@SuppressWarnings("unused") Exception e) {
+				} catch (Exception e) {
 					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 					mb.setText("Error");
 					mb.setMessage("Please verify firstname and lastname");

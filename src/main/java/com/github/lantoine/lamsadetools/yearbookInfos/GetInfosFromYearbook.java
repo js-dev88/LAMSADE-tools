@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -31,16 +32,43 @@ import com.sun.star.lang.IllegalArgumentException;
  */
 public class GetInfosFromYearbook {
 
-	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(GetInfosFromYearbook.class);
 
 	private String firstname;
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
 	private String surname;
+	private String login;
 
 	// HashMap collection register informations with a key and an associated
 	// value
 	private HashMap<String, String> informations = new HashMap<>();
 
+	/**
+	 * Constructor using a person's login
+	 *
+	 * @param login
+	 *            of the person not be null
+	 * @throws Throwable
+	 */
+	public GetInfosFromYearbook(String login) throws IllegalArgumentException {
+		if (login == null) {
+			throw new IllegalArgumentException("login is null");
+		}
+		this.login = login;
+
+	}
+	
 	/**
 	 * Constructor using a person's firstname and surname
 	 *
@@ -90,7 +118,9 @@ public class GetInfosFromYearbook {
 		Document htmlDoc = null;
 
 		// Yearbook connection
-		ConnectionToYearbook connection = new ConnectionToYearbook(firstname, surname);
+		ConnectionToYearbook connection;
+		if (login == null) connection = new ConnectionToYearbook(firstname, surname);
+		else connection = new ConnectionToYearbook(login);
 		connection.buildConnection();
 		factory = DocumentBuilderFactory.newInstance();
 		builder = factory.newDocumentBuilder();
@@ -115,11 +145,32 @@ public class GetInfosFromYearbook {
 
 		}
 		// If parameters are valid create a Hashmap with Professor's information
+		
+		String category = "";	
+		String info = "";
+		
+		// This is useful only if we don't have the name and firstname
+		if(surname == null && firstname == null){
+			Node h4 = htmlDoc.getElementsByTagName("h4").item(0);
+			String nameSurnameRaw = h4.getTextContent();
+			String[] nameSurname = nameSurnameRaw.split(" ");
+			
+			for (int i =0 ; i < nameSurname.length; ++i) {
+				if (nameSurname[i] == nameSurname[i].toUpperCase()){
+					surname += nameSurname[i] + " ";
+				}
+				else {
+					firstname += nameSurname[i] + " ";
+				}
+			}
+		}
+		
+		
 		NodeList ulList = htmlDoc.getElementsByTagName("ul");
 
 		for (int i = 0; i < ulList.getLength(); i++) {
-			String category = "";
-			String info = "";
+			category = "";
+			info = "";
 			NodeList listOfLi = ulList.item(i).getChildNodes();
 			for (int j = 0; j < listOfLi.getLength(); j++) {
 				if (listOfLi.item(j).getNodeName() == "li") {
@@ -222,6 +273,32 @@ public class GetInfosFromYearbook {
 		return user;
 
 	}
+	
+	/**
+	 * find informations of the person in parameter
+	 * 
+	 * @param login
+	 * @return return a UserDetails filled with the informations from Dauphine's
+	 *         yearbook
+	 * @throws IOException
+	 * @throws YearbookDataException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws Throwable
+	 */
+	/*
+	 * No Upperletter for a function only for constructor Userdetails
+	 * instanciation must be in the setcoordinates package
+	 */
+	public static UserDetails getUserDetails(String login) throws IllegalArgumentException,
+			IOException, YearbookDataException, SAXException, ParserConfigurationException {
+		GetInfosFromYearbook prof = new GetInfosFromYearbook(login);
+		prof.retrieveYearbookData();
+		UserDetails user = new UserDetails(prof.surname, prof.firstname, prof.getFonction(), prof.getTelephone(), prof.getCourrier(),
+				prof.getGroupes(), prof.getFax(), prof.getBureau(), "Paris","France");
+		return user;
+
+	}
 
 	public static void main(String[] args) throws IllegalArgumentException, IOException, YearbookDataException,
 			SAXException, ParserConfigurationException {
@@ -230,9 +307,23 @@ public class GetInfosFromYearbook {
 		UserDetails user = GetInfosFromYearbook.getUserDetails(nom,prenom);
 		System.out.println(user.getName());
 		System.out.println(user.getFirstName());
+		logger.info("Informations sur l'objet GIFYB :\n" + user.toString());
+		
+		String login = "marru";
+		UserDetails user2 = GetInfosFromYearbook.getUserDetails(login);
+		System.out.println("user2 " + user2.getName());
+		System.out.println( "user2 " + user2.getFirstName());
 		//GetInfosFromYearbook profJava = new GetInfosFromYearbook(prenom, nom);
 		//profJava.retrieveYearbookData();
 		//logger.info("info profjava:" + profJava.getBureau());
-		logger.info("Informations sur l'objet GIFYB :\n" + user.toString());
+		logger.info("Informations sur l'objet GIFYB :\n" + user2.toString());
+		
+		GetInfosFromYearbook prof1 = new GetInfosFromYearbook(login);
+		prof1.retrieveYearbookData();
+		System.out.println(prof1.firstname + " " + prof1.surname + " " + prof1.login);
+		GetInfosFromYearbook prof2 = new GetInfosFromYearbook(login);
+		prof2.retrieveYearbookData();
+		System.out.println(prof2.firstname + " " + prof2.surname + " " + prof2.login);
+		
 	}
 }

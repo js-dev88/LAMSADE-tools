@@ -73,9 +73,12 @@ public class ConnectionToYearbook {
 	 * @throws FileNotFoundException
 	 */
 	public void buildConnection() throws IllegalArgumentException, NullPointerException, FileNotFoundException {
-		// Build the URL parameter with the firstname's first letter and the
-		// person's surname
-		String param = firstname.toLowerCase().charAt(0) + surname.toLowerCase();
+		// Build the URL parameter with the login OR
+		// with the firstname's first letter and the
+		// person's surname 
+		String param;
+		if (login == null ) param = firstname.toLowerCase().charAt(0) + surname.toLowerCase();
+		else param = login;
 		String param0 = "fiche";
 		// This part of the url is always the same
 		String urlConstantPArt = "https://www.ent.dauphine.fr/Annuaire/index.php?";
