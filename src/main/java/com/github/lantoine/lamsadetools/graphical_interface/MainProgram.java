@@ -43,6 +43,7 @@ import com.github.lantoine.lamsadetools.conferences.database.ConferenceDatabase;
 import com.github.lantoine.lamsadetools.map.AddressInfos;
 import com.github.lantoine.lamsadetools.map.GoogleItineraryMap;
 import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrderYS;
+import com.github.lantoine.lamsadetools.missionOrder.History;
 import com.github.lantoine.lamsadetools.missionOrder.GenerateMissionOrder;
 import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
@@ -52,6 +53,8 @@ import com.github.lantoine.lamsadetools.yearbookInfos.YearbookDataException;
 
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.ValidationException;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.RowData;
 
 /**
  * The Tester class is the interface of the LAMSADE-Tools application It allows
@@ -73,6 +76,7 @@ public class MainProgram {
 	private static Text txt_login;
 	private static Text txt_number;
 	private static Text txt_office;
+	private static Table tabHisto;
 
 	/**
 	 * Converts a LocalDate passed by parameter into a string
@@ -123,6 +127,40 @@ public class MainProgram {
 	}
 
 	/**
+	 * Fill the Historic table with all the files of the correct OM type
+	 *
+	 * @param table
+	 * @param boolean
+	 *            for checkbox
+	 * @throws SQLException
+	 */
+	private static void fillHistoricTable(Table table, Boolean isYC) {
+		String title = "Name";
+		File[] files;
+		if (!isYC) {
+			files = History.getOMHistory();
+		} else {
+			files = History.getYSOMHistory();
+		}
+
+		TableColumn column = new TableColumn(table, 0);
+		column.setText(title);
+
+		if (files != null) {
+			for (File i : files) {
+				TableItem item = new TableItem(table, 0);
+				item.setText(0, i.getName());
+			}
+		} else {
+			TableItem item = new TableItem(table, 0);
+			item.setText(0, "No file in directory");
+		}
+
+		table.getColumn(0).pack();
+
+	}
+
+	/**
 	 *
 	 * @return user informations, returns null if failed to get the informations
 	 */
@@ -164,7 +202,8 @@ public class MainProgram {
 
 	public static void main(String[] args) throws SQLException {
 		Preferences prefs = Preferences.userRoot().node("graphical_prefs :");
-
+		
+		
 		System.setProperty("SWT_GTK3", "0");
 		Display display = new Display();
 		shell = new Shell(display);
@@ -172,7 +211,6 @@ public class MainProgram {
 		shell.setText("Conference List");
 
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
 
 		shell.setLayout(gridLayout);
 
@@ -182,7 +220,7 @@ public class MainProgram {
 
 		final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
-		shell.setSize(new Point(888, 661));
+		shell.setSize(new Point(888, 799));
 
 		Menu bar = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(bar);
@@ -578,12 +616,22 @@ public class MainProgram {
 				}
 			}
 		});
-		
+
 		btnSaveOrdreMission.setText("Save Ordre Mission");
 		Button btnYoungSearcher = new Button(grp_conferencesInfos, SWT.CHECK);
 		btnYoungSearcher.setBounds(684, 114, 103, 16);
 		btnYoungSearcher.setText("Young searcher");
-		
+		btnYoungSearcher.addSelectionListener(new SelectionAdapter() {
+
+	        @Override
+	        public void widgetSelected(SelectionEvent event) {
+	            Button btn = (Button) event.getSource();
+	            tabHisto.removeAll();
+				fillHistoricTable(tabHisto,btn.getSelection());
+	        }
+	    });
+	
+
 		// Handle here the GenerateOrderMission button because it needs the
 		// table to be set
 		// This button handles order mission generations for both searcher and
@@ -605,15 +653,17 @@ public class MainProgram {
 							LocalDate.parse(items[0].getText(2), formatter),
 							LocalDate.parse(items[0].getText(3), formatter), Double.valueOf(items[0].getText(4)),
 							items[0].getText(5), items[0].getText(6));
-					System.out.println(items[0].getText(5) + " " + items[0].getText(6));
+					LOGGER.debug(items[0].getText(5) + " " + items[0].getText(6));
 
 					if (btnYoungSearcher.getSelection()) {
 
 						try {
-							String fileName = Prefs.getSaveDir() + "\\DJC_"+ conf.getCity()+"-"+
-						conf.getCountry() + "_" + conf.getStart_date()+".fodt";
+							String fileName = Prefs.getSaveDir() + "\\DJC_" + conf.getCity() + "-" + conf.getCountry()
+									+ "_" + conf.getStart_date() + ".fodt";
 							GenerateMissionOrderYS.fillYSOrderMission(user, conf, fileName);
 							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
+							tabHisto.removeAll();
+							fillHistoricTable(tabHisto,true);
 						} catch (IllegalArgumentException | IOException | SAXException
 								| ParserConfigurationException e1) {
 
@@ -624,11 +674,12 @@ public class MainProgram {
 					} else {
 
 						try {
-							String fileName = Prefs.getSaveDir() + "\\OM_"+ conf.getCity()+"-"+
-									conf.getCountry() + "_" + conf.getStart_date()+ ".ods";
+							String fileName = Prefs.getSaveDir() + "\\OM_" + conf.getCity() + "-" + conf.getCountry()
+									+ "_" + conf.getStart_date() + ".ods";
 							GenerateMissionOrder.generateSpreadsheetDocument(user, conf, fileName);
 							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
-
+							tabHisto.removeAll();
+							fillHistoricTable(tabHisto,false);
 						} catch (Exception e1) {
 							LOGGER.error("Error : ", e1);
 							throw new IllegalStateException(e1);
@@ -645,8 +696,6 @@ public class MainProgram {
 		});
 		btnGenerateOM.setText("Generate Order Mission");
 
-		
-
 		Button btnItinerary = new Button(grp_conferencesInfos, SWT.NONE);
 		btnItinerary.setBounds(440, 156, 115, 25);
 		btnItinerary.setText("Itinerary");
@@ -658,9 +707,11 @@ public class MainProgram {
 				if (table.getSelection().length != 0) {
 					try {
 						TableItem[] items = table.getSelection();
-						
-						//AddressInfos dep = new AddressInfos(departure.getText());
-						//AddressInfos arr = new AddressInfos(arrival.getText());
+
+						// AddressInfos dep = new
+						// AddressInfos(departure.getText());
+						// AddressInfos arr = new
+						// AddressInfos(arrival.getText());
 						// ItineraryMap itinerary = new
 						// ItineraryMap(dep.getLongitude(),
 						// dep.getLatitude(),arr.getLongitude(),
@@ -727,30 +778,89 @@ public class MainProgram {
 			}
 		});
 
-		Group grp_map = new Group(shell, SWT.NONE);
-		grp_map.setText("Visualize your travel");
-		GridData gd_map = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
-		gd_map.heightHint = 85;
-		gd_map.widthHint = 412;
-		grp_map.setLayoutData(gd_map);
-		Text departure = new Text(grp_map, SWT.BORDER);
-		departure.setLocation(101, 30);
-		departure.setSize(196, 21);
-		Text arrival = new Text(grp_map, SWT.BORDER);
-		arrival.setLocation(101, 57);
-		arrival.setSize(196, 21);
+		Group grp_bottom = new Group(shell, SWT.NONE);
+		grp_bottom.setLayout(new RowLayout(SWT.HORIZONTAL));
+		GridData gd_grp_bottom = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
+		gd_grp_bottom.heightHint = 236;
+		gd_grp_bottom.widthHint = 857;
+		grp_bottom.setLayoutData(gd_grp_bottom);
 
-		Label lblDeparture = new Label(grp_map, SWT.NONE);
+		Group grpVisualizeYourTravel = new Group(grp_bottom, SWT.NONE);
+		grpVisualizeYourTravel.setText("Visualize your travel");
+		grpVisualizeYourTravel.setLayoutData(new RowData(383, 188));
+
+		Label lblDeparture = new Label(grpVisualizeYourTravel, SWT.NONE);
+		lblDeparture.setLocation(25, 51);
+		lblDeparture.setSize(52, 15);
 		lblDeparture.setAlignment(SWT.RIGHT);
-		lblDeparture.setBounds(22, 33, 73, 15);
 		lblDeparture.setText("Departure");
+		Text departure = new Text(grpVisualizeYourTravel, SWT.BORDER);
+		departure.setLocation(93, 47);
+		departure.setSize(121, 21);
 
-		Label lblArrival = new Label(grp_map, SWT.NONE);
+		Button btnNewButton = new Button(grpVisualizeYourTravel, SWT.NONE);
+		btnNewButton.setLocation(249, 65);
+		btnNewButton.setSize(84, 30);
+		btnNewButton.setText("Flights");
+		Text arrival = new Text(grpVisualizeYourTravel, SWT.BORDER);
+		arrival.setLocation(94, 97);
+		arrival.setSize(119, 21);
+
+		Label lblArrival = new Label(grpVisualizeYourTravel, SWT.NONE);
+		lblArrival.setLocation(43, 103);
+		lblArrival.setSize(34, 15);
 		lblArrival.setAlignment(SWT.RIGHT);
-		lblArrival.setBounds(10, 60, 73, 15);
 		lblArrival.setText("Arrival");
-
-		Button btnNewButton = new Button(grp_map, SWT.NONE);
+		
+		Group grpHistoric = new Group(grp_bottom, SWT.NONE);
+		grpHistoric.setLayoutData(new RowData(455, 183));
+		grpHistoric.setText("Historic");
+		
+		tabHisto = new Table(grpHistoric, SWT.BORDER | SWT.FULL_SELECTION);
+		tabHisto.setBounds(10, 25, 233, 166);
+		tabHisto.setHeaderVisible(true);
+		tabHisto.setLinesVisible(true);
+		//display arbitrary the OM historic
+		fillHistoricTable(tabHisto,false);
+		
+		Button btnDeleteFile = new Button(grpHistoric, SWT.NONE);
+		btnDeleteFile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (tabHisto.getSelection().length != 0) {
+					Boolean isYC;
+					if(btnYoungSearcher.getSelection()){
+						isYC = true;
+					}else{
+						isYC = false;
+					}
+					TableItem[] item = tabHisto.getSelection();
+					History.deleteFile(item[0].getText(0), isYC);
+					tabHisto.removeAll();
+					if(btnYoungSearcher.getSelection()){
+						fillHistoricTable(tabHisto,true);
+					}else{
+						fillHistoricTable(tabHisto,false);
+					}
+					
+					
+					
+			} else {
+				MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+				mb.setText("No File selected");
+				mb.setMessage("Please Choose a file in the list");
+				mb.open();
+			}
+			}
+		});
+		btnDeleteFile.setText("Delete");
+		btnDeleteFile.setBounds(276, 25, 103, 32);
+		arrival.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				System.out.println("nouvelle valeur = " + ((Text) e.widget).getText());
+			}
+		});
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -799,20 +909,12 @@ public class MainProgram {
 				}
 			}
 		});
-		btnNewButton.setBounds(303, 30, 94, 28);
-		btnNewButton.setText("Flights");
 
 		/*
 		 * Behavior of the btnItinerary : Takes the addresses entered in
 		 * departure and arrival Texts and call the ItineraryMap class to open
 		 * the itinerary into the browser
 		 */
-		arrival.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				System.out.println("nouvelle valeur = " + ((Text) e.widget).getText());
-			}
-		});
 		departure.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -828,5 +930,4 @@ public class MainProgram {
 		}
 		display.dispose();
 	}
-
 }
