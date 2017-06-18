@@ -1,57 +1,31 @@
 package com.github.lantoine.lamsadetools.missionOrder;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.nio.channels.FileChannel;
 import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.util.Units;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.jboss.resteasy.plugins.delegates.LocaleDelegate;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
 import com.github.lantoine.lamsadetools.conferences.Conference;
-import com.github.lantoine.lamsadetools.map.ConnectionToGoogleMapsApi;
 import com.github.lantoine.lamsadetools.setCoordinates.SetCoordinates;
 import com.github.lantoine.lamsadetools.setCoordinates.UserDetails;
-import com.github.lantoine.lamsadetools.yearbookInfos.ConnectionToYearbook;
-import com.github.lantoine.lamsadetools.yearbookInfos.YearbookDataException;
 
 /**
  * This class fills a young searcher Mission Order
