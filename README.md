@@ -102,13 +102,20 @@ Julien has worked on:
  
 AGBOIGBA Lionel has worked on :
 
-- Work on a DOC’s version of “PapierAEntete” with APACHE-POI => Abandoned
-- Work with Apache ODF Toolkit to generate ODT’s version of “PapierAEntete” 
-- Use Jodconverter to convert ODT doc it in a specific format (HTML, ASCIIDOC) => Abandoned
-- Work on the creation of new fields in the conferences’ database
-- Creation template for PRES request and filled it 
-- Work on the creation of a document history for “Ordre de Mission” and “Demande jeune chercheur” docs 
-- Creation unit tests for classes in SetCoordinates package
+- Creation of DOC’s version of “PapierAEntete” => Abandoned
+	- Test with multiples libraries (docx4j, APACHE-POI, ...)
+- Generation of ODT’s version of “PapierAEntete” with Apache ODF Toolkit 
+- Use Jodconverter to convert ODT doc in a specific format (HTML, ASCIIDOC) => Abandoned
+- The Database
+	- Creation of new fields in the conferences’ database
+	- Creation of new class to avoid to reapeted code
+- Creation of template for PRES request and filled it 
+- Creation of a function to historicize “Ordre de Mission” and “Demande jeune chercheur” docs 
+- Creation of unit tests for classes in SetCoordinates package
+- Javadoc and logging in SetCoordinates package
+- Modifications of keyring's functions  
+- Libraries' importation & testing in Maven
+
 
 N.B. As a beginner in Java programming, I knew that I wouldn't be able to do as many things as my teammates for the project. It was really complicated for me to learn how Java works and to work for the project in the same time. Thanks to my teammates, I was able to do something decent.
 
