@@ -3,6 +3,7 @@ package com.github.lantoine.lamsadetools.missionOrder;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 
 /**
  * This class will get the Order missions History It's used in a static way
@@ -25,8 +26,19 @@ public class History {
 				return name.endsWith(".fodt");
 			}
 		});
-
+        
 		return ysHistory;
+	}
+	
+	/**
+	 * Delete a file from the folder
+	 * @param name of the file
+	 */
+	public static void deleteFile(String name){
+		String path = FileSystems.getDefault().getPath("").toAbsolutePath() +"/"+name;
+		File fileToDelete = new File(path.replace("\\","/"));
+		System.out.println(path.replace("\\","/"));
+		fileToDelete.delete();
 	}
 
 	/**

@@ -146,11 +146,10 @@ public class MainProgram {
 		TableColumn column = new TableColumn(table, 0);
 		column.setText(title);
 
-		if (files.length != 0) {
+		if (files != null) {
 			for (File i : files) {
 				TableItem item = new TableItem(table, 0);
 				item.setText(0, i.getName());
-				LOGGER.debug(item.getText(0));
 			}
 		} else {
 			TableItem item = new TableItem(table, 0);
@@ -837,6 +836,29 @@ public class MainProgram {
 		btnOpenFile.setText("Open");
 		
 		Button btnDeleteFile = new Button(grpHistoric, SWT.NONE);
+		btnDeleteFile.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (tabHisto.getSelection().length != 0) {
+					TableItem[] item = tabHisto.getSelection();
+					History.deleteFile(item[0].getText(0));
+					tabHisto.removeAll();
+					if(btnYoungSearcher.getSelection()){
+						fillHistoricTable(tabHisto,true);
+					}else{
+						fillHistoricTable(tabHisto,false);
+					}
+					
+					
+					
+			} else {
+				MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+				mb.setText("No File selected");
+				mb.setMessage("Please Choose a file in the list");
+				mb.open();
+			}
+			}
+		});
 		btnDeleteFile.setText("Delete");
 		btnDeleteFile.setBounds(281, 79, 103, 32);
 		arrival.addModifyListener(new ModifyListener() {
