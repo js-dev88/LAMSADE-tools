@@ -15,7 +15,6 @@ import com.sun.star.lang.NullPointerException;
 public class EmailPasswordDatabase {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EmailPasswordDatabase.class);
-	private static ConnectionDataBase connectionDataBase;
 
 	private static final String DROPSTATEMENT = "DROP table EMAILPASSWORD;";
 

@@ -22,7 +22,7 @@ import com.sun.star.lang.IllegalArgumentException;
  *
  */
 public class ConnectionToYearbook {
-	@SuppressWarnings("unused")
+
 	private static final Logger logger = LoggerFactory.getLogger(ConnectionToYearbook.class);
 
 	// html page from Yearbook

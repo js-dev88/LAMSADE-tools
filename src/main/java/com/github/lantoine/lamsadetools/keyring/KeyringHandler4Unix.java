@@ -1,11 +1,5 @@
 package com.github.lantoine.lamsadetools.keyring;
 
-import java.sql.SQLException;
-
-import com.github.windpapi4j.InitializationFailedException;
-import com.github.windpapi4j.WinAPICallFailedException;
-import com.sun.star.uno.Exception;
-
 import io.bunting.keyring.DefaultKeyring;
 import io.bunting.keyring.Keyring;
 

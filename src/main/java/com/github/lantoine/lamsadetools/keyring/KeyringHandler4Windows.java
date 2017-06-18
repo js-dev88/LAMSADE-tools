@@ -1,8 +1,5 @@
 package com.github.lantoine.lamsadetools.keyring;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Base64;
 
 import org.slf4j.Logger;
