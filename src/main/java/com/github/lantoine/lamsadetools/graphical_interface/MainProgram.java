@@ -879,6 +879,40 @@ public class MainProgram {
 		});
 		btnOpen.setText("Open");
 		btnOpen.setBounds(276, 38, 103, 32);
+        /**
+         * Send Email Be careful modification for presentation
+         */
+		Button btnSendTo = new Button(grpHistoric, SWT.NONE);
+		btnSendTo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (tabHisto.getSelection().length != 0 /*|| txt_email.getText() == "" || txt_email.getText() == null*/) {
+					Boolean isYC;
+					if (btnYoungSearcher.getSelection()) {
+						isYC = true;
+					} else {
+						isYC = false;
+					}
+
+					TableItem[] item = tabHisto.getSelection();
+					String pathToFile = History.getFilePath(item[0].getText(0), isYC);
+					try {
+						// Be Careful ! Only for demonstration !!
+						// sendEmail(txt_email.getText(), path);
+						Util.sendEmail("lamsadetoolsuser@gmail.com", pathToFile);
+					} catch (IOError e) {
+						throw new IOError(e);
+					}
+				} else {
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("No File selected or no mail adress");
+					mb.setMessage("Please Choose a file in the list");
+					mb.open();
+				}
+			}
+		});
+		btnSendTo.setText("Send To");
+		btnSendTo.setBounds(276, 142, 103, 32);
 		arrival.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
