@@ -1,6 +1,7 @@
 package com.github.lantoine.lamsadetools.graphical_interface;
 
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -202,8 +203,7 @@ public class MainProgram {
 
 	public static void main(String[] args) throws SQLException {
 		Preferences prefs = Preferences.userRoot().node("graphical_prefs :");
-		
-		
+
 		System.setProperty("SWT_GTK3", "0");
 		Display display = new Display();
 		shell = new Shell(display);
@@ -623,14 +623,13 @@ public class MainProgram {
 		btnYoungSearcher.setText("Young searcher");
 		btnYoungSearcher.addSelectionListener(new SelectionAdapter() {
 
-	        @Override
-	        public void widgetSelected(SelectionEvent event) {
-	            Button btn = (Button) event.getSource();
-	            tabHisto.removeAll();
-				fillHistoricTable(tabHisto,btn.getSelection());
-	        }
-	    });
-	
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				Button btn = (Button) event.getSource();
+				tabHisto.removeAll();
+				fillHistoricTable(tabHisto, btn.getSelection());
+			}
+		});
 
 		// Handle here the GenerateOrderMission button because it needs the
 		// table to be set
@@ -663,7 +662,7 @@ public class MainProgram {
 							GenerateMissionOrderYS.fillYSOrderMission(user, conf, fileName);
 							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
 							tabHisto.removeAll();
-							fillHistoricTable(tabHisto,true);
+							fillHistoricTable(tabHisto, true);
 						} catch (IllegalArgumentException | IOException | SAXException
 								| ParserConfigurationException e1) {
 
@@ -679,7 +678,7 @@ public class MainProgram {
 							GenerateMissionOrder.generateSpreadsheetDocument(user, conf, fileName);
 							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
 							tabHisto.removeAll();
-							fillHistoricTable(tabHisto,false);
+							fillHistoricTable(tabHisto, false);
 						} catch (Exception e1) {
 							LOGGER.error("Error : ", e1);
 							throw new IllegalStateException(e1);
@@ -811,50 +810,76 @@ public class MainProgram {
 		lblArrival.setSize(34, 15);
 		lblArrival.setAlignment(SWT.RIGHT);
 		lblArrival.setText("Arrival");
-		
+
 		Group grpHistoric = new Group(grp_bottom, SWT.NONE);
 		grpHistoric.setLayoutData(new RowData(455, 183));
 		grpHistoric.setText("Historic");
-		
+
 		tabHisto = new Table(grpHistoric, SWT.BORDER | SWT.FULL_SELECTION);
 		tabHisto.setBounds(10, 25, 233, 166);
 		tabHisto.setHeaderVisible(true);
 		tabHisto.setLinesVisible(true);
-		//display arbitrary the OM historic
-		fillHistoricTable(tabHisto,false);
-		
+		// display arbitrary the OM historic
+		fillHistoricTable(tabHisto, false);
+
 		Button btnDeleteFile = new Button(grpHistoric, SWT.NONE);
 		btnDeleteFile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (tabHisto.getSelection().length != 0) {
 					Boolean isYC;
-					if(btnYoungSearcher.getSelection()){
+					if (btnYoungSearcher.getSelection()) {
 						isYC = true;
-					}else{
+					} else {
 						isYC = false;
 					}
 					TableItem[] item = tabHisto.getSelection();
 					History.deleteFile(item[0].getText(0), isYC);
 					tabHisto.removeAll();
-					if(btnYoungSearcher.getSelection()){
-						fillHistoricTable(tabHisto,true);
-					}else{
-						fillHistoricTable(tabHisto,false);
+					if (btnYoungSearcher.getSelection()) {
+						fillHistoricTable(tabHisto, true);
+					} else {
+						fillHistoricTable(tabHisto, false);
 					}
-					
-					
-					
-			} else {
-				MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-				mb.setText("No File selected");
-				mb.setMessage("Please Choose a file in the list");
-				mb.open();
-			}
+
+				} else {
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("No File selected");
+					mb.setMessage("Please Choose a file in the list");
+					mb.open();
+				}
 			}
 		});
 		btnDeleteFile.setText("Delete");
-		btnDeleteFile.setBounds(276, 25, 103, 32);
+		btnDeleteFile.setBounds(276, 86, 103, 32);
+
+		Button btnOpen = new Button(grpHistoric, SWT.NONE);
+		btnOpen.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (tabHisto.getSelection().length != 0) {
+					Boolean isYC;
+					if (btnYoungSearcher.getSelection()) {
+						isYC = true;
+					} else {
+						isYC = false;
+					}
+					TableItem[] item = tabHisto.getSelection();
+					try {
+						History.openFile(item[0].getText(0), isYC);
+					} catch (IOError | IOException e) {
+						throw new IOError(e);
+					}
+				} else {
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("No File selected");
+					mb.setMessage("Please Choose a file in the list");
+					mb.open();
+				}
+			}
+		});
+		btnOpen.setText("Open");
+		btnOpen.setBounds(276, 38, 103, 32);
 		arrival.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
