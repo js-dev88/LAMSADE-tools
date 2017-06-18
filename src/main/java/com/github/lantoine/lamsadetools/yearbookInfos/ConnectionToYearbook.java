@@ -51,9 +51,9 @@ public class ConnectionToYearbook {
 		this.surname = surname;
 
 	}
-	
+
 	public ConnectionToYearbook(String login) throws IllegalArgumentException {
-		if(login ==null){
+		if (login == null) {
 			throw new IllegalArgumentException("login is null");
 		}
 		this.login = login;
@@ -120,11 +120,10 @@ public class ConnectionToYearbook {
 
 		if (htmlPageFile == null) {
 			throw new NullPointerException("htmlPage has no data, the yearbook site may be down");
-		} 
+		}
 		logger.debug("Yearbook successfully targeted");
 		htmlPage = new FileInputStream(htmlPageFile);
 		return htmlPage;
-		
 
 	}
 

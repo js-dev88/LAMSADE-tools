@@ -53,6 +53,7 @@ public class KeyringHandler4Windows {
 
 	/**
 	 * factorization of the process to call the API directly from other classes
+	 * 
 	 * @param pswdToEncrypt
 	 *            may not be null
 	 * @throws Exception
@@ -76,6 +77,7 @@ public class KeyringHandler4Windows {
 
 	/**
 	 * factorization of the process to call the API directly from other classes
+	 * 
 	 * @param pswdEncrypted
 	 *            may not be null
 	 * @return the decrypted password in String format

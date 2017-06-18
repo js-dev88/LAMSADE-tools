@@ -18,6 +18,7 @@ import com.github.lantoine.lamsadetools.conferences.IO;
 public class SetCoordinates {
 
 	private static final Logger logger = LoggerFactory.getLogger(SetCoordinates.class);
+
 	/**
 	 * fill the paper with header
 	 *
@@ -140,5 +141,5 @@ public class SetCoordinates {
 		}
 		return user;
 	}
-	
+
 }
