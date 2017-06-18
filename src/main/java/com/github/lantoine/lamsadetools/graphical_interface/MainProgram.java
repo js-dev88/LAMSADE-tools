@@ -840,8 +840,14 @@ public class MainProgram {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (tabHisto.getSelection().length != 0) {
+					Boolean isYC;
+					if(btnYoungSearcher.getSelection()){
+						isYC = true;
+					}else{
+						isYC = false;
+					}
 					TableItem[] item = tabHisto.getSelection();
-					History.deleteFile(item[0].getText(0));
+					History.deleteFile(item[0].getText(0), isYC);
 					tabHisto.removeAll();
 					if(btnYoungSearcher.getSelection()){
 						fillHistoricTable(tabHisto,true);

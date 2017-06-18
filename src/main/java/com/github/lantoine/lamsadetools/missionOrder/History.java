@@ -34,8 +34,14 @@ public class History {
 	 * Delete a file from the folder
 	 * @param name of the file
 	 */
-	public static void deleteFile(String name){
-		String path = FileSystems.getDefault().getPath("").toAbsolutePath() +"/"+name;
+	public static void deleteFile(String name, Boolean isYc){
+		String folder;
+		if(isYc){
+			folder = "/historique_DJC/";
+		}else{
+			folder = "/historique_OM/";
+		}
+		String path = FileSystems.getDefault().getPath("").toAbsolutePath() +folder+name;
 		File fileToDelete = new File(path.replace("\\","/"));
 		System.out.println(path.replace("\\","/"));
 		fileToDelete.delete();
