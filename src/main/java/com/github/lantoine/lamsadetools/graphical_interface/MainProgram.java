@@ -65,6 +65,7 @@ import net.fortuna.ical4j.model.ValidationException;
 public class MainProgram {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainProgram.class);
 	private static Shell shell;
+	private static Table tabHisto;
 	private static Text txt_city_ud;
 	private static Text txt_country_ud;
 	private static Text txt_email;
@@ -76,7 +77,6 @@ public class MainProgram {
 	private static Text txt_login;
 	private static Text txt_number;
 	private static Text txt_office;
-	private static Table tabHisto;
 
 	/**
 	 * Converts a LocalDate passed by parameter into a string
@@ -625,7 +625,7 @@ public class MainProgram {
 
 		btnSaveOrdreMission.setText("Save Ordre Mission");
 		Button btnYoungSearcher = new Button(grp_conferencesInfos, SWT.CHECK);
-		btnYoungSearcher.setBounds(684, 114, 103, 16);
+		btnYoungSearcher.setBounds(684, 114, 125, 16);
 		btnYoungSearcher.setText("Young searcher");
 		btnYoungSearcher.addSelectionListener(new SelectionAdapter() {
 
