@@ -816,25 +816,6 @@ public class MainProgram {
 		//display arbitrary the OM historic
 		fillHistoricTable(tabHisto,false);
 		
-		Button btnOpenFile = new Button(grpHistoric, SWT.NONE);
-		/*btnOpenFile.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				
-				if (tabHisto.getSelection().length != 0) {
-						TableItem[] item = table.getSelection();
-						
-				} else {
-					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					mb.setText("No File selected");
-					mb.setMessage("Please Choose a file in the list");
-					mb.open();
-				}
-			}
-		});*/
-		btnOpenFile.setBounds(281, 25, 103, 32);
-		btnOpenFile.setText("Open");
-		
 		Button btnDeleteFile = new Button(grpHistoric, SWT.NONE);
 		btnDeleteFile.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -866,7 +847,7 @@ public class MainProgram {
 			}
 		});
 		btnDeleteFile.setText("Delete");
-		btnDeleteFile.setBounds(281, 79, 103, 32);
+		btnDeleteFile.setBounds(276, 25, 103, 32);
 		arrival.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {

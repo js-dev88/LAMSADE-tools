@@ -26,24 +26,26 @@ public class History {
 				return name.endsWith(".fodt");
 			}
 		});
-        
+
 		return ysHistory;
 	}
-	
+
 	/**
 	 * Delete a file from the folder
-	 * @param name of the file
+	 * 
+	 * @param name
+	 *            of the file
 	 */
-	public static void deleteFile(String name, Boolean isYc){
+	public static void deleteFile(String name, Boolean isYc) {
 		String folder;
-		if(isYc){
+		if (isYc) {
 			folder = "/historique_DJC/";
-		}else{
+		} else {
 			folder = "/historique_OM/";
 		}
-		String path = FileSystems.getDefault().getPath("").toAbsolutePath() +folder+name;
-		File fileToDelete = new File(path.replace("\\","/"));
-		System.out.println(path.replace("\\","/"));
+		String path = FileSystems.getDefault().getPath("").toAbsolutePath() + folder + name;
+		File fileToDelete = new File(path.replace("\\", "/"));
+		System.out.println(path.replace("\\", "/"));
 		fileToDelete.delete();
 	}
 
@@ -74,7 +76,6 @@ public class History {
 			}
 		}
 
-		
 		File[] history = History.getOMHistory();
 
 		if (!(ysHistory.length == 0)) {
