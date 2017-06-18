@@ -99,6 +99,18 @@ Julien has worked on:
 - Javadoc, test and import Maven librairies, small refactorings
   
  
+ 
+AGBOIGBA Lionel has worked on :
+
+- Work on a DOC’s version of “PapierAEntete” with APACHE-POI => Abandoned
+- Work with Apache ODF Toolkit to generate ODT’s version of “PapierAEntete” 
+- Use Jodconverter to convert ODT doc it in a specific format (HTML, ASCIIDOC) => Abandoned
+- Work on the creation of new fields in the conferences’ database
+- Creation template for PRES request and filled it 
+- Work on the creation of a document history for “Ordre de Mission” and “Demande jeune chercheur” docs 
+- Creation unit tests for classes in SetCoordinates package
+
+N.B. As a beginner in Java programming, I knew that I wouldn't be able to do as many things as my teammates for the project. It was really complicated for me to learn how Java works and to work for the project in the same time. Thanks to my teammates, I was able to do something decent.
 
 
 
