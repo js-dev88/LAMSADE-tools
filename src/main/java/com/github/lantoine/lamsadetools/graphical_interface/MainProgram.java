@@ -603,7 +603,8 @@ public class MainProgram {
 					if (btnYoungSearcher.getSelection()) {
 
 						try {
-							String fileName = Prefs.getSaveDir() + "/demande_de_mission_jeune_chercheur.fodt";
+							String fileName = Prefs.getSaveDir() + "\\DJC_"+ conf.getCity()+"-"+
+						conf.getCountry() + "_" + conf.getStart_date()+".fodt";
 							GenerateMissionOrderYS.fillYSOrderMission(user, conf, fileName);
 							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
 						} catch (IllegalArgumentException | IOException | SAXException
@@ -616,7 +617,8 @@ public class MainProgram {
 					} else {
 
 						try {
-							String fileName = Prefs.getSaveDir() + "/ordre_de_mission.ods";
+							String fileName = Prefs.getSaveDir() + "\\OM_"+ conf.getCity()+"-"+
+									conf.getCountry() + "_" + conf.getStart_date()+ ".ods";
 							GenerateMissionOrder.generateSpreadsheetDocument(user, conf, fileName);
 							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
 
