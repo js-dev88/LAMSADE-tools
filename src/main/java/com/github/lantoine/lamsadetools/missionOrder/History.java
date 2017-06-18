@@ -16,7 +16,8 @@ public class History {
 	 * @param path
 	 * @return
 	 */
-	public static File[] getYSOMHistory(String path) {
+	public static File[] getYSOMHistory() {
+		String path = FileSystems.getDefault().getPath("").toAbsolutePath() + "/historique_DJC";
 		File folder = new File(path);
 		File[] ysHistory = folder.listFiles(new FilenameFilter() {
 			@Override
@@ -34,8 +35,9 @@ public class History {
 	 * @param path
 	 * @return
 	 */
-	public static File[] getOMHistory(String path) {
-		File folder = new File(path);
+	public static File[] getOMHistory() {
+		String path2 = FileSystems.getDefault().getPath("").toAbsolutePath() + "/historique_OM";
+		File folder = new File(path2);
 		File[] history = folder.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
@@ -46,8 +48,7 @@ public class History {
 	}
 
 	public static void main(String[] args) {
-		String path = FileSystems.getDefault().getPath("").toAbsolutePath() + "/historique_DJC";
-		File[] ysHistory = History.getYSOMHistory(path);
+		File[] ysHistory = History.getYSOMHistory();
 
 		if (!(ysHistory.length == 0)) {
 			for (int i = 0; i < ysHistory.length; ++i) {
@@ -55,8 +56,8 @@ public class History {
 			}
 		}
 
-		String path2 = FileSystems.getDefault().getPath("").toAbsolutePath() + "/historique_OM";
-		File[] history = History.getOMHistory(path2);
+		
+		File[] history = History.getOMHistory();
 
 		if (!(ysHistory.length == 0)) {
 			for (int i = 0; i < history.length; ++i) {
