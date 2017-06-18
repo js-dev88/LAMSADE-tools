@@ -178,4 +178,14 @@ Abdelkader has worked on :
 - Javadoc, test, import Maven librairies, refactorings	
 
 	
+Antony has worked on :
 
+- Class GetInfoFromYearbook : creation (with Abdel) and modifications
+- Class ConnectionToYearbook : how to use JAXRS 
+- Class SetCoordinate : I tried to generate an odt document with all the specified fields (abandoned)
+- Resolve somes problems of conference’s class : overview of the class trougth this issue  (with Kevin)
+- Keyring : research of Maven dependency and implementation (with Julien)
+- Review of Javadoc
+- Review of the code with best practices
+- GUI : nothing
+I lost a lot of time in SetCoordinate class for no result. The same for the JaxRs connection and the Keyring method... My skills in Java were low but I learnt many things during this project thanks to work in pairs. 
