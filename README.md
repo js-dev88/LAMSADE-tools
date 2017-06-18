@@ -73,7 +73,7 @@ https://gist.github.com/edoreld/430b72b342a7911f6e4820ad8292a71b
 
 Julien has worked on:
 
-Refactoring of previous fonctional Classes made by Antoine and Abdel
+- Refactoring of previous fonctional Classes made by Antoine and Abdel
 - Package YearBook Info :
 	-Class ConnectionToYearbook => JAXRS
 	-Class GetInfosFromYearbook => JDOM then JSOUP and finally DOM
