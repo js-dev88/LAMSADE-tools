@@ -101,7 +101,7 @@ public class MainProgram {
 	private static void fillConferenceTable(Table table) throws SQLException {
 		String[] titles = { "Title", "URL", "Start Date", "End Date", "Fee", "City", "Country" };
 		ArrayList<Conference> confs = ConferenceDatabase.returnAllConferencesFromDatabase();
-        
+
 		for (String title : titles) {
 			System.out.println(title);
 			TableColumn column = new TableColumn(table, SWT.NULL);
@@ -125,37 +125,39 @@ public class MainProgram {
 		}
 
 	}
-	
+
 	/**
 	 * Fill the Historic table with all the files of the correct OM type
 	 *
 	 * @param table
-	 * @param boolean for checkbox
+	 * @param boolean
+	 *            for checkbox
 	 * @throws SQLException
 	 */
-	private static void fillHistoricTable(Table table, Boolean isYC){
-		String title =  "Name" ;
+	private static void fillHistoricTable(Table table, Boolean isYC) {
+		String title = "Name";
 		File[] files;
-		if(!isYC){
+		if (!isYC) {
 			files = History.getOMHistory();
-		}else{
+		} else {
 			files = History.getYSOMHistory();
 		}
-		
-	    TableColumn column = new TableColumn(table, 0);
+
+		TableColumn column = new TableColumn(table, 0);
 		column.setText(title);
-		
-		
 
-		for (File i : files) {
+		if (files.length != 0) {
+			for (File i : files) {
+				TableItem item = new TableItem(table, 0);
+				item.setText(0, i.getName());
+				LOGGER.debug(item.getText(0));
+			}
+		} else {
 			TableItem item = new TableItem(table, 0);
-			item.setText(0, i.getName());
-			LOGGER.debug(item.getText(0));
+			item.setText(0, "No file in directory");
 		}
-		
-		table.getColumn(0).pack();
 
-		
+		table.getColumn(0).pack();
 
 	}
 
@@ -816,11 +818,21 @@ public class MainProgram {
 		fillHistoricTable(tabHisto,false);
 		
 		Button btnOpenFile = new Button(grpHistoric, SWT.NONE);
-		btnOpenFile.addSelectionListener(new SelectionAdapter() {
+		/*btnOpenFile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				
+				if (tabHisto.getSelection().length != 0) {
+						TableItem[] item = table.getSelection();
+						
+				} else {
+					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					mb.setText("No File selected");
+					mb.setMessage("Please Choose a file in the list");
+					mb.open();
+				}
 			}
-		});
+		});*/
 		btnOpenFile.setBounds(281, 25, 103, 32);
 		btnOpenFile.setText("Open");
 		
