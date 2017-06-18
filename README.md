@@ -151,3 +151,31 @@ Antoine has worked on :
 	- created the menu 'File', the preferences window it contains, and the menu 'Help' to have at least 2 menus
 
 
+Abdelkader has worked on :
+
+-GetInfosFromYearbook :
+	¤ Creation of the class GetInfosFromYearbook => the first code of this class was reading through an html page code line by line.
+	¤ Modification of the class GetInfosFromYearbook => DOM instead of JSOUP
+	¤ Add behavior for letting the possibilty to use both login OR firstname + lastname
+-UserDetails :
+	¤ Modified the code so it can handle both login OR firstname + lastname
+-Researched on how to use JAXRS
+-Corrected the mistakes on the Maven integration
+-Package map :
+	¤ Creation of the classes AddressInfos, ConnectionToGoogleMapsAPI, ItineraryMap
+	¤ Refactoring to use DOM
+	¤ Unit Tests
+-Graphical User Interface :
+	¤ Group organization of the GUI (UserDetails group, Conference group ...)
+	¤ Implementation of the button allowing to add a new conference into the database
+	¤ First Itinerary button behavior, using ItineraryMap with OpenStreetMap (changed later for GoogleItineraryMap)
+	¤ Generate a young searcher mission order
+-missionOrder package :
+	¤ Creation of the GenerateMissionOrderYS class using DOM
+	¤ Creation of the History class
+	¤ Worked on the historization
+-Tried to implement the keyring, this was the most difficult task I had since there is not much documentation on that topic
+-Javadoc, test, import Maven librairies, refactorings	
+
+	
+
