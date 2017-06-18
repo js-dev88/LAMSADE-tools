@@ -25,6 +25,8 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.lantoine.lamsadetools.missionOrder.History;
+
 /**
  * Utility class with misc functions
  *
@@ -40,7 +42,8 @@ public class Util {
 	private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
 	public static void main(String[] args) throws IllegalStateException {
-		// sendEmail("edoreld@gmail.com");
+		//String path = History.getFilePath("DJC_Lyon-France_2018-04-10.fodt", true);
+		//sendEmail("lamsadetoolsuser@gmail.com", path);
 	}
 
 	/**
@@ -105,28 +108,26 @@ public class Util {
 			}
 			message.setFrom(new InternetAddress(smtp_username));
 
-			if (filename == "") {
-				message.setSubject("Email Test Subject");
-				message.setText("Email Test Body");
-			} else {
-				Multipart multipart = new MimeMultipart();
+			message.setSubject("New Mission Order");
+			message.setText("Email Test Body");
 
-				MimeBodyPart messageBodyPart = new MimeBodyPart();
+			Multipart multipart = new MimeMultipart();
 
-				messageBodyPart.setContent("Une conference a été partagée avec vous", "text/html");
+			MimeBodyPart messageBodyPart = new MimeBodyPart();
 
-				MimeBodyPart attachPart = new MimeBodyPart();
+			messageBodyPart.setContent("Une conference a été partagée avec vous", "text/html");
 
-				String attachFile = filename;
-				attachPart.attachFile(attachFile);
+			MimeBodyPart attachPart = new MimeBodyPart();
 
-				// adds parts to the multipart
-				multipart.addBodyPart(messageBodyPart);
-				multipart.addBodyPart(attachPart);
+			String attachFile = filename;
+			attachPart.attachFile(attachFile);
 
-				// sets the multipart as message's content
-				message.setContent(multipart);
-			}
+			// adds parts to the multipart
+			multipart.addBodyPart(messageBodyPart);
+			multipart.addBodyPart(attachPart);
+
+			// sets the multipart as message's content
+			message.setContent(multipart);
 
 			Transport transport = session.getTransport("smtps");
 			try {
