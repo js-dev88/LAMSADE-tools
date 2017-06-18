@@ -124,7 +124,7 @@ Kévin has worded on :
 - Simplify the classe Conference in MVC(model,view,controller)
 - Prevent SQL injection with PreparedStatement function
 - Made tests for class’s in the conference package 
-- Generate MissionOrder(User part)
+- Generate MissionOrder(conference part)
 - Add user details to SWT window and modified User details
 - Refactoring the field Address to Country 
 - Complete OM (retreive Conference and users infos from GUI and set the informations into spreadsheet)
