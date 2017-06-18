@@ -164,8 +164,6 @@ public class GetInfosFromYearbook {
 					firstname += nameSurname[i] + " ";
 				}
 			}
-			surname = surname.trim();
-			firstname = firstname.trim();
 		}
 		
 		
@@ -190,38 +188,61 @@ public class GetInfosFromYearbook {
 			}
 
 		}
-
-		if (informations.size() > 8) {
-			throw new YearbookDataException("Too many rows in Hashmap");
-		} else if (informations.size() < 7) {
-			throw new YearbookDataException("Some yearbook's informations are missing");
-		}
-		logger.debug("Professor's Informations are ready to be exploited...");
-
 	}
 
+	
+	/**
+	 * @return value if exists, empty otherwise
+	 */
 	public String getBureau() {
-		return informations.get("Bureau");
+		if (informations.get("Bureau") ==null)
+			return "";
+		else return informations.get("Bureau");
 	}
 
+	/**
+	 * @return value if exists, empty otherwise
+	 */
 	public String getCourrier() {
-		return informations.get("Courriel");
+		if (informations.get("Courriel") ==null)
+			return "";
+		else return informations.get("Courriel");
 	}
 
+	/**
+	 * @return value if exists, empty otherwise
+	 */
 	public String getFax() {
-		return informations.get("Fax");
+		if (informations.get("Fax") ==null)
+			return "";
+		else return informations.get("Fax");
 	}
 
+	/**
+	 * @return value if exists, empty otherwise
+	 */
 	public String getFonction() {
-		return informations.get("Fonction");
+		if (informations.get("Fonction") ==null)
+			return "";
+		else return informations.get("Fonction");
 	}
 
+	/**
+	 * @return value if exists, empty otherwise
+	 */
 	public String getGroupes() {
-		return informations.get("Groupes");
+		if (informations.get("Groupes") ==null)
+			return "";
+		else return informations.get("Groupes");
 	}
 
+	/**
+	 * @return value if exists, empty otherwise
+	 */
 	public String getTelephone() {
-		return informations.get("Téléphone");
+		if (informations.get("Téléphone") ==null)
+			return "";
+		else return informations.get("Téléphone");
 	}
 
 	/**
@@ -306,14 +327,14 @@ public class GetInfosFromYearbook {
 
 	public static void main(String[] args) throws IllegalArgumentException, IOException, YearbookDataException,
 			SAXException, ParserConfigurationException {
-		String prenom = "Maude";
-		String nom = "ARRU";
+		String prenom = "Jerome";
+		String nom = "Lang";
 		UserDetails user = GetInfosFromYearbook.getUserDetails(nom,prenom);
 		System.out.println(user.getName());
 		System.out.println(user.getFirstName());
 		logger.info("Informations sur l'objet GIFYB :\n" + user.toString());
 		
-		String login = "marru";
+		String login = "jlang";
 		UserDetails user2 = GetInfosFromYearbook.getUserDetails(login);
 		System.out.println("user2 " + user2.getName());
 		System.out.println( "user2 " + user2.getFirstName());

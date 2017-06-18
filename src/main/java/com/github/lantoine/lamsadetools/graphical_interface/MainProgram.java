@@ -645,7 +645,6 @@ public class MainProgram {
 				UserDetails user = getUserDetails();
 
 				if (user != null && table.getSelection().length != 0) {
-					String string = "";
 					TableItem[] items = table.getSelection();
 					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/M/yyyy");
 

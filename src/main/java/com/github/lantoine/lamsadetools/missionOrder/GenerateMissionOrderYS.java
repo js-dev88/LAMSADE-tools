@@ -121,7 +121,6 @@ public class GenerateMissionOrderYS {
 			}
 
 			if (span.item(i).getTextContent().contains("DUREE")) {
-				//Period period = Period.between(conf.getStart_date(), conf.getEnd_date());
 				Long period = ChronoUnit.DAYS.between(conf.getStart_date(), conf.getEnd_date());
 				span.item(i).setTextContent(String.valueOf(period + " jour(s)"));
 			}
