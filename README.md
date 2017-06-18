@@ -137,6 +137,17 @@ Kévin has worked on :
 - Complete OM (retreive Conference and users infos from GUI and set the informations into spreadsheet)
 
 
-
+Antoine has worked on :
+- The creation of the class GetInfosFromYearbook
+- The creation of the class conference, the establishement of the database, the tests, and the division of the huge class it had become into several classes. The CLI is mostly from me.
+- The creation of the class General menu which is a CLI which aside from giving access to all the fonctionality of the time also made work GetInfosFromYearBook and Setcoordinates together (obviously to do so I had to add and modify several methods in both classes)
+- Solving issue #3 (Creation of .odt doc using a template). My solution uses regex, this is not very beautiful but it is  efficient and has been easy to copy in the fillPRES method createdby Lionel.
+- Preventing SQL injections (the solution was found by Kevin, I only helped to implement it)
+- As everybody, clean the code from comments and delete unused classes, notably in issue #49
+- In the graphical interface:
+	- added the button to general 'PapierEntete'
+	- made the class Prefs to have the name and firstname kept from one launch to another
+	- Launched the idea that it would better to be able to choose where the generated files go (implemented it with 	  the PreferencesWindow and modified GeneratePapierEntete to work with it) 
+	- created the menu 'File', the preferences window it contains, and the menu 'Help' to have at least 2 menus
 
 
