@@ -590,9 +590,11 @@ public class MainProgram {
 								LOGGER.info("User chose not to replace the existing file");
 							} else {
 								LOGGER.info("User chose to replace the existing file");
+								LOGGER.info(pathToFile.getAbsolutePath());
 								conf.generateCalendarFile(pathToFile.getAbsolutePath());
 							}
 						} else {
+
 							conf.generateCalendarFile(pathToFile.getAbsolutePath());
 						}
 
