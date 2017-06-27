@@ -57,10 +57,12 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.ValidationException;
 
 /**
- * The MainProgram class is the graphical interface of the LAMSADE-Tools application It allows
- * the user : -to see all the existing conferences, -to add new ones -to see the
- * itinerary of his trip, -to see flights for his trip, -to create Mission orders, -to export an event in calendar format, 
- * - to search for his information in Dauphine's yearbook and finally -to generate a paper completed with his information
+ * The MainProgram class is the graphical interface of the LAMSADE-Tools
+ * application It allows the user : -to see all the existing conferences, -to
+ * add new ones -to see the itinerary of his trip, -to see flights for his trip,
+ * -to create Mission orders, -to export an event in calendar format, - to
+ * search for his information in Dauphine's yearbook and finally -to generate a
+ * paper completed with his information
  */
 
 public class MainProgram {
@@ -201,13 +203,14 @@ public class MainProgram {
 	}
 
 	/**
-	 * The main that display the whole LAMSADE-Tools application
-	 * The application needs at least that the user enters his login or his Firstname + Lastname
-	 * 
+	 * The main that display the whole LAMSADE-Tools application The application
+	 * needs at least that the user enters his login or his Firstname + Lastname
+	 *
 	 * @param args
 	 * @throws SQLException
 	 */
 	public static void main(String[] args) throws SQLException {
+
 		Preferences prefs = Preferences.userRoot().node("graphical_prefs :");
 
 		System.setProperty("SWT_GTK3", "0");
@@ -226,7 +229,7 @@ public class MainProgram {
 
 		final Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
-		shell.setSize(new Point(888, 799));
+		shell.setSize(new Point(912, 796));
 
 		Menu bar = display.getMenuBar();
 		if (bar == null) {
@@ -261,8 +264,9 @@ public class MainProgram {
 		 * Initialize Group userDetails which will include : -The Grid data
 		 * which will display the information on the user
 		 *
-		 * -The button that will allow the user to fill in his user information using Dauphine's yearbook 
-		 * -The button that will allow him to generate a document with his information
+		 * -The button that will allow the user to fill in his user information
+		 * using Dauphine's yearbook -The button that will allow him to generate
+		 * a document with his information
 		 */
 
 		Group grpUserDetails = new Group(shell, SWT.NONE);
@@ -426,7 +430,7 @@ public class MainProgram {
 					try {
 						MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 						mb.setText("Success");
-						mb.setMessage("file saved in : " + SetCoordinates.fillPapierEnTete(user,
+						mb.setMessage("File saved in : " + SetCoordinates.fillPapierEnTete(user,
 								FileSystems.getDefault().getPath(Prefs.getSaveDir())));
 						LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
 						mb.open();
@@ -456,10 +460,12 @@ public class MainProgram {
 		 * which will display conferences
 		 *
 		 * -The buttons that will allow the user to add a new conference in the
-		 * database, [the following operations are available for a selected conference] to export an event as a calendar file, to display an itinerary from Paris to the conference City
-		 * And an other button to check the available flights
+		 * database, [the following operations are available for a selected
+		 * conference] to export an event as a calendar file, to display an
+		 * itinerary from Paris to the conference City And an other button to
+		 * check the available flights
 		 */
-		
+
 		// Group Conferences informations
 		Group grp_conferencesInfos = new Group(shell, SWT.NONE);
 		GridData gd_conferencesInfos = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -513,7 +519,6 @@ public class MainProgram {
 
 		// add news fields
 
-
 		Label lblCity = new Label(grp_conferencesInfos, SWT.NONE);
 		lblCity.setAlignment(SWT.RIGHT);
 		lblCity.setBounds(25, 153, 50, 15);
@@ -529,10 +534,10 @@ public class MainProgram {
 		txt_address.setBounds(81, 177, 78, 21);
 
 		/**
-		 *  Create new Conference object, assign it values from
-		 *  selection, then pass it function to export to desktop
-		 *  public Conference(int id, String title, String url, LocalDate
-		 *  start_date, LocalDate end_date, double entry_fee)
+		 * Create new Conference object, assign it values from selection, then
+		 * pass it function to export to desktop public Conference(int id,
+		 * String title, String url, LocalDate start_date, LocalDate end_date,
+		 * double entry_fee)
 		 */
 
 		Button btnExportEvent = new Button(grp_conferencesInfos, SWT.NONE);
@@ -546,8 +551,7 @@ public class MainProgram {
 
 				if (ti.length == 0) {
 					// TODO: Put somewhere that an event should be selected
-				} 
-				else {
+				} else {
 					Conference conf = new Conference(ti[0].getText(0), ti[0].getText(1),
 							LocalDate.parse(ti[0].getText(2), formatter), LocalDate.parse(ti[0].getText(3), formatter),
 							Double.parseDouble(ti[0].getText(4)), ti[0].getText(5), ti[0].getText(6));
@@ -574,9 +578,24 @@ public class MainProgram {
 						}
 
 						dialog.setFileName("conference.ics");
-
 						String path = dialog.open();
-						conf.generateCalendarFile(path);
+						File pathToFile = new File(path);
+						if (pathToFile.exists()) {
+							LOGGER.info("Duplicate Detected");
+							MessageBox mBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
+							mBox.setText("Duplicate detected");
+							mBox.setMessage("A file with that name already exists. Would you like to replace it?");
+							int returnCode = mBox.open();
+							if (returnCode == 256) {
+								LOGGER.info("User chose not to replace the existing file");
+							} else {
+								LOGGER.info("User chose to replace the existing file");
+								conf.generateCalendarFile(pathToFile.getAbsolutePath());
+							}
+						} else {
+							conf.generateCalendarFile(pathToFile.getAbsolutePath());
+						}
+
 					} catch (ValidationException | ParserException e2) {
 						e2.printStackTrace();
 					} catch (Exception e1) {
@@ -590,7 +609,7 @@ public class MainProgram {
 		btnExportEvent.setText("Export Event");
 
 		Button btnSaveOrdreMission = new Button(grp_conferencesInfos, SWT.NONE);
-		btnSaveOrdreMission.setBounds(684, 32, 158, 28);
+		btnSaveOrdreMission.setBounds(684, 32, 176, 28);
 		btnSaveOrdreMission.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -620,13 +639,29 @@ public class MainProgram {
 						} else {
 							LOGGER.info("User chose to replace the existing file");
 							Util.saveFile(dialogResult);
-							lblPlaceholder.setText("The file has successfully been saved to " + pathToTargetFile);
+							try {
+								MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+								mb.setText("Success");
+								mb.setMessage("File saved in : " + pathToTargetFile);
+								LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
+								mb.open();
+							} catch (Exception e2) {
+								throw new IllegalStateException(e2);
+							}
 
 						}
 					} else {
 						LOGGER.info("Calling saveFile(String) to save the file to disk");
 						Util.saveFile(dialogResult);
-						lblPlaceholder.setText("The file has successfully been saved to " + pathToTargetFile);
+						try {
+							MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+							mb.setText("Success");
+							mb.setMessage("File saved in : " + pathToTargetFile);
+							LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
+							mb.open();
+						} catch (Exception e2) {
+							throw new IllegalStateException(e2);
+						}
 
 					}
 				}
@@ -649,14 +684,13 @@ public class MainProgram {
 
 		/**
 		 * Handle here the GenerateOrderMission button because it needs the
-		 * table to be set 
-		 * This button handles order mission generations for both searcher and
-		 * young searcher,
-		 * depending on the checkbox "btnYoungSearcher" status
+		 * table to be set This button handles order mission generations for
+		 * both searcher and young searcher, depending on the checkbox
+		 * "btnYoungSearcher" status
 		 */
-		
+
 		Button btnGenerateOM = new Button(grp_conferencesInfos, SWT.NONE);
-		btnGenerateOM.setBounds(684, 72, 158, 28);
+		btnGenerateOM.setBounds(684, 72, 176, 28);
 		btnGenerateOM.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -678,7 +712,15 @@ public class MainProgram {
 							String fileName = Prefs.getSaveDir() + "\\DJC_" + conf.getCity() + "-" + conf.getCountry()
 									+ "_" + conf.getStart_date() + ".fodt";
 							GenerateMissionOrderYS.fillYSOrderMission(user, conf, fileName);
-							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
+							try {
+								MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+								mb.setText("Success");
+								mb.setMessage("File saved in : " + fileName);
+								LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
+								mb.open();
+							} catch (Exception e2) {
+								throw new IllegalStateException(e2);
+							}
 							tabHisto.removeAll();
 							fillHistoricTable(tabHisto, true);
 						} catch (IllegalArgumentException | IOException | SAXException
@@ -694,7 +736,15 @@ public class MainProgram {
 							String fileName = Prefs.getSaveDir() + "\\OM_" + conf.getCity() + "-" + conf.getCountry()
 									+ "_" + conf.getStart_date() + ".ods";
 							GenerateMissionOrder.generateSpreadsheetDocument(user, conf, fileName);
-							lblPlaceholder.setText("The file has successfully been saved to " + fileName);
+							try {
+								MessageBox mb = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+								mb.setText("Success");
+								mb.setMessage("File saved in : " + fileName);
+								LOGGER.debug("SetCoordinates.fillPapierEnTete completed");
+								mb.open();
+							} catch (Exception e2) {
+								throw new IllegalStateException(e2);
+							}
 							tabHisto.removeAll();
 							fillHistoricTable(tabHisto, false);
 						} catch (Exception e1) {
@@ -718,8 +768,8 @@ public class MainProgram {
 		btnItinerary.setText("Itinerary");
 
 		/**
-		 * This button allow the user to check the available flights to get to his conference
-		 * The departure point is always set to Paris
+		 * This button allow the user to check the available flights to get to
+		 * his conference The departure point is always set to Paris
 		 */
 		Button btnFlight = new Button(grp_conferencesInfos, SWT.NONE);
 		btnFlight.setBounds(561, 156, 84, 25);
@@ -756,12 +806,13 @@ public class MainProgram {
 				}
 			}
 		});
-		
+
 		/**
-		 * This Button allows the user to check his itinerary from the departure point (set to Paris) to the conference destination
-		 * Needs a conference to be selected
-		 * It will open Google maps on the browser with the itinerary set
-		 * 
+		 * This Button allows the user to check his itinerary from the departure
+		 * point (set to Paris) to the conference destination Needs a conference
+		 * to be selected It will open Google maps on the browser with the
+		 * itinerary set
+		 *
 		 */
 		btnItinerary.addSelectionListener(new SelectionAdapter() {
 
@@ -832,7 +883,7 @@ public class MainProgram {
 		});
 
 		/**
-		 * This group handles all the Mission order history 
+		 * This group handles all the Mission order history
 		 */
 		Group grp_bottom = new Group(shell, SWT.NONE);
 		grp_bottom.setLayout(new RowLayout(SWT.HORIZONTAL));

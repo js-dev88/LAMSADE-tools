@@ -182,7 +182,7 @@ public class Conference {
 		java.util.Calendar endCal = java.util.Calendar.getInstance();
 		endCal.setTime(java.sql.Date.valueOf(getEnd_date()));
 
-		String subject = "Conference";
+		String subject = getTitle();
 		String description = "A conference with a fee of " + getEntry_fee();
 		String hostEmail = "";
 
