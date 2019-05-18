@@ -1,4 +1,5 @@
 # LAMSADE-tools
+
 [![Build Status](https://travis-ci.org/LAntoine/LAMSADE-tools.svg?branch=master)](https://travis-ci.org/LAntoine/LAMSADE-tools)
 
 Le LAMSADE est une unité de recherche de Paris-Dauphine. Ce projet a pour but de fournir des outils de gestion administrative utiles à cette unité (ou plus généralement aux unités de recherche).
